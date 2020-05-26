@@ -1,0 +1,70 @@
+{
+    "name": "dn_tocactionrenderer",
+    "title": "${bundleName}",
+    "description": "${bundleDescription}",
+    "version": "0.0.1",
+    "vendor": "con terra GmbH",
+    "dependencies": {
+        "apprt-vue": "^4.0.0",
+        "apprt-vuetify": "^4.0.0",
+        "esri": "^4.6.0"
+    },
+    "CSS-Themes-Extension": [
+        {
+          // the * as name matches to folder "./all/all.css". You can use this if you have styles that can be used in any theme.
+          "name": "*"
+        }
+      ],
+    "layout-widgets": [{
+        "widgetRole": "tocRendererChanger",
+        "window": {
+            "title": "${ui.windowTitle}",
+            "dockTool": "tocRendererChangerToggleTool",
+            "marginBox": {
+                "w": 350,
+                "h": 650
+            },
+            "closable": true,
+            "minimizeOnClose": true
+        }
+    }],
+    "components": [{
+            "name": "TocRendererChangerActionDefinitionFactory",
+            "provides": ["toc.ActionDefinitionFactory"],
+            "references": [{
+                    "name": "_tocRendererChangerFactory",
+                    "providing": "dn_tocactionrenderer.TocRendererChangerFactory"
+                },
+                {
+                    "name": "_windowManager",
+                    "providing": "ct.framework.api.WindowManager"
+                }
+            ]
+        },
+        {
+            "name": "TocRendererChangerFactory",
+            "provides": ["dijit.Widget", "dn_tocactionrenderer.TocRendererChangerFactory"],
+            "instanceFactory": true,
+            "properties": {
+                "widgetRole": "tocRendererChanger"
+            },
+            "references": [{
+                "name": "_mapWidgetModel",
+                "providing": "map-widget.MapWidgetModel"
+            }]
+        },
+        {
+            "name": "tocRendererChangerToggleTool",
+            "impl": "ct/tools/Tool",
+            "provides": ["ct.tools.Tool"],
+            "propertiesConstructor": true,
+            "properties": {
+                "toolRole": "toolset",
+                "id": "tocRendererChangerToggleTool",
+                "iconClass": "icon-heart",
+                "title": "${ui.toolTitle}",
+                "togglable": true
+            }
+        }
+    ]
+}

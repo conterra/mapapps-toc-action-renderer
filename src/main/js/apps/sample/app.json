@@ -35,7 +35,8 @@
             "share-link",
             "omnisearch",
             "locator-store",
-            "toc"
+            "toc",
+            "dn_tocactionrenderer"
         ],
         "require": [
             "${app}.app"
