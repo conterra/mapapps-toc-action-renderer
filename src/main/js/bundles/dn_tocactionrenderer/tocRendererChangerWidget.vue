@@ -36,12 +36,8 @@
         <v-btn @click="resetRenderer">Reset Renderer</v-btn>
       </template>
       <template v-if="selectedRenderer == 'Simple'">
-        <PublishedParameter
-          :i18n="{invalidParameter: 'Invalid Parameter'}"
-          v-bind:parameter="{name: 'Color', type: 'COLOR_PICK'}"
-          v-on:parameter-changed="updateSimpleRenderer($event)"
-        ></PublishedParameter>
-        {{simpleColor}}
+        <color-picker v-model="colorPickerValue"></color-picker>
+        {{colorPickerValue}}
       </template>
 
       <div
@@ -61,11 +57,12 @@ TODO:
 - heatmap renderer
 */
 import Bindable from "apprt-vue/mixins/Bindable";
-import PublishedParameter from "mapapps_etl/PublishedParameter.vue";
+import VueColor from './VueColor/index';
+
 
 export default {
   components: {
-    PublishedParameter: PublishedParameter
+    'color-picker': VueColor.Sketch
   },
   mixins: [Bindable],
   data: function() {
@@ -78,7 +75,7 @@ export default {
       selectedAttribute: undefined,
       selectedRenderer: "Simple",
       rendererOptions: ["Simple", "Class Breaks", "Size", "Unique Values"],
-      simpleColor: undefined
+      colorPickerValue: '#000000'
     };
   },
 
@@ -88,6 +85,10 @@ export default {
     },
     selectedRenderer: function(ren) {
       if (ren) this.updateRenderer();
+    },
+    colorPickerValue: function(attr){
+      let rgbColor = [attr.rgba.r, attr.rgba.g, attr.rgba.b, attr.rgba.a];
+      this.$emit("update-color", rgbColor);
     }
   },
   methods: {
@@ -99,7 +100,7 @@ export default {
     },
     resetWidget() {
       this.selectedRenderer = "Simple";
-      this.simpleColor = undefined;
+      this.colorPickerValue = undefined;
       this.selectedAttribute = undefined;
     },
     updateSimpleRenderer(event) {

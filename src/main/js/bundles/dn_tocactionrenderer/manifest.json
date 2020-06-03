@@ -13,7 +13,12 @@
         {
           // the * as name matches to folder "./all/all.css". You can use this if you have styles that can be used in any theme.
           "name": "*"
-        }
+        }, {
+            "name": "*",
+            "files": [              
+              "./VueColor/css/all.css"
+            ]
+          }
       ],
     "layout-widgets": [{
         "widgetRole": "tocRendererChanger",

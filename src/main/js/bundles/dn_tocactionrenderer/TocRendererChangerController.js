@@ -79,8 +79,7 @@ class TocRendererChangerController {
         });
     }
 
-    updateSimpleRenderer(colorEvent) {
-        event = this.getColorFromEvent(colorEvent);
+    updateSimpleRenderer(event) {
         let geomType = this.selectedLayer.geometryType;
 
         switch (geomType) {
@@ -127,15 +126,6 @@ class TocRendererChangerController {
         }
     }
 
-    getColorFromEvent(event) {
-        event = event.split(",");
-        if (event.length === 3) {
-            event[0] = parseInt(parseFloat(event[0] * 255));
-            event[1] = parseInt(parseFloat(event[1] * 255));
-            event[2] = parseInt(parseFloat(event[2] * 255));
-        }
-        return event;
-    }
 
     createRendererWidget(evt) {
         this.removeRendererWidget();
