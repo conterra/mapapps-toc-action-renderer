@@ -151,7 +151,7 @@ class TocRendererChangerController {
             this.selectedLayer,
             this._mapWidgetModel.view,
             attribute,
-            this.vm.$refs["ctSmartRenderWidgets"]
+            this.vm.$refs["ctSmartRendererWidgets"]
         );
     }
 
@@ -160,7 +160,7 @@ class TocRendererChangerController {
             this.selectedLayer,
             this._mapWidgetModel.view,
             attribute,
-            this.vm.$refs["ctSmartRenderWidgets"]
+            this.vm.$refs["ctSmartRendererWidgets"]
         );
     }
 
@@ -169,13 +169,13 @@ class TocRendererChangerController {
             this.selectedLayer,
             this._mapWidgetModel.view,
             attribute,
-            this.vm.$refs["ctSmartRenderWidgets"]
+            this.vm.$refs["ctSmartRendererWidgets"]
         );
     }
 
     removeRendererWidget() {
-        if (this.vm.$refs.ctSmartRenderWidgets && this.vm.$refs.ctSmartRenderWidgets.childNodes) {
-            this.vm.$refs.ctSmartRenderWidgets.childNodes.forEach(el => {
+        if (this.vm.$refs.ctSmartRendererWidgets && this.vm.$refs.ctSmartRendererWidgets.childNodes) {
+            this.vm.$refs.ctSmartRendererWidgets.childNodes.forEach(el => {
                 el.remove();
             });
         }

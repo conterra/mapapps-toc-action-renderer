@@ -16,7 +16,7 @@
 export default class TocRendererChangerActionDefinitionFactory {
 
     constructor() {
-        this.supportedIds = ["my-button-action"];
+        this.supportedIds = ["change-renderer-action"];
     }
 
 

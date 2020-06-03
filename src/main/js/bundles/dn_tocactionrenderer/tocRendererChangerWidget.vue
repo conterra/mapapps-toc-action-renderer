@@ -42,7 +42,7 @@
 
       <div
         class="dn_tocactionrenderer-esri-widgets"
-        ref="ctSmartRenderWidgets"
+        ref="ctSmartRendererWidgets"
       ></div>
     </template>
   </v-container>
