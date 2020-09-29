@@ -7,18 +7,14 @@
     "dependencies": {
         "apprt-vue": "^4.0.0",
         "apprt-vuetify": "^4.0.0",
-        "esri": "^4.6.0"
+        "esri": "^4.6.0",
+        "dn_vuecolor": "^2.7.1"
     },
     "CSS-Themes-Extension": [
         {
           // the * as name matches to folder "./all/all.css". You can use this if you have styles that can be used in any theme.
           "name": "*"
-        }, {
-            "name": "*",
-            "files": [              
-              "./VueColor/css/all.css"
-            ]
-          }
+        }
       ],
     "layout-widgets": [{
         "widgetRole": "tocRendererChanger",
@@ -26,10 +22,11 @@
             "title": "${ui.windowTitle}",
             "dockTool": "tocRendererChangerToggleTool",
             "marginBox": {
-                "w": 350,
+                "w": 450,
                 "h": 650
             },
             "closable": true,
+            "resizable": true,
             "minimizeOnClose": true
         }
     }],

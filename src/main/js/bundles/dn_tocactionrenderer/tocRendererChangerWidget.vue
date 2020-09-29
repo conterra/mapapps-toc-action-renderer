@@ -36,8 +36,9 @@
         <v-btn @click="resetRenderer">Reset Renderer</v-btn>
       </template>
       <template v-if="selectedRenderer == 'Simple'">
+        <div class="dn_tocactionrenderer_color_picker">
         <color-picker v-model="colorPickerValue"></color-picker>
-        {{colorPickerValue}}
+        </div>
       </template>
 
       <div
@@ -57,12 +58,12 @@ TODO:
 - heatmap renderer
 */
 import Bindable from "apprt-vue/mixins/Bindable";
-import VueColor from './VueColor/index';
+import  {Slider} from 'dn_vuecolor';
 
 
 export default {
   components: {
-    'color-picker': VueColor.Sketch
+    'color-picker': Slider
   },
   mixins: [Bindable],
   data: function() {

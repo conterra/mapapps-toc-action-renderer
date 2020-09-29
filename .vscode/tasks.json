@@ -4,10 +4,11 @@
         {
             "label": "Run Jetty Server",
             "type": "shell",
-            "command": "mvn clean jetty:run -P watch-all",
+            "command": "mvn clean jetty:run -P watch-all -P include-mapapps-deps -P env-dev",
             "group": {
                 "kind": "build"
-            }
+            },
+            "problemMatcher": []
         },
         {
             "label": "Install",

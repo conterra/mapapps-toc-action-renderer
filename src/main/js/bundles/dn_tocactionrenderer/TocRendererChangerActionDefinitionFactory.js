@@ -39,9 +39,10 @@ export default class TocRendererChangerActionDefinitionFactory {
                     title: "Change Renderer",
                     id: Math.random(),
                     marginBox: {
-                        w: 350,
+                        w: 500,
                         h: 650
                     },
+                    resizable: true,
                     hideOnClose: true,
                     content: this.widget
                 });

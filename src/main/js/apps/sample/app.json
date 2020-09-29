@@ -27,10 +27,10 @@
             "popups-default",
             "scalebar",
             "locateme",
-            "printing",
             "share-link",
             "toc",
-            "dn_tocactionrenderer"
+            "dn_vuecolor",
+            "dn_tocactionrenderer"           
         ],
         "require": [
             "${app}.app"

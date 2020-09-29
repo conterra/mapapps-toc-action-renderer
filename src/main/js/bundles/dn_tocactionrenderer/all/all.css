@@ -29,3 +29,7 @@
 .dn_tocactionrenderer .dn_tocactionrenderer-esri-widgets .esri-slider__label:hover{
     background-color: transparent;
 }
+
+.dn_tocactionrenderer_color_picker{
+    width: 100%;
+}
