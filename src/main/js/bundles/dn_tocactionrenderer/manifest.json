@@ -2,8 +2,9 @@
     "name": "dn_tocactionrenderer",
     "title": "${bundleName}",
     "description": "${bundleDescription}",
-    "version": "0.0.1",
+    "version": "1.0.0-SNAPSHOT",
     "vendor": "con terra GmbH",
+    "productName": "devnet-mapapps-toc-action-renderer",
     "dependencies": {
         "apprt-vue": "^4.0.0",
         "apprt-vuetify": "^4.0.0",
