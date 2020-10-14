@@ -23,7 +23,7 @@ class tocRendererChangerFactory {
     createInstance() {
         const vm = new Vue(tocRendererChangerWidget);
         const widget = VueDijit(vm);
-        vm.i18n = this._i18n.get();
+        vm.i18n = this._i18n.get().ui;
 
         let controller = widget.controller = new TocRendererChangerController(vm,this._mapWidgetModel);
         this.createBinding(vm,controller);
@@ -36,7 +36,7 @@ class tocRendererChangerFactory {
             .syncAll("selectedLayerId", "selectedRenderer", "selectedLayerAttributes", "selectedAttribute")
             .enable()
             .syncToRightNow();
-            
+
     }
 
 

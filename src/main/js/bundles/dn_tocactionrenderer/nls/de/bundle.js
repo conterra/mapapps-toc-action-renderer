@@ -17,11 +17,7 @@ module.exports = {
     bundleName: "dn_tocactionrenderer",
     bundleDescription: "Widget containing the esri smart renderer functionalities",
     ui: {
-        toolTitle: "Render Wechsel Werkzeug",
-        windowTitle: "Render Wechsel Fenster",
-        intro: "Hallo, ich bin map.apps. Wie heißt du?",
-        textinput: "Dein Name",
-        button:"Klick mich!",
-        alert: "Dein Name ist"
+        toolTitle: "Symbolisierung anpassen",
+        windowTitle: "Symbolisierung anpassen"
     }
 };
