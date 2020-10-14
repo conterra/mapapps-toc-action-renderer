@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as colorRendererCreator from "esri/renderers/smartMapping/creators/color";
-import histogram from "esri/renderers/smartMapping/statistics/histogram";
+import * as colorRendererCreator from "esri/smartMapping/renderers/color";
+import histogram from "esri/smartMapping/statistics/histogram";
 import ClassedColorSlider from "esri/widgets/smartMapping/ClassedColorSlider";
 
 const createClassBreaksRenderer = function (layer, view, attribute, domNode) {

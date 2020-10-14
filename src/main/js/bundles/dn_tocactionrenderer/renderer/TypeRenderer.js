@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as typeRendererCreator from "esri/renderers/smartMapping/creators/type";
+import * as typeRendererCreator from "esri/smartMapping/renderers/type";
 
 const createTypeRenderer = function (layer, view, attribute, domNode) {
     let rendererParams = {

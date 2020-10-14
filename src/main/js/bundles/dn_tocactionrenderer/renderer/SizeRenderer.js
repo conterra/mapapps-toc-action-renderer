@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as sizeRendererCreator from "esri/renderers/smartMapping/creators/size";
-import histogram from "esri/renderers/smartMapping/statistics/histogram";
+import * as sizeRendererCreator from "esri/smartMapping/renderers/size";
+import histogram from "esri/smartMapping/statistics/histogram";
 import SizeSlider from "esri/widgets/smartMapping/SizeSlider";
 
 const createSizeRenderer = function (layer, view, attribute, domNode) {
