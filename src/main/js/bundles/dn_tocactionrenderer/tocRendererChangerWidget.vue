@@ -33,7 +33,7 @@
         ></v-select>
       </template>
       <template v-if="selectedRenderer">
-        <v-btn @click="resetRenderer">Reset Renderer</v-btn>
+        <v-btn @click="resetRenderer">{{i18n.resetRenderer}}</v-btn>
       </template>
       <template v-if="selectedRenderer == 'Simple'">
         <div class="dn_tocactionrenderer_color_picker">

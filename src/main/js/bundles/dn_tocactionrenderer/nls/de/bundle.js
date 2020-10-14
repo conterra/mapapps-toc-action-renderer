@@ -18,6 +18,7 @@ module.exports = {
     bundleDescription: "Widget containing the esri smart renderer functionalities",
     ui: {
         toolTitle: "Symbolisierung anpassen",
-        windowTitle: "Symbolisierung anpassen"
+        windowTitle: "Symbolisierung anpassen",
+        resetRenderer: "Symbolisierung zurücksetzen"
     }
 };

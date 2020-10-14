@@ -64,7 +64,7 @@
             "properties": {
                 "toolRole": "toolset",
                 "id": "tocRendererChangerToggleTool",
-                "iconClass": "icon-heart",
+                "iconClass": "color_lens",
                 "title": "${ui.toolTitle}",
                 "togglable": true
             }

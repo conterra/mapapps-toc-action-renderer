@@ -19,7 +19,8 @@ module.exports = {
         bundleDescription: "Widget containing the esri smart renderer functionalities",
         ui: {
             toolTitle: "Change symbology",
-            windowTitle: "Change symbology"
+            windowTitle: "Change symbology",
+            resetRenderer: "Reset symbology"
         }
     }),
     "de": true

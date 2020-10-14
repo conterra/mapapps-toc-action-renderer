@@ -26,17 +26,18 @@ export default class TocRendererChangerActionDefinitionFactory {
             type: "button",
 
             // Label of the button menu entry
-            label: "Change Renderer",
+            label: this._i18n.get().ui.toolTitle,
 
             // Icon of the button entry
             icon: "color_lens",
             window: undefined,
             windowManager: this._windowManager,
             widget: this._tocRendererChangerFactory,
-            
-            createWindow: function () {                
+            i18n: this._i18n.get().ui,
+
+            createWindow: function () {
                 this.window = this.windowManager.createWindow({
-                    title: "Change Renderer",
+                    title: this.i18n.toolTitle,
                     id: Math.random(),
                     marginBox: {
                         w: 500,
@@ -46,11 +47,11 @@ export default class TocRendererChangerActionDefinitionFactory {
                     hideOnClose: true,
                     content: this.widget
                 });
-                
+
             },
 
-            showWindow: function(layerId){
-                if(!this.window){
+            showWindow: function (layerId) {
+                if (!this.window) {
                     this.createWindow()
                 }
                 this.widget.controller.setSelectedLayerId(layerId);
@@ -64,14 +65,18 @@ export default class TocRendererChangerActionDefinitionFactory {
             // is available for a given tocItem
             isVisibleForItem(tocItem) {
                 if (tocItem && tocItem.ref &&
-                    tocItem.ref.type == "feature" &&
-                    tocItem.ref.visible)
+                    tocItem.ref.type == "feature")
                     return true;
             },
 
             // method to decide if the action should be shown as
             // currently disabled (optional)
             isDisabledForItem(tocItem) {
+                if (tocItem && tocItem.ref) {
+                    if (!tocItem.ref.visible) {
+                        return true;
+                    }
+                }
                 return false;
             },
 
