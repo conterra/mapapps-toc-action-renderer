@@ -29,8 +29,7 @@
             "locateme",
             "share-link",
             "toc",
-            "dn_vuecolor",
-            "dn_tocactionrenderer"           
+            "dn_tocactionrenderer"
         ],
         "require": [
             "${app}.app"
@@ -104,6 +103,34 @@
                     "iconClass": "icon-custom-info-imprint",
                     "togglable": true,
                     "id": "IMPRINT_Imprint_CustomInfoTool_mobile"
+                },
+                {
+                    "widgetSettings": {
+                        "content": "<div>Diese App demonstriert die dynamische Anpassung von Layer-Symbologien. Sie finden das Tool im Karteninhalt für den jeweiligen Layer.</div><div><br /></div><div><br /></div><img alt=\"\" src=\"https://demos.conterra.de/mapapps/resources/apps/downloads_toc_action_renderer/images/screenshot.jpg\" />",
+                        "window": {
+                            "marginBox": {
+                                "w": 640,
+                                "h": 320
+                            },
+                            "draggable": true,
+                            "closable": true,
+                            "modal": false,
+                            "maximizable": false,
+                            "resizable": true,
+                            "title": "Willkommen"
+                        }
+                    },
+                    "type": "INFO",
+                    "toolClass": "ctInfo",
+                    "title": "Willkommen",
+                    "tooltip": "Show information",
+                    "iconClass": "icon-custom-info-info",
+                    "togglable": true,
+                    "id": "INFO_Willkommen_1602833788334_CustomInfoTool",
+                    "rules": {
+                        "groups": "custominfo",
+                        "activateOnStartup": true
+                    }
                 }
             ]
         },
@@ -465,14 +492,6 @@
                     },
                     "scale": 140000
                 }
-            }
-        },
-        "themes": {
-            "ThemeModel": {
-                "_selectedTheme": "everlasting"
-            },
-            "ThemeSelector": {
-                "componentEnabled": true
             }
         },
         "templates": {
