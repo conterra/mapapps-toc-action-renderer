@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import tocRendererChangerWidget from "./tocRendererChangerWidget.vue";
+import tocRendererChangerWidget from "./TocRendererChangerWidget.vue";
 import Vue from "apprt-vue/Vue";
 import VueDijit from "apprt-vue/VueDijit";
 import TocRendererChangerController from "./TocRendererChangerController";
