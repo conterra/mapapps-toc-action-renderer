@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+const ID = "change-renderer-action";
+
 export default class TocRendererChangerActionDefinitionFactory {
 
     constructor() {
-        this.supportedIds = ["change-renderer-action"];
+        this.supportedIds = [ID];
     }
 
 
@@ -60,19 +63,18 @@ export default class TocRendererChangerActionDefinitionFactory {
             },
 
 
-
             // Method to decide if this action
             // is available for a given tocItem
             isVisibleForItem(tocItem) {
-                if (tocItem && tocItem.ref &&
-                    tocItem.ref.type == "feature")
+                if (tocItem?.ref?.type === "feature") {
                     return true;
+                }
             },
 
             // method to decide if the action should be shown as
             // currently disabled (optional)
             isDisabledForItem(tocItem) {
-                if (tocItem && tocItem.ref) {
+                if (tocItem?.ref) {
                     if (!tocItem.ref.visible) {
                         return true;
                     }
@@ -83,7 +85,6 @@ export default class TocRendererChangerActionDefinitionFactory {
             // method triggered if the menu item is clicked
             trigger(tocItem) {
                 this.showWindow(tocItem.ref.id);
-
             }
         };
     }
