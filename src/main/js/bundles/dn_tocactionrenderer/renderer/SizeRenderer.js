@@ -17,7 +17,7 @@ import * as sizeRendererCreator from "esri/smartMapping/renderers/size";
 import histogram from "esri/smartMapping/statistics/histogram";
 import SizeSlider from "esri/widgets/smartMapping/SizeSlider";
 
-export default function (layer, view, attribute, domNode) {
+export default function createSizeRenderer(layer, view, attribute, domNode) {
 
     const sizeParams = {
         layer: layer,

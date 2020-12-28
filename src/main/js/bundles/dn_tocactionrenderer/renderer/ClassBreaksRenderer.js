@@ -17,7 +17,7 @@ import * as colorRendererCreator from "esri/smartMapping/renderers/color";
 import histogram from "esri/smartMapping/statistics/histogram";
 import ClassedColorSlider from "esri/widgets/smartMapping/ClassedColorSlider";
 
-export default function (layer, view, attribute, domNode) {
+export default function createClassBreaksRenderer(layer, view, attribute, domNode) {
     const rendererParams = {
         layer: layer,
         view: view,

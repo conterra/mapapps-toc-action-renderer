@@ -15,7 +15,7 @@
  */
 import * as typeRendererCreator from "esri/smartMapping/renderers/type";
 
-export default function (layer, view, attribute, domNode) {
+export default function createTypeRenderer(layer, view, attribute, domNode) {
 
     const rendererParams = {
         layer: layer,
