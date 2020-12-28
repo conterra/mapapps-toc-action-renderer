@@ -17,8 +17,8 @@ import * as colorRendererCreator from "esri/smartMapping/renderers/color";
 import histogram from "esri/smartMapping/statistics/histogram";
 import ClassedColorSlider from "esri/widgets/smartMapping/ClassedColorSlider";
 
-const createClassBreaksRenderer = function (layer, view, attribute, domNode) {
-    let rendererParams = {
+export default function (layer, view, attribute, domNode) {
+    const rendererParams = {
         layer: layer,
         view: view,
         valueExpression: "$feature." + attribute,
@@ -64,39 +64,37 @@ const createClassBreaksRenderer = function (layer, view, attribute, domNode) {
             console.log("there was an error: ", error);
         });
 
-        function updateColorSlider(rendererResult) {
-            histogram({
-              layer: layer,
-              valueExpression: rendererParams.valueExpression,
-              view: view,
-              numBins: 100
-            }).then(function(histogramResult) {
-              if (!slider) {
-  
+    function updateColorSlider(rendererResult) {
+        histogram({
+            layer: layer,
+            valueExpression: rendererParams.valueExpression,
+            view: view,
+            numBins: 100
+        }).then(function (histogramResult) {
+            if (!slider) {
+
                 slider = ClassedColorSlider.fromRendererResult(
-                  rendererResult,
-                  histogramResult
+                    rendererResult,
+                    histogramResult
                 );
                 slider.container = domNode;
                 slider.viewModel.precision = 1;
-  
-                function changeEventHandler() {
-                  const renderer = layer.renderer.clone();
-                  renderer.classBreakInfos = slider.updateClassBreakInfos(
-                    renderer.classBreakInfos
-                  );
-                  layer.renderer = renderer;
-                }
-  
-                slider.on(
-                  ["thumb-change", "thumb-drag", "min-change", "max-change"],
-                  changeEventHandler
-                );
-              } else {
-                slider.updateFromRendererResult(rendererResult, histogramResult);
-              }
-            });
-          }
-};
 
-export default createClassBreaksRenderer;
+                function changeEventHandler() {
+                    const renderer = layer.renderer.clone();
+                    renderer.classBreakInfos = slider.updateClassBreakInfos(
+                        renderer.classBreakInfos
+                    );
+                    layer.renderer = renderer;
+                }
+
+                slider.on(
+                    ["thumb-change", "thumb-drag", "min-change", "max-change"],
+                    changeEventHandler
+                );
+            } else {
+                slider.updateFromRendererResult(rendererResult, histogramResult);
+            }
+        });
+    }
+};

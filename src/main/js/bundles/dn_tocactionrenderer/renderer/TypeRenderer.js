@@ -15,8 +15,9 @@
  */
 import * as typeRendererCreator from "esri/smartMapping/renderers/type";
 
-const createTypeRenderer = function (layer, view, attribute, domNode) {
-    let rendererParams = {
+export default function (layer, view, attribute, domNode) {
+
+    const rendererParams = {
         layer: layer,
         view: view,
         field: attribute,
@@ -37,5 +38,3 @@ const createTypeRenderer = function (layer, view, attribute, domNode) {
             console.log("there was an error: ", error);
         });
 };
-
-export default createTypeRenderer;

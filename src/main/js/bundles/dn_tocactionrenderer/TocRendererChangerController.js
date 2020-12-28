@@ -16,12 +16,10 @@
 import createSizeRenderer from "./renderer/SizeRenderer";
 import createClassBreaksRenderer from "./renderer/ClassBreaksRenderer";
 import createTypeRenderer from "./renderer/TypeRenderer";
-import {
-    declare
-} from "apprt-core/Mutable";
+import {declare} from "apprt-core/Mutable";
 
+export default class TocRendererChangerController {
 
-class TocRendererChangerController {
     constructor(vm, mapWidgetModel) {
         this.vm = vm;
         this._mapWidgetModel = mapWidgetModel;
@@ -58,12 +56,9 @@ class TocRendererChangerController {
                     type: item.type
                 };
             });
-            this.oldRenderer[
-                this.selectedLayer.id
-            ] = this.selectedLayer.renderer.clone();
+            this.oldRenderer[this.selectedLayer.id] = this.selectedLayer.renderer.clone();
         }
     }
-
 
     _attachWidgetEvents(vm) {
         vm.$on('update-color', (evt) => {
@@ -80,7 +75,7 @@ class TocRendererChangerController {
     }
 
     updateSimpleRenderer(event) {
-        let geomType = this.selectedLayer.geometryType;
+        const geomType = this.selectedLayer.geometryType;
 
         switch (geomType) {
             case "polygon":
@@ -125,7 +120,6 @@ class TocRendererChangerController {
                 break;
         }
     }
-
 
     createRendererWidget(evt) {
         this.removeRendererWidget();
@@ -189,5 +183,3 @@ class TocRendererChangerController {
     }
 
 }
-
-module.exports = TocRendererChangerController;

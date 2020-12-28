@@ -61,7 +61,6 @@
     import Bindable from "apprt-vue/mixins/Bindable";
     import {Slider} from 'dn_vuecolor';
 
-
     export default {
         components: {
             'color-picker': Slider

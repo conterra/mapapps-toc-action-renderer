@@ -17,8 +17,9 @@ import * as sizeRendererCreator from "esri/smartMapping/renderers/size";
 import histogram from "esri/smartMapping/statistics/histogram";
 import SizeSlider from "esri/widgets/smartMapping/SizeSlider";
 
-const createSizeRenderer = function (layer, view, attribute, domNode) {
-    let sizeParams = {
+export default function (layer, view, attribute, domNode) {
+
+    const sizeParams = {
         layer: layer,
         view: view,
         valueExpression: "$feature." + attribute,
@@ -65,9 +66,7 @@ const createSizeRenderer = function (layer, view, attribute, domNode) {
             sizeSlider.container = domNode;
 
             // Color the slider track to match the renderer
-            const iconColor =
-                rendererResult.renderer.classBreakInfos[0].symbol.color;
-            sizeSlider.style.trackFillColor = iconColor;
+            sizeSlider.style.trackFillColor = rendererResult.renderer.classBreakInfos[0].symbol.color;
 
             sizeSlider.labelFormatFunction = function (value) {
                 return value.toFixed(1);
@@ -94,5 +93,3 @@ const createSizeRenderer = function (layer, view, attribute, domNode) {
             console.log("there was an error: ", error);
         });
 };
-
-export default createSizeRenderer;

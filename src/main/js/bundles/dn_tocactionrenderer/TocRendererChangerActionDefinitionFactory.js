@@ -22,7 +22,6 @@ export default class TocRendererChangerActionDefinitionFactory {
         this.supportedIds = [ID];
     }
 
-
     createDefinitionById(id) {
         return {
             id,
@@ -62,7 +61,6 @@ export default class TocRendererChangerActionDefinitionFactory {
                 this.window.show();
             },
 
-
             // Method to decide if this action
             // is available for a given tocItem
             isVisibleForItem(tocItem) {
@@ -88,4 +86,5 @@ export default class TocRendererChangerActionDefinitionFactory {
             }
         };
     }
+
 }
