@@ -19,19 +19,19 @@ import VueDijit from "apprt-vue/VueDijit";
 import TocRendererChangerController from "./TocRendererChangerController";
 import Binding from "apprt-binding/Binding";
 
-class tocRendererChangerFactory {
+export default class tocRendererChangerFactory {
     createInstance() {
         const vm = new Vue(tocRendererChangerWidget);
         const widget = VueDijit(vm);
         vm.i18n = this._i18n.get().ui;
 
-        let controller = widget.controller = new TocRendererChangerController(vm,this._mapWidgetModel);
-        this.createBinding(vm,controller);
+        const controller = widget.controller = new TocRendererChangerController(vm, this._mapWidgetModel);
+        this.createBinding(vm, controller);
 
         return widget;
     }
 
-    createBinding(vm, controller){
+    createBinding(vm, controller) {
         Binding.for(controller.model, vm)
             .syncAll("selectedLayerId", "selectedRenderer", "selectedLayerAttributes", "selectedAttribute")
             .enable()
@@ -39,11 +39,4 @@ class tocRendererChangerFactory {
 
     }
 
-
-
-    activate() {}
-
-
 }
-
-module.exports = tocRendererChangerFactory;
