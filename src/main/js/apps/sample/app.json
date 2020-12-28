@@ -29,6 +29,7 @@
             "locateme",
             "share-link",
             "toc",
+            "legend",
             "dn_tocactionrenderer"
         ],
         "require": [
