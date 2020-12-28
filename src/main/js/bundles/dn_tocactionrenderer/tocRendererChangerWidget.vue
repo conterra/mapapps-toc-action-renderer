@@ -16,101 +16,102 @@
 
 -->
 <template>
-  <v-container class="dn_tocactionrenderer">
-    <template v-if="selectedLayerId">
-      <v-select
-        :items="rendererOptions"
-        v-model="selectedRenderer"
-        label="Renderer"
-      ></v-select>
-      <template v-if="selectedLayerId && selectedRenderer != 'Simple'">
-        <v-select
-          :items="selectedLayerAttributes"
-          item-text="name"
-          item-value="name"
-          v-model="selectedAttribute"
-          label="Attribute"
-        ></v-select>
-      </template>
-      <template v-if="selectedRenderer">
-        <v-btn @click="resetRenderer">{{i18n.resetRenderer}}</v-btn>
-      </template>
-      <template v-if="selectedRenderer == 'Simple'">
-        <div class="dn_tocactionrenderer_color_picker">
-        <color-picker v-model="colorPickerValue"></color-picker>
-        </div>
-      </template>
-
-      <div
-        class="dn_tocactionrenderer-esri-widgets"
-        ref="ctSmartRendererWidgets"
-      ></div>
-    </template>
-  </v-container>
+    <v-container class="dn_tocactionrenderer">
+        <template v-if="selectedLayerId">
+            <v-select
+                v-model="selectedRenderer"
+                :items="rendererOptions"
+                label="Renderer"
+            ></v-select>
+            <template v-if="selectedLayerId && selectedRenderer !== 'Simple'">
+                <v-select
+                    v-model="selectedAttribute"
+                    :items="selectedLayerAttributes"
+                    item-text="name"
+                    item-value="name"
+                    label="Attribute"
+                ></v-select>
+            </template>
+            <template v-if="selectedRenderer">
+                <v-btn @click="resetRenderer">
+                    {{ i18n.resetRenderer }}
+                </v-btn>
+            </template>
+            <template v-if="selectedRenderer === 'Simple'">
+                <div class="dn_tocactionrenderer_color_picker">
+                    <color-picker v-model="colorPickerValue"></color-picker>
+                </div>
+            </template>
+            <div
+                ref="ctSmartRendererWidgets"
+                class="dn_tocactionrenderer-esri-widgets"
+            ></div>
+        </template>
+    </v-container>
 </template>
 
 <script>
-/*
-TODO:
-- different color schemes: https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-smartMapping-symbology-color.html#getSchemes
-- error handling 
-- filter renderer for attr types 
-- heatmap renderer
-*/
-import Bindable from "apprt-vue/mixins/Bindable";
-import  {Slider} from 'dn_vuecolor';
+    /*
+    TODO:
+    - different color schemes: https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-smartMapping-symbology-color.html#getSchemes
+    - error handling
+    - filter renderer for attr types
+    - heatmap renderer
+    */
+    import Bindable from "apprt-vue/mixins/Bindable";
+    import {Slider} from 'dn_vuecolor';
 
 
-export default {
-  components: {
-    'color-picker': Slider
-  },
-  mixins: [Bindable],
-  data: function() {
-    return {
-      name: "",
-      i18n: Object,
-      message: "",
-      selectedLayerAttributes: Object,
-      selectedLayerId: undefined,
-      selectedAttribute: undefined,
-      selectedRenderer: "Simple",
-      rendererOptions: ["Simple", "Class Breaks", "Size", "Unique Values"],
-      colorPickerValue: '#000000'
+    export default {
+        components: {
+            'color-picker': Slider
+        },
+        mixins: [Bindable],
+        data: function () {
+            return {
+                name: "",
+                i18n: Object,
+                message: "",
+                selectedLayerAttributes: Object,
+                selectedLayerId: undefined,
+                selectedAttribute: undefined,
+                selectedRenderer: "Simple",
+                rendererOptions: ["Simple", "Class Breaks", "Size", "Unique Values"],
+                colorPickerValue: '#000000'
+            };
+        },
+
+        watch: {
+            selectedAttribute: function (attr) {
+                if (attr) this.updateRenderer();
+            },
+            selectedRenderer: function (ren) {
+                if (ren) this.updateRenderer();
+            },
+            colorPickerValue: function (attr) {
+                let rgbColor = [attr.rgba.r, attr.rgba.g, attr.rgba.b, attr.rgba.a];
+                this.$emit("update-color", rgbColor);
+            }
+        },
+        methods: {
+            updateRenderer() {
+                this.$emit("updateRenderer", {
+                    attribute: this.selectedAttribute,
+                    renderer: this.selectedRenderer
+                });
+            },
+            resetWidget() {
+                this.selectedRenderer = "Simple";
+                this.colorPickerValue = undefined;
+                this.selectedAttribute = undefined;
+            },
+            updateSimpleRenderer(event) {
+                this.$emit("update-color", event);
+            },
+
+            resetRenderer() {
+                this.$emit("resetRenderer");
+            }
+        }
     };
-  },
-
-  watch: {
-    selectedAttribute: function(attr) {
-      if (attr) this.updateRenderer();
-    },
-    selectedRenderer: function(ren) {
-      if (ren) this.updateRenderer();
-    },
-    colorPickerValue: function(attr){
-      let rgbColor = [attr.rgba.r, attr.rgba.g, attr.rgba.b, attr.rgba.a];
-      this.$emit("update-color", rgbColor);
-    }
-  },
-  methods: {
-    updateRenderer() {
-      this.$emit("updateRenderer", {
-        attribute: this.selectedAttribute,
-        renderer: this.selectedRenderer
-      });
-    },
-    resetWidget() {
-      this.selectedRenderer = "Simple";
-      this.colorPickerValue = undefined;
-      this.selectedAttribute = undefined;
-    },
-    updateSimpleRenderer(event) {
-      this.$emit("update-color", event);
-    },
-
-    resetRenderer() {
-      this.$emit("resetRenderer");
-    }
-  }
-};
 </script>
