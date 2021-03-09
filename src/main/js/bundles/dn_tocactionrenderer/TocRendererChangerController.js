@@ -16,13 +16,15 @@
 import createSizeRenderer from "./renderer/SizeRenderer";
 import createClassBreaksRenderer from "./renderer/ClassBreaksRenderer";
 import createTypeRenderer from "./renderer/TypeRenderer";
+import createHeatMapRenderer from "./renderer/HeatMapRenderer";
 import {declare} from "apprt-core/Mutable";
 
 export default class TocRendererChangerController {
 
-    constructor(vm, mapWidgetModel) {
+    constructor(vm, mapWidgetModel, properties) {
         this.vm = vm;
         this._mapWidgetModel = mapWidgetModel;
+        this._properties = properties;
 
         const Model = declare({
             selectedRenderer: undefined,
@@ -123,7 +125,7 @@ export default class TocRendererChangerController {
 
     createRendererWidget(evt) {
         this.removeRendererWidget();
-        if (evt && evt.renderer && evt.attribute) {
+        if (evt?.renderer) {
             switch (evt.renderer) {
                 case "Class Breaks":
                     this.setClassBreaksRenderer(evt.attribute);
@@ -133,6 +135,12 @@ export default class TocRendererChangerController {
                     break;
                 case "Unique Values":
                     this.setTypeRenderer(evt.attribute);
+                    break;
+                case "Heatmap":
+                    this.setHeatmapRenderer();
+                    break;
+                case "Simple":
+                    // do nothing
                     break;
                 default:
                     break;
@@ -145,6 +153,15 @@ export default class TocRendererChangerController {
             this.selectedLayer,
             this._mapWidgetModel.view,
             attribute,
+            this.vm.$refs["ctSmartRendererWidgets"]
+        );
+    }
+
+    setHeatmapRenderer() {
+        createHeatMapRenderer(
+            this.selectedLayer,
+            this._properties.heatmapRenderer,
+            this._mapWidgetModel,
             this.vm.$refs["ctSmartRendererWidgets"]
         );
     }

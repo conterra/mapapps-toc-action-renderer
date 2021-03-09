@@ -16,25 +16,31 @@
           // the * as name matches to folder "./all/all.css". You can use this if you have styles that can be used in any theme.
           "name": "*"
         }
-      ],
-    "layout-widgets": [{
-        "widgetRole": "tocRendererChanger",
-        "window": {
-            "title": "${ui.windowTitle}",
-            "dockTool": "tocRendererChangerToggleTool",
-            "marginBox": {
-                "w": 450,
-                "h": 650
-            },
-            "closable": true,
-            "resizable": true,
-            "minimizeOnClose": true
+    ],
+    "layout-widgets": [
+        {
+            "widgetRole": "tocRendererChanger",
+            "window": {
+                "title": "${ui.windowTitle}",
+                "dockTool": "tocRendererChangerToggleTool",
+                "marginBox": {
+                    "w": 450,
+                    "h": 650
+                },
+                "closable": true,
+                "resizable": true,
+                "minimizeOnClose": true
+            }
         }
-    }],
-    "components": [{
+    ],
+    "components": [
+        {
             "name": "TocRendererChangerActionDefinitionFactory",
-            "provides": ["toc.ActionDefinitionFactory"],
-            "references": [{
+            "provides": [
+                "toc.ActionDefinitionFactory"
+            ],
+            "references": [
+                {
                     "name": "_tocRendererChangerFactory",
                     "providing": "dn_tocactionrenderer.TocRendererChangerFactory"
                 },
@@ -45,21 +51,38 @@
             ]
         },
         {
-            "name": "TocRendererChangerFactory",
-            "provides": ["dijit.Widget", "dn_tocactionrenderer.TocRendererChangerFactory"],
+            "name": "Config",
+            "impl": "./TocRendererChangerFactory",
+            "provides": [
+                "dijit.Widget",
+                "dn_tocactionrenderer.TocRendererChangerFactory"
+            ],
             "instanceFactory": true,
             "properties": {
-                "widgetRole": "tocRendererChanger"
+                "widgetRole": "tocRendererChanger",
+                "heatmapRenderer": {
+                    "colorStops": [
+                        {"ratio": 0, "color": "rgba(255, 255, 255, 0)"},
+                        {"ratio": 0.2, "color": "rgba(255, 255, 255, 1)"},
+                        {"ratio": 0.5, "color": "rgba(255, 140, 0, 1)"},
+                        {"ratio": 0.8, "color": "rgba(255, 140, 0, 1)"},
+                        {"ratio": 1, "color": "rgba(255, 0, 0, 1)"}
+                    ]
+                }
             },
-            "references": [{
-                "name": "_mapWidgetModel",
-                "providing": "map-widget.MapWidgetModel"
-            }]
+            "references": [
+                {
+                    "name": "_mapWidgetModel",
+                    "providing": "map-widget.MapWidgetModel"
+                }
+            ]
         },
         {
             "name": "tocRendererChangerToggleTool",
             "impl": "ct/tools/Tool",
-            "provides": ["ct.tools.Tool"],
+            "provides": [
+                "ct.tools.Tool"
+            ],
             "propertiesConstructor": true,
             "properties": {
                 "toolRole": "toolset",

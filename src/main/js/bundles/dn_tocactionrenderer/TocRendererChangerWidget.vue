@@ -23,7 +23,7 @@
                 :items="rendererOptions"
                 label="Renderer"
             ></v-select>
-            <template v-if="selectedLayerId && selectedRenderer !== 'Simple'">
+            <template v-if="selectedLayerId && selectedRenderer !== 'Simple' && selectedRenderer !== 'Heatmap'">
                 <v-select
                     v-model="selectedAttribute"
                     :items="selectedLayerAttributes"
@@ -75,7 +75,7 @@
                 selectedLayerId: undefined,
                 selectedAttribute: undefined,
                 selectedRenderer: "Simple",
-                rendererOptions: ["Simple", "Class Breaks", "Size", "Unique Values"],
+                rendererOptions: ["Simple", "Class Breaks", "Size", "Unique Values", "Heatmap"],
                 colorPickerValue: '#000000'
             };
         },

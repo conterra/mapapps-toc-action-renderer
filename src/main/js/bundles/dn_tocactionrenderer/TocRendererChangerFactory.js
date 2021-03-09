@@ -26,7 +26,7 @@ export default class TocRendererChangerFactory {
         const widget = VueDijit(vm);
         vm.i18n = this._i18n.get().ui;
 
-        const controller = widget.controller = new TocRendererChangerController(vm, this._mapWidgetModel);
+        const controller = widget.controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._properties);
         this.createBinding(vm, controller);
 
         return widget;
