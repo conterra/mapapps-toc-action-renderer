@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import registerSuite from "intern!object";
-import assert from "intern/chai!assert";
-import md from "module";
+import { assert } from "chai";
+import module from "module";
 import TocRenderChangerFactory from "../TocRendererChangerFactory"
 
-registerSuite({
-    name: md.id,
-    "expect that 1 added to 1 equals 2": function () {
+describe(module.id, function(){
+    it("expect that 1 added to 1 equals 2", function () {
         const test = new TocRenderChangerFactory ();
         // TODO: exchange this with a more clever test ;)
         const result = 1 + 1;
         assert.equal(result, 2);
-    }
+    });
 });
