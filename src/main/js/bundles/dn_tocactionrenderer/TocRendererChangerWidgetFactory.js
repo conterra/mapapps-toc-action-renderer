@@ -13,31 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import tocRendererChangerWidget from "./TocRendererChangerWidget.vue";
 import Vue from "apprt-vue/Vue";
 import VueDijit from "apprt-vue/VueDijit";
-import TocRendererChangerController from "./TocRendererChangerController";
 import Binding from "apprt-binding/Binding";
+import TocRendererChangerWidget from "./TocRendererChangerWidget.vue";
+import TocRendererChangerController from "./TocRendererChangerController";
 
 export default class TocRendererChangerWidgetFactory {
 
-    createInstance() {
-        const vm = new Vue(tocRendererChangerWidget);
-        const widget = VueDijit(vm, {class: "tocactionrenderer"});
-        vm.i18n = this._i18n.get().ui;
+    #widget = undefined;
+    #binding = undefined;
 
-        const controller = widget.controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._properties);
-        this.createBinding(vm, controller);
-
-        return widget;
+    activate() {
+        this.#initComponent();
     }
 
-    createBinding(vm, controller) {
-        Binding.for(controller.model, vm)
-            .syncAll("selectedLayerId", "selectedRenderer", "selectedLayerAttributes", "selectedAttribute")
-            .enable()
-            .syncToRightNow();
+    createInstance() {
+        return this.#widget;
+    }
 
+    #initComponent() {
+        const vm = new Vue(TocRendererChangerWidget);
+        vm.i18n = this._i18n.get().ui;
+
+        const widget = this.#widget = VueDijit(vm, {class: "tocactionrenderer"});
+        const controller = widget.controller =
+            new TocRendererChangerController(vm, this._mapWidgetModel, this._properties);
+
+        let binding = TocRendererChangerWidgetFactory.#createBinding(vm, controller);
+        widget.enableBinding = function () {
+            binding.enable().syncToRightNow();
+        };
+        widget.disableBinding = function () {
+            binding.disable();
+        };
+
+        widget.own({
+            remove() {
+                binding.unbind();
+                binding = undefined;
+                widget.enableBinding = widget.disableBinding = undefined;
+            }
+        });
+    }
+
+    static #createBinding(vm, controller) {
+        return Binding.for(controller.model, vm)
+            .syncAll("selectedLayerId", "selectedRenderer", "selectedLayerAttributes", "selectedAttribute");
     }
 
 }
