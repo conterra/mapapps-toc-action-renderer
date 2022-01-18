@@ -16,12 +16,13 @@
 
 -->
 <template>
-    <v-container class="dn_tocactionrenderer">
+    <v-container pa-0>
         <template v-if="selectedLayerId">
             <v-select
                 v-model="selectedRenderer"
                 :items="rendererOptions"
                 label="Renderer"
+                hide-details
             ></v-select>
             <template v-if="selectedLayerId && selectedRenderer !== 'Simple' && selectedRenderer !== 'Heatmap'">
                 <v-select
@@ -30,6 +31,7 @@
                     item-text="name"
                     item-value="name"
                     label="Attribute"
+                    hide-details
                 ></v-select>
             </template>
             <template v-if="selectedRenderer">
@@ -38,13 +40,13 @@
                 </v-btn>
             </template>
             <template v-if="selectedRenderer === 'Simple'">
-                <div class="dn_tocactionrenderer_color_picker">
+                <div class="tocactionrenderer_color_picker">
                     <color-picker v-model="colorPickerValue"></color-picker>
                 </div>
             </template>
             <div
                 ref="ctSmartRendererWidgets"
-                class="dn_tocactionrenderer-esri-widgets"
+                class="tocactionrenderer-esri-widgets"
             ></div>
         </template>
     </v-container>

@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* playground */
-
-{
-/* this is a fix for Chrome Browsers that do not properly apply AA on web Fonts. It forces Chrome to use SVG Font where AA can be applied propperly.
-   For more Info see. http://keyamoon.com/?p=318 */
-}
-
-.dn_tocactionrenderer .dn_tocactionrenderer-esri-widgets .esri-slider__max:hover{
-    background-color: transparent;
-}
-.dn_tocactionrenderer .dn_tocactionrenderer-esri-widgets .esri-slider__min:hover{
-    background-color: transparent;
-}
-.dn_tocactionrenderer .dn_tocactionrenderer-esri-widgets .esri-slider__label:hover{
+.ctAppRoot .tocactionrenderer .tocactionrenderer-esri-widgets .esri-slider__max:hover {
     background-color: transparent;
 }
 
-.dn_tocactionrenderer_color_picker{
+.ctAppRoot .tocactionrenderer .tocactionrenderer-esri-widgets .esri-slider__min:hover {
+    background-color: transparent;
+}
+
+.ctAppRoot .tocactionrenderer .tocactionrenderer-esri-widgets .esri-slider__label:hover {
+    background-color: transparent;
+}
+
+.ctAppRoot .tocactionrenderer .tocactionrenderer_color_picker {
     width: 100%;
 }

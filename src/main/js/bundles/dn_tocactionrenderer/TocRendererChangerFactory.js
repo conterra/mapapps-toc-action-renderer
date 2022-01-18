@@ -23,7 +23,7 @@ export default class TocRendererChangerFactory {
 
     createInstance() {
         const vm = new Vue(tocRendererChangerWidget);
-        const widget = VueDijit(vm);
+        const widget = VueDijit(vm, {class: "tocactionrenderer"});
         vm.i18n = this._i18n.get().ui;
 
         const controller = widget.controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._properties);
