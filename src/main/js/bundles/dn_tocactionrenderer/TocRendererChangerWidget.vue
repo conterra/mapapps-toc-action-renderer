@@ -17,14 +17,14 @@
 -->
 <template>
     <v-container pa-0>
-        <template v-if="selectedLayerId">
+        <div v-if="selectedLayerId">
             <v-select
                 v-model="selectedRenderer"
                 :items="rendererOptions"
                 label="Renderer"
                 hide-details
             ></v-select>
-            <template v-if="selectedLayerId && selectedRenderer !== 'Simple' && selectedRenderer !== 'Heatmap'">
+            <div v-if="selectedLayerId && selectedRenderer !== 'Simple' && selectedRenderer !== 'Heatmap'">
                 <v-select
                     v-model="selectedAttribute"
                     :items="selectedLayerAttributes"
@@ -33,22 +33,22 @@
                     label="Attribute"
                     hide-details
                 ></v-select>
-            </template>
-            <template v-if="selectedRenderer">
-                <v-btn @click="resetRenderer">
+            </div>
+            <div v-if="selectedRenderer">
+                <v-btn @click="$emit('reset-renderer')">
                     {{ i18n.resetRenderer }}
                 </v-btn>
-            </template>
-            <template v-if="selectedRenderer === 'Simple'">
+            </div>
+            <div v-if="selectedRenderer === 'Simple'">
                 <div class="tocactionrenderer_color_picker">
-                    <color-picker v-model="colorPickerValue"></color-picker>
+                    <color-picker v-model="colorPickerValue"/>
                 </div>
-            </template>
+            </div>
             <div
                 ref="ctSmartRendererWidgets"
                 class="tocactionrenderer-esri-widgets"
             ></div>
-        </template>
+        </div>
     </v-container>
 </template>
 
@@ -73,7 +73,7 @@
                 name: "",
                 i18n: Object,
                 message: "",
-                selectedLayerAttributes: Object,
+                selectedLayerAttributes: [],
                 selectedLayerId: undefined,
                 selectedAttribute: undefined,
                 selectedRenderer: "Simple",
@@ -84,34 +84,26 @@
 
         watch: {
             selectedAttribute: function (attr) {
-                if (attr) this.updateRenderer();
+                if (attr) {
+                    this.updateRenderer();
+                }
             },
-            selectedRenderer: function (ren) {
-                if (ren) this.updateRenderer();
+            selectedRenderer: function (renderer) {
+                if (renderer) {
+                    this.updateRenderer();
+                }
             },
             colorPickerValue: function (attr) {
-                let rgbColor = [attr.rgba.r, attr.rgba.g, attr.rgba.b, attr.rgba.a];
+                const rgbColor = [attr.rgba.r, attr.rgba.g, attr.rgba.b, attr.rgba.a];
                 this.$emit("update-color", rgbColor);
             }
         },
         methods: {
             updateRenderer() {
-                this.$emit("updateRenderer", {
+                this.$emit("update-renderer", {
                     attribute: this.selectedAttribute,
                     renderer: this.selectedRenderer
                 });
-            },
-            resetWidget() {
-                this.selectedRenderer = "Simple";
-                this.colorPickerValue = undefined;
-                this.selectedAttribute = undefined;
-            },
-            updateSimpleRenderer(event) {
-                this.$emit("update-color", event);
-            },
-
-            resetRenderer() {
-                this.$emit("resetRenderer");
             }
         }
     };

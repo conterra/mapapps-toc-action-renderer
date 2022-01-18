@@ -29,7 +29,7 @@ export default class TocRendererChangerController {
         const Model = declare({
             selectedRenderer: undefined,
             selectedLayerId: undefined,
-            selectedLayerAttributes: {},
+            selectedLayerAttributes: [],
             selectedAttribute: undefined
         });
 
@@ -67,11 +67,11 @@ export default class TocRendererChangerController {
             this.updateSimpleRenderer(evt);
         });
 
-        vm.$on('updateRenderer', (evt) => {
+        vm.$on('update-renderer', (evt) => {
             this.createRendererWidget(evt);
-        })
+        });
 
-        vm.$on('resetRenderer', () => {
+        vm.$on('reset-renderer', () => {
             this.resetRenderer();
         });
     }
