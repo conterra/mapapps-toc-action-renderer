@@ -22,19 +22,15 @@ export default class TocRendererChangerActionDefinitionFactory {
     }
 
     createDefinitionById(id) {
+        const i18n = this._i18n.get();
+        const tool = this._tool;
+        const widget = this._tocRendererChangerFactory;
+
         return {
             id,
             type: "button",
-
-            // Label of the button menu entry
-            label: this._i18n.get().ui.toolTitle,
-
-            // Icon of the button entry
+            label: i18n.tool.title,
             icon: "color_lens",
-            window: undefined,
-            widget: this._tocRendererChangerFactory,
-            tool: this._tool,
-            i18n: this._i18n.get().ui,
 
             isVisibleForItem(tocItem) {
                 if (tocItem?.ref?.type === "feature") {
@@ -46,10 +42,9 @@ export default class TocRendererChangerActionDefinitionFactory {
                 return !tocItem?.ref?.visible;
             },
 
-            // method triggered if the menu item is clicked
             trigger(tocItem) {
-                this.tool.set("active", true);
-                this.widget.controller.setSelectedLayerId(tocItem.ref.id);
+                tool.set("active", true);
+                widget.controller.setSelectedLayerId(tocItem.ref.id);
             }
         };
     }

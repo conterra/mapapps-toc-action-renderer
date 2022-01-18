@@ -16,3 +16,4 @@
 import ".";
 import "./TocRendererChangerWidgetFactory";
 import "./TocRendererChangerActionDefinitionFactory";
+import "ct/tools/Tool";

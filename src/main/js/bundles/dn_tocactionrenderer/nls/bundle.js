@@ -17,9 +17,12 @@ module.exports = {
     root: ({
         bundleName: "dn_tocactionrenderer",
         bundleDescription: "Widget containing the esri smart renderer functionalities",
+        tool: {
+            title: "Change symbology",
+            tooltip: "Change symbology"
+        },
+        windowTitle: "Change symbology",
         ui: {
-            toolTitle: "Change symbology",
-            windowTitle: "Change symbology",
             resetRenderer: "Reset symbology"
         }
     }),

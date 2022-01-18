@@ -16,9 +16,12 @@
 module.exports = {
     bundleName: "dn_tocactionrenderer",
     bundleDescription: "Widget containing the esri smart renderer functionalities",
+    tool: {
+        title: "Symbolisierung anpassen",
+        tooltip: "Symbolisierung anpassen"
+    },
+    windowTitle: "Symbolisierung anpassen",
     ui: {
-        toolTitle: "Symbolisierung anpassen",
-        windowTitle: "Symbolisierung anpassen",
         resetRenderer: "Symbolisierung zurücksetzen"
     }
 };

@@ -23,7 +23,7 @@
         {
             "widgetRole": "tocRendererChanger",
             "window": {
-                "title": "${ui.windowTitle}",
+                "title": "${windowTitle}",
                 "dockTool": "tocRendererChangerToggleTool",
                 "marginBox": {
                     "w": 450,
@@ -103,10 +103,11 @@
             ],
             "propertiesConstructor": true,
             "properties": {
-                "toolRole": "toolset",
                 "id": "tocRendererChangerToggleTool",
+                "title": "${tool.title}",
+                "tooltip": "${tool.tooltip}",
                 "iconClass": "color_lens",
-                "title": "${ui.toolTitle}",
+                "toolRole": "toolset",
                 "togglable": true,
                 "activateHandler": "enableBinding",
                 "deactivateHandler": "disableBinding"
