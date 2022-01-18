@@ -22,6 +22,8 @@ module.exports = {
     },
     windowTitle: "Symbolisierung anpassen",
     ui: {
-        resetRenderer: "Symbolisierung zurücksetzen"
+        renderer: "Art der Symbolisierung",
+        resetRenderer: "Symbolisierung zurücksetzen",
+        attribute: "Attribut"
     }
 };

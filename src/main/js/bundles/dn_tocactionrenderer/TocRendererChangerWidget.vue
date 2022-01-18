@@ -21,7 +21,7 @@
             <v-select
                 v-model="selectedRenderer"
                 :items="rendererOptions"
-                label="Renderer"
+                :label="i18n.renderer"
                 hide-details
             ></v-select>
             <div v-if="selectedLayerId && selectedRenderer !== 'Simple' && selectedRenderer !== 'Heatmap'">
@@ -30,7 +30,7 @@
                     :items="selectedLayerAttributes"
                     item-text="name"
                     item-value="name"
-                    label="Attribute"
+                    :label="i18n.attribute"
                     hide-details
                 ></v-select>
             </div>

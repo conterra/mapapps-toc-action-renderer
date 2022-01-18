@@ -23,7 +23,9 @@ module.exports = {
         },
         windowTitle: "Change symbology",
         ui: {
-            resetRenderer: "Reset symbology"
+            renderer: "Renderer",
+            resetRenderer: "Reset Renderer",
+            attribute: "Attribute"
         }
     }),
     "de": true
