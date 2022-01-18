@@ -53,17 +53,17 @@
 </template>
 
 <script>
-    /*
-    TODO:
-    - different color schemes: https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-smartMapping-symbology-color.html#getSchemes
-    - error handling
-    - filter renderer for attr types
-    - heatmap renderer
-    */
-    import Bindable from "apprt-vue/mixins/Bindable";
-    import {Slider} from 'dn_vuecolor';
+/*
+TODO:
+- different color schemes: https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-smartMapping-symbology-color.html#getSchemes
+- error handling
+- filter renderer for attr types
+- heatmap renderer
+*/
+import Bindable from "apprt-vue/mixins/Bindable";
+import {Slider} from 'dn_vuecolor';
 
-    export default {
+export default {
         components: {
             'color-picker': Slider
         },
@@ -78,8 +78,35 @@
                 selectedAttribute: undefined,
                 selectedRenderer: "Simple",
                 rendererOptions: ["Simple", "Class Breaks", "Size", "Unique Values", "Heatmap"],
-                colorPickerValue: '#000000'
+                color: []
             };
+        },
+
+        computed: {
+            colorPickerValue: {
+                get() {
+                    const color = this.color;
+                    if (color.length === 4) {
+                        return {
+                            r: color[0],
+                            g: color[1],
+                            b: color[2],
+                            a: color[3]
+                        };
+                    } else {
+                        return {
+                            r: 255,
+                            g: 0,
+                            b: 0,
+                            a: 0
+                        };
+                    }
+                },
+                set(value) {
+                    const rgba = value.rgba;
+                    this.color = [rgba.r, rgba.g, rgba.b, rgba.a];
+                }
+            }
         },
 
         watch: {
@@ -94,8 +121,6 @@
                 }
             },
             colorPickerValue: function (attr) {
-                const rgbColor = [attr.rgba.r, attr.rgba.g, attr.rgba.b, attr.rgba.a];
-                this.$emit("update-color", rgbColor);
             }
         },
         methods: {

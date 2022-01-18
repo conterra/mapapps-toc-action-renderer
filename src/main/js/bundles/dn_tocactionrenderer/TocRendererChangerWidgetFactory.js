@@ -64,14 +64,11 @@ export default class TocRendererChangerWidgetFactory {
 
     #createBinding(vm) {
         return Binding.for(this._model, vm)
-            .syncAll("selectedLayerId", "selectedRenderer", "selectedLayerAttributes", "selectedAttribute");
+            .syncAll("color")
+            .syncAllToRight("selectedLayerId", "selectedRenderer", "selectedLayerAttributes", "selectedAttribute");
     }
 
     #watchForEvents(vm, controller) {
-        vm.$on('update-color', (evt) => {
-            controller.updateSimpleRenderer(evt);
-        });
-
         vm.$on('update-renderer', (evt) => {
             controller.createRendererWidget(evt);
         });

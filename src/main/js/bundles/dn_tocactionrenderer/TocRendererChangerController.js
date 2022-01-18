@@ -30,6 +30,10 @@ export default class TocRendererChangerController {
         model.watch("selectedLayerId", ({value}) => {
             this.getLayerAttributes(value);
         });
+
+        model.watch("color", ({value}) => {
+            this.updateSimpleRenderer(value);
+        });
     }
 
     initProperties() {
@@ -49,7 +53,7 @@ export default class TocRendererChangerController {
         }
     }
 
-    updateSimpleRenderer(event) {
+    updateSimpleRenderer(color) {
         const geomType = this.selectedLayer.geometryType;
 
         switch (geomType) {
@@ -58,7 +62,7 @@ export default class TocRendererChangerController {
                     type: "simple",
                     symbol: {
                         type: "simple-fill",
-                        color: event,
+                        color: color,
                         outline: {
                             width: 1,
                             color: "white"
@@ -72,7 +76,7 @@ export default class TocRendererChangerController {
                     symbol: {
                         type: "simple-marker",
                         size: 6,
-                        color: event,
+                        color: color,
                         outline: {
                             width: 0.5,
                             color: "white"
@@ -85,7 +89,7 @@ export default class TocRendererChangerController {
                     type: "simple",
                     symbol: {
                         type: "simple-line",
-                        color: event,
+                        color: color,
                         width: "3px",
                         style: "solid"
                     }
