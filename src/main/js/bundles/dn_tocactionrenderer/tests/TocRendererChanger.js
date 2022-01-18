@@ -15,7 +15,7 @@
  */
 import { assert } from "chai";
 import module from "module";
-import TocRenderChangerFactory from "../TocRendererChangerFactory"
+import TocRenderChangerFactory from "../TocRendererChangerWidgetFactory"
 
 describe(module.id, function(){
     it("expect that 1 added to 1 equals 2", function () {

@@ -19,7 +19,7 @@ import VueDijit from "apprt-vue/VueDijit";
 import TocRendererChangerController from "./TocRendererChangerController";
 import Binding from "apprt-binding/Binding";
 
-export default class TocRendererChangerFactory {
+export default class TocRendererChangerWidgetFactory {
 
     createInstance() {
         const vm = new Vue(tocRendererChangerWidget);

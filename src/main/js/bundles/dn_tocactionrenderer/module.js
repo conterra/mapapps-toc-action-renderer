@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 import ".";
-import "./TocRendererChangerFactory";
+import "./TocRendererChangerWidgetFactory";
 import "./TocRendererChangerActionDefinitionFactory";

@@ -54,7 +54,7 @@
         },
         {
             "name": "Config",
-            "impl": "./TocRendererChangerFactory",
+            "impl": "./TocRendererChangerWidgetFactory",
             "provides": [
                 "dijit.Widget",
                 "dn_tocactionrenderer.TocRendererChangerFactory"
