@@ -21,10 +21,16 @@ import TocRendererChangerController from "./TocRendererChangerController";
 
 export default class TocRendererChangerWidgetFactory {
 
+    #vm = undefined;
     #widget = undefined;
+    #controller = undefined
 
     activate() {
         this.#initComponent();
+    }
+
+    deactivate() {
+        this.#vm.$off();
     }
 
     createInstance() {
@@ -32,11 +38,12 @@ export default class TocRendererChangerWidgetFactory {
     }
 
     #initComponent() {
-        const vm = new Vue(TocRendererChangerWidget);
+        const vm = this.#vm = new Vue(TocRendererChangerWidget);
         vm.i18n = this._i18n.get().ui;
 
+        const controller = this.#controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
+        this.#watchForEvents(vm, controller);
         const widget = this.#widget = VueDijit(vm, {class: "tocactionrenderer"});
-        widget.controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
 
         let binding = this.#createBinding(vm);
         widget.enableBinding = function () {
@@ -58,6 +65,20 @@ export default class TocRendererChangerWidgetFactory {
     #createBinding(vm) {
         return Binding.for(this._model, vm)
             .syncAll("selectedLayerId", "selectedRenderer", "selectedLayerAttributes", "selectedAttribute");
+    }
+
+    #watchForEvents(vm, controller) {
+        vm.$on('update-color', (evt) => {
+            controller.updateSimpleRenderer(evt);
+        });
+
+        vm.$on('update-renderer', (evt) => {
+            controller.createRendererWidget(evt);
+        });
+
+        vm.$on('reset-renderer', () => {
+            controller.resetRenderer();
+        });
     }
 
 }

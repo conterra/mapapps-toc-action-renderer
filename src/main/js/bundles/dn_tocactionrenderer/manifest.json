@@ -98,8 +98,8 @@
             ],
             "references": [
                 {
-                    "name": "_tocRendererChangerFactory",
-                    "providing": "dn_tocactionrenderer.TocRendererChangerWidget"
+                    "name": "_model",
+                    "providing": "dn_tocactionrenderer.TocRendererChangerModel"
                 },
                 {
                     "name": "_tool",

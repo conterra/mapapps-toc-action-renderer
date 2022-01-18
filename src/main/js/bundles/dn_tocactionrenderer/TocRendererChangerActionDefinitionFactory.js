@@ -24,7 +24,7 @@ export default class TocRendererChangerActionDefinitionFactory {
     createDefinitionById(id) {
         const i18n = this._i18n.get();
         const tool = this._tool;
-        const widget = this._tocRendererChangerFactory;
+        const model = this._model;
 
         return {
             id,
@@ -44,7 +44,7 @@ export default class TocRendererChangerActionDefinitionFactory {
 
             trigger(tocItem) {
                 tool.set("active", true);
-                widget.controller.setSelectedLayerId(tocItem.ref.id);
+                model.selectedLayerId = tocItem.ref.id;
             }
         };
     }

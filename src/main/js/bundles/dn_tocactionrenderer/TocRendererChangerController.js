@@ -17,7 +17,6 @@ import createSizeRenderer from "./renderer/SizeRenderer";
 import createClassBreaksRenderer from "./renderer/ClassBreaksRenderer";
 import createTypeRenderer from "./renderer/TypeRenderer";
 import createHeatMapRenderer from "./renderer/HeatMapRenderer";
-import {declare} from "apprt-core/Mutable";
 
 export default class TocRendererChangerController {
 
@@ -27,17 +26,14 @@ export default class TocRendererChangerController {
         this._mapWidgetModel = mapWidgetModel;
 
         this.initProperties();
-        this._attachWidgetEvents(vm);
 
+        model.watch("selectedLayerId", ({value}) => {
+            this.getLayerAttributes(value);
+        });
     }
 
     initProperties() {
         this.oldRenderer = [];
-    }
-
-    setSelectedLayerId(layerId) {
-        this.model.selectedLayerId = layerId;
-        this.getLayerAttributes(layerId);
     }
 
     getLayerAttributes(layerId) {
@@ -51,20 +47,6 @@ export default class TocRendererChangerController {
             });
             this.oldRenderer[this.selectedLayer.id] = this.selectedLayer.renderer.clone();
         }
-    }
-
-    _attachWidgetEvents(vm) {
-        vm.$on('update-color', (evt) => {
-            this.updateSimpleRenderer(evt);
-        });
-
-        vm.$on('update-renderer', (evt) => {
-            this.createRendererWidget(evt);
-        });
-
-        vm.$on('reset-renderer', () => {
-            this.resetRenderer();
-        });
     }
 
     updateSimpleRenderer(event) {
