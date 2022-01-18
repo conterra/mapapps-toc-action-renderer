@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ".";
-import "./TocRendererChangerModel";
-import "./TocRendererChangerWidgetFactory";
-import "./TocRendererChangerActionDefinitionFactory";
-import "ct/tools/Tool";
+import {declare} from "apprt-core/Mutable";
+
+export default declare({
+
+    selectedRenderer: undefined,
+    selectedLayerId: undefined,
+    selectedAttribute: undefined,
+    selectedLayerAttributes: [],
+    heatmapRenderer: []
+
+});

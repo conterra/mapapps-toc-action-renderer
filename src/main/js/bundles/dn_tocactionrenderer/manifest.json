@@ -37,32 +37,13 @@
     ],
     "components": [
         {
-            "name": "TocRendererChangerActionDefinitionFactory",
-            "provides": [
-                "toc.ActionDefinitionFactory"
-            ],
-            "references": [
-                {
-                    "name": "_tocRendererChangerFactory",
-                    "providing": "dn_tocactionrenderer.TocRendererChangerWidget"
-                },
-                {
-                    "name": "_tool",
-                    "providing": "ct.tools.Tool",
-                    "filter": "(id=tocRendererChangerToggleTool)"
-                }
-            ]
-        },
-        {
             "name": "Config",
-            "impl": "./TocRendererChangerWidgetFactory",
+            "impl": "./TocRendererChangerModel",
             "provides": [
-                "dijit.Widget",
-                "dn_tocactionrenderer.TocRendererChangerWidget"
+                "dn_tocactionrenderer.TocRendererChangerModel"
             ],
-            "instanceFactory": true,
+            "propertiesConstructor": true,
             "properties": {
-                "widgetRole": "tocRendererChanger",
                 "heatmapRenderer": {
                     "colorStops": [
                         {
@@ -87,11 +68,43 @@
                         }
                     ]
                 }
+            }
+        },
+        {
+            "name": "TocRendererChangerWidgetFactory",
+            "provides": [
+                "dijit.Widget",
+                "dn_tocactionrenderer.TocRendererChangerWidget"
+            ],
+            "instanceFactory": true,
+            "properties": {
+                "widgetRole": "tocRendererChanger"
             },
             "references": [
                 {
+                    "name": "_model",
+                    "providing": "dn_tocactionrenderer.TocRendererChangerModel"
+                },
+                {
                     "name": "_mapWidgetModel",
                     "providing": "map-widget.MapWidgetModel"
+                }
+            ]
+        },
+        {
+            "name": "TocRendererChangerActionDefinitionFactory",
+            "provides": [
+                "toc.ActionDefinitionFactory"
+            ],
+            "references": [
+                {
+                    "name": "_tocRendererChangerFactory",
+                    "providing": "dn_tocactionrenderer.TocRendererChangerWidget"
+                },
+                {
+                    "name": "_tool",
+                    "providing": "ct.tools.Tool",
+                    "filter": "(id=tocRendererChangerToggleTool)"
                 }
             ]
         },

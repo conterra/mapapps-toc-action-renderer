@@ -21,21 +21,12 @@ import {declare} from "apprt-core/Mutable";
 
 export default class TocRendererChangerController {
 
-    constructor(vm, mapWidgetModel, properties) {
+    constructor(vm, mapWidgetModel, model) {
         this.vm = vm;
+        this.model = model;
         this._mapWidgetModel = mapWidgetModel;
-        this._properties = properties;
-
-        const Model = declare({
-            selectedRenderer: undefined,
-            selectedLayerId: undefined,
-            selectedLayerAttributes: [],
-            selectedAttribute: undefined
-        });
-
 
         this.initProperties();
-        this.model = new Model();
         this._attachWidgetEvents(vm);
 
     }
@@ -160,7 +151,7 @@ export default class TocRendererChangerController {
     setHeatmapRenderer() {
         createHeatMapRenderer(
             this.selectedLayer,
-            this._properties.heatmapRenderer,
+            this.model.heatmapRenderer,
             this._mapWidgetModel,
             this.vm.$refs["ctSmartRendererWidgets"]
         );

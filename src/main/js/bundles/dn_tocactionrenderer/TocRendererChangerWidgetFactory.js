@@ -22,7 +22,6 @@ import TocRendererChangerController from "./TocRendererChangerController";
 export default class TocRendererChangerWidgetFactory {
 
     #widget = undefined;
-    #binding = undefined;
 
     activate() {
         this.#initComponent();
@@ -37,10 +36,9 @@ export default class TocRendererChangerWidgetFactory {
         vm.i18n = this._i18n.get().ui;
 
         const widget = this.#widget = VueDijit(vm, {class: "tocactionrenderer"});
-        const controller = widget.controller =
-            new TocRendererChangerController(vm, this._mapWidgetModel, this._properties);
+        widget.controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
 
-        let binding = TocRendererChangerWidgetFactory.#createBinding(vm, controller);
+        let binding = this.#createBinding(vm);
         widget.enableBinding = function () {
             binding.enable().syncToRightNow();
         };
@@ -57,8 +55,8 @@ export default class TocRendererChangerWidgetFactory {
         });
     }
 
-    static #createBinding(vm, controller) {
-        return Binding.for(controller.model, vm)
+    #createBinding(vm) {
+        return Binding.for(this._model, vm)
             .syncAll("selectedLayerId", "selectedRenderer", "selectedLayerAttributes", "selectedAttribute");
     }
 
