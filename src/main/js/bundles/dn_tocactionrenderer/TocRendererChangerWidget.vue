@@ -46,12 +46,12 @@
             <v-flex x12>
                 <div v-if="selectedRenderer === 'simple'">
                     <v-card class="pa-3 secondary">
-                        <p>Fill Color Picker:</p>
+                        <p>{{ i18n.fillColor }}</p>
                         <div class="tocactionrenderer_color_picker">
                             <color-picker v-model="colorPickerValue" />
                         </div>
                         <div class="mb-4" />
-                        <p>Outline Color Picker:</p>
+                        <p>{{ i18n.outlineColor }}</p>
                         <div class="tocactionrenderer_color_picker">
                             <color-picker v-model="outlineColorPickerValue" />
                         </div>

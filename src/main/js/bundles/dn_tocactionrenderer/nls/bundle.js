@@ -32,7 +32,9 @@ module.exports = {
                 {value: "heatmap", text: "Heatmap"}
             ],
             resetRenderer: "Reset Renderer",
-            attribute: "Attribute"
+            attribute: "Attribute",
+            fillColor: "Fill Color",
+            outlineColor: "Outline Color"
         }
     }),
     "de": true

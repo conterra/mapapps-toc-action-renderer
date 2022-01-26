@@ -31,6 +31,8 @@ module.exports = {
             {value: "heatmap", text: "Heatmap"}
         ],
         resetRenderer: "Symbolisierung zurücksetzen",
-        attribute: "Attribut"
+        attribute: "Attribut",
+        fillColor: "Füllfarbe",
+        outlineColor: "Umrandfarbe"
     }
 };
