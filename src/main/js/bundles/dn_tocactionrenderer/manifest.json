@@ -78,7 +78,8 @@
             ],
             "instanceFactory": true,
             "properties": {
-                "widgetRole": "tocRendererChanger"
+                "widgetRole": "tocRendererChanger",
+                "allowedRenderers": ["simple", "class breaks", "size", "unique values", "heatmap"]
             },
             "references": [
                 {
