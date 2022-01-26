@@ -44,6 +44,7 @@
             ],
             "propertiesConstructor": true,
             "properties": {
+                "selectedRenderer": "simple",
                 "allowedRenderers": ["simple", "class_breaks", "size", "unique_values", "heatmap"],
                 "heatmapRenderer": {
                     "colorStops": [
@@ -68,7 +69,9 @@
                             "color": "rgba(255, 0, 0, 1)"
                         }
                     ]
-                }
+                },
+                "color": [0, 255, 0, 0],
+                "outlineColor": [0, 255, 0, 0]
             }
         },
         {
