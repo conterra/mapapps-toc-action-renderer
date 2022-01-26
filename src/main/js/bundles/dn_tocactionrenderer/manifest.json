@@ -44,6 +44,7 @@
             ],
             "propertiesConstructor": true,
             "properties": {
+                "allowedRenderers": ["simple", "class breaks", "size", "unique values", "heatmap"],
                 "heatmapRenderer": {
                     "colorStops": [
                         {
@@ -78,8 +79,7 @@
             ],
             "instanceFactory": true,
             "properties": {
-                "widgetRole": "tocRendererChanger",
-                "allowedRenderers": ["simple", "class breaks", "size", "unique values", "heatmap"]
+                "widgetRole": "tocRendererChanger"
             },
             "references": [
                 {

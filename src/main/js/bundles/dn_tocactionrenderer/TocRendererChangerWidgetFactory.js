@@ -39,7 +39,6 @@ export default class TocRendererChangerWidgetFactory {
 
     #initComponent() {
         const vm = this.#vm = new Vue(TocRendererChangerWidget);
-        vm.allowedRenderers = this._properties.allowedRenderers;
         vm.i18n = this._i18n.get().ui;
 
         const controller = this.#controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
@@ -66,7 +65,8 @@ export default class TocRendererChangerWidgetFactory {
     #createBinding(vm) {
         return Binding.for(this._model, vm)
             .syncAll("color", "outlineColor")
-            .syncAllToRight("selectedLayerId", "selectedRenderer", "selectedLayerAttributes", "selectedAttribute");
+            .syncAllToRight("allowedRenderers", "selectedLayerId",
+                "selectedRenderer", "selectedLayerAttributes", "selectedAttribute");
     }
 
     #watchForEvents(vm, controller) {
