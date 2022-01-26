@@ -53,7 +53,7 @@
                         <div class="mb-4" />
                         <p>Outline Color Picker:</p>
                         <div class="tocactionrenderer_color_picker">
-                            <outline-color-picker v-model="outlineColorPickerValue" />
+                            <color-picker v-model="outlineColorPickerValue" />
                         </div>
                     </v-card>
                 </div>
@@ -90,8 +90,7 @@
 
     export default {
         components: {
-            'color-picker': Slider,
-            'outline-color-picker': Slider
+            'color-picker': Slider
         },
         mixins: [Bindable],
         data: function () {
