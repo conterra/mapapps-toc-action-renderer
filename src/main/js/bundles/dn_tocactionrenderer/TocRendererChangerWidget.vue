@@ -17,38 +17,50 @@
 -->
 <template>
     <v-container pa-0>
-        <div v-if="selectedLayerId">
-            <v-select
-                v-model="selectedRenderer"
-                :items="rendererOptions"
-                :label="i18n.renderer"
-                hide-details
-            ></v-select>
-            <div v-if="selectedLayerId && selectedRenderer !== 'Simple' && selectedRenderer !== 'Heatmap'">
+        <v-layout column wrap>
+            <v-flex xs12 mb-2 v-if="selectedLayerId">
                 <v-select
-                    v-model="selectedAttribute"
-                    :items="selectedLayerAttributes"
-                    item-text="name"
-                    item-value="name"
-                    :label="i18n.attribute"
+                    v-model="selectedRenderer"
+                    :items="rendererOptions"
+                    :label="i18n.renderer"
                     hide-details
                 ></v-select>
-            </div>
-            <div v-if="selectedRenderer">
-                <v-btn @click="$emit('reset-renderer')">
+                <div v-if="selectedLayerId && selectedRenderer !== 'Simple' && selectedRenderer !== 'Heatmap'">
+                    <v-select
+                        v-model="selectedAttribute"
+                        :items="selectedLayerAttributes"
+                        item-text="name"
+                        item-value="name"
+                        :label="i18n.attribute"
+                        hide-details
+                    ></v-select>
+                </div>
+            </v-flex>
+            <v-flex x12>
+                <div v-if="selectedRenderer === 'Simple'">
+                    <v-card class="pa-3 secondary">
+                        <p>Fill Color Picker:</p>
+                        <div class="tocactionrenderer_color_picker">
+                            <color-picker v-model="colorPickerValue"/>
+                        </div>
+                        <div class="mb-4"/>
+                        <p>Outline Color Picker:</p>
+                        <div class="tocactionrenderer_color_picker">
+                            <outline-color-picker v-model="outlineColorPickerValue"/>
+                        </div>
+                    </v-card>
+                </div>
+            </v-flex>
+            <v-flex xs12 v-if="selectedRenderer">
+                <v-btn class="secondary ml-0" @click="$emit('reset-renderer')">
                     {{ i18n.resetRenderer }}
                 </v-btn>
-            </div>
-            <div v-if="selectedRenderer === 'Simple'">
-                <div class="tocactionrenderer_color_picker">
-                    <color-picker v-model="colorPickerValue"/>
-                </div>
-            </div>
-            <div
-                ref="ctSmartRendererWidgets"
-                class="tocactionrenderer-esri-widgets"
-            ></div>
-        </div>
+            </v-flex>
+        </v-layout>
+        <div
+            ref="ctSmartRendererWidgets"
+            class="tocactionrenderer-esri-widgets"
+        ></div>
     </v-container>
 </template>
 
@@ -64,72 +76,100 @@ import Bindable from "apprt-vue/mixins/Bindable";
 import {Slider} from 'dn_vuecolor';
 
 export default {
-        components: {
-            'color-picker': Slider
-        },
-        mixins: [Bindable],
-        data: function () {
-            return {
-                name: "",
-                i18n: Object,
-                message: "",
-                selectedLayerAttributes: [],
-                selectedLayerId: undefined,
-                selectedAttribute: undefined,
-                selectedRenderer: "Simple",
-                rendererOptions: ["Simple", "Class Breaks", "Size", "Unique Values", "Heatmap"],
-                color: []
-            };
-        },
+    components: {
+        'color-picker': Slider,
+        'outline-color-picker': Slider
+    },
+    mixins: [Bindable],
+    data: function () {
+        return {
+            name: "",
+            i18n: Object,
+            message: "",
+            selectedLayerAttributes: [],
+            selectedLayerId: undefined,
+            selectedAttribute: undefined,
+            selectedRenderer: "Simple",
+            rendererOptions: ["Simple", "Class Breaks", "Size", "Unique Values", "Heatmap"],
+            color: [],
+            outlineColor: []
+        };
+    },
 
-        computed: {
-            colorPickerValue: {
-                get() {
-                    const color = this.color;
-                    if (color.length === 4) {
-                        return {
-                            r: color[0],
-                            g: color[1],
-                            b: color[2],
-                            a: color[3]
-                        };
-                    } else {
-                        return {
-                            r: 255,
-                            g: 0,
-                            b: 0,
-                            a: 0
-                        };
-                    }
-                },
-                set(value) {
-                    const rgba = value.rgba;
-                    this.color = [rgba.r, rgba.g, rgba.b, rgba.a];
-                }
-            }
-        },
-
-        watch: {
-            selectedAttribute: function (attr) {
-                if (attr) {
-                    this.updateRenderer();
+    computed: {
+        colorPickerValue: {
+            get() {
+                const color = this.color;
+                if (color.length === 4) {
+                    return {
+                        r: color[0],
+                        g: color[1],
+                        b: color[2],
+                        a: color[3]
+                    };
+                } else {
+                    return {
+                        r: 255,
+                        g: 0,
+                        b: 0,
+                        a: 0
+                    };
                 }
             },
-            selectedRenderer: function (renderer) {
-                if (renderer) {
-                    this.updateRenderer();
-                }
-            },
-            colorPickerValue: function (attr) {
+            set(value) {
+                const rgba = value.rgba;
+                this.color = [rgba.r, rgba.g, rgba.b, rgba.a];
             }
         },
-        methods: {
-            updateRenderer() {
-                this.$emit("update-renderer", {
-                    attribute: this.selectedAttribute,
-                    renderer: this.selectedRenderer
-                });
+        outlineColorPickerValue: {
+            get() {
+                const outlineColor = this.outlineColor;
+                if (outlineColor.length === 4) {
+                    return {
+                        r: outlineColor[0],
+                        g: outlineColor[1],
+                        b: outlineColor[2],
+                        a: outlineColor[3]
+                    };
+                } else {
+                    return {
+                        r: 255,
+                        g: 0,
+                        b: 0,
+                        a: 0
+                    };
+                }
+            },
+            set(value) {
+                const rgba = value.rgba;
+                this.outlineColor = [rgba.r, rgba.g, rgba.b, rgba.a];
             }
         }
-    };
+    },
+
+    watch: {
+        selectedAttribute: function (attr) {
+            if (attr) {
+                this.updateRenderer();
+            }
+        },
+        selectedRenderer: function (renderer) {
+            if (renderer) {
+                this.updateRenderer();
+            }
+        },
+        colorPickerValue: function (attr) {
+        },
+        outlineColorPickerValue: function (attr) {
+        }
+    },
+    methods: {
+        updateRenderer() {
+            this.$emit("update-renderer", {
+                attribute: this.selectedAttribute,
+                renderer: this.selectedRenderer
+            });
+        }
+    }
+};
 </script>
