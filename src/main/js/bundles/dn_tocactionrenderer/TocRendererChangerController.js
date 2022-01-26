@@ -32,7 +32,11 @@ export default class TocRendererChangerController {
         });
 
         model.watch("color", ({value}) => {
-            this.updateSimpleRenderer(value);
+            this.updateSimpleRenderer(value, this.model.outlineColor);
+        });
+
+        model.watch("outlineColor", ({value}) => {
+            this.updateSimpleRenderer(this.model.color, value);
         });
     }
 
@@ -53,7 +57,7 @@ export default class TocRendererChangerController {
         }
     }
 
-    updateSimpleRenderer(color) {
+    updateSimpleRenderer(color, outlineColor) {
         const geomType = this.selectedLayer.geometryType;
 
         switch (geomType) {
@@ -65,7 +69,7 @@ export default class TocRendererChangerController {
                         color: color,
                         outline: {
                             width: 1,
-                            color: "white"
+                            color: outlineColor
                         }
                     }
                 };
@@ -79,7 +83,7 @@ export default class TocRendererChangerController {
                         color: color,
                         outline: {
                             width: 0.5,
-                            color: "white"
+                            color: outlineColor
                         }
                     }
                 };
