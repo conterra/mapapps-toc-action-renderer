@@ -21,7 +21,7 @@
             <v-flex xs12 mb-2 v-if="selectedLayerId">
                 <v-select
                     v-model="selectedRenderer"
-                    :items="rendererOptions"
+                    :items="rendererItems"
                     :label="i18n.renderer"
                     hide-details
                 ></v-select>
@@ -145,10 +145,8 @@ export default {
                 this.outlineColor = [rgba.r, rgba.g, rgba.b, rgba.a];
             }
         },
-        rendererOptions: {
+        rendererItems: {
             get() {
-                let renderers = [];
-
                 // predefined array of available renderers
                 const availableRenderers = [
                     {value: "simple", text: "Simple"},
@@ -156,16 +154,8 @@ export default {
                     {value: "size", text: "Size"},
                     {value: "unique_values", text: "Unique Values"},
                     {value: "heatmap", text: "Heatmap"}
-                ]
-
-                // if renderer is within the allowedRenderers array defined in the WidgetFactory properties make renderer selectable in UI
-                availableRenderers.forEach(renderer => {
-                    if(this.allowedRenderers.includes(renderer.value)){
-                        renderers.push(renderer);
-                    }
-                })
-
-                return renderers;
+                ];
+                return availableRenderers.filter((renderer) => this.allowedRenderers.includes(renderer.value));
             }
         }
     },
