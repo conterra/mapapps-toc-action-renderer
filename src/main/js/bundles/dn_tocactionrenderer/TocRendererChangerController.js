@@ -108,19 +108,19 @@ export default class TocRendererChangerController {
         this.removeRendererWidget();
         if (evt?.renderer) {
             switch (evt.renderer) {
-                case "Class Breaks":
+                case "class breaks":
                     this.setClassBreaksRenderer(evt.attribute);
                     break;
-                case "Size":
+                case "size":
                     this.setSizeRenderer(evt.attribute);
                     break;
-                case "Unique Values":
+                case "unique values":
                     this.setTypeRenderer(evt.attribute);
                     break;
-                case "Heatmap":
+                case "heatmap":
                     this.setHeatmapRenderer();
                     break;
-                case "Simple":
+                case "simple":
                     // do nothing
                     break;
                 default:

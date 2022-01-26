@@ -25,7 +25,7 @@
                     :label="i18n.renderer"
                     hide-details
                 ></v-select>
-                <div v-if="selectedLayerId && selectedRenderer !== 'Simple' && selectedRenderer !== 'Heatmap'">
+                <div v-if="selectedLayerId && selectedRenderer !== 'simple' && selectedRenderer !== 'heatmap'">
                     <v-select
                         v-model="selectedAttribute"
                         :items="selectedLayerAttributes"
@@ -37,7 +37,7 @@
                 </div>
             </v-flex>
             <v-flex x12>
-                <div v-if="selectedRenderer === 'Simple'">
+                <div v-if="selectedRenderer === 'simple'">
                     <v-card class="pa-3 secondary">
                         <p>Fill Color Picker:</p>
                         <div class="tocactionrenderer_color_picker">
@@ -89,8 +89,14 @@ export default {
             selectedLayerAttributes: [],
             selectedLayerId: undefined,
             selectedAttribute: undefined,
-            selectedRenderer: "Simple",
-            rendererOptions: ["Simple", "Class Breaks", "Size", "Unique Values", "Heatmap"],
+            selectedRenderer: "simple",
+            rendererOptions: [
+                {value: "simple", text: "Simple"},
+                {value: "class breaks", text: "Class Breaks"},
+                {value: "size", text: "Size"},
+                {value: "unique values", text: "Unique Values"},
+                {value: "heatmap", text: "Heatmap"}
+            ],
             color: [],
             outlineColor: []
         };
