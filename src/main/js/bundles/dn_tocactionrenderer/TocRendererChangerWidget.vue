@@ -147,15 +147,7 @@ export default {
         },
         rendererItems: {
             get() {
-                // predefined array of available renderers
-                const availableRenderers = [
-                    {value: "simple", text: "Simple"},
-                    {value: "class_breaks", text: "Class Breaks"},
-                    {value: "size", text: "Size"},
-                    {value: "unique_values", text: "Unique Values"},
-                    {value: "heatmap", text: "Heatmap"}
-                ];
-                return availableRenderers.filter((renderer) => this.allowedRenderers.includes(renderer.value));
+                return this.i18n.renderers.filter((renderer) => this.allowedRenderers.includes(renderer.value));
             }
         }
     },

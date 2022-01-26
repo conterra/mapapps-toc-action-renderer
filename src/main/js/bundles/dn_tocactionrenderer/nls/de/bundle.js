@@ -23,6 +23,13 @@ module.exports = {
     windowTitle: "Symbolisierung anpassen",
     ui: {
         renderer: "Art der Symbolisierung",
+        renderers: [
+            {value: "simple", text: "Simple"},
+            {value: "class_breaks", text: "Class Breaks"},
+            {value: "size", text: "Size"},
+            {value: "unique_values", text: "Unique Values"},
+            {value: "heatmap", text: "Heatmap"}
+        ],
         resetRenderer: "Symbolisierung zurücksetzen",
         attribute: "Attribut"
     }

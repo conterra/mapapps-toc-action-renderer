@@ -24,6 +24,13 @@ module.exports = {
         windowTitle: "Change symbology",
         ui: {
             renderer: "Renderer",
+            renderers: [
+                {value: "simple", text: "Simple"},
+                {value: "class_breaks", text: "Class Breaks"},
+                {value: "size", text: "Size"},
+                {value: "unique_values", text: "Unique Values"},
+                {value: "heatmap", text: "Heatmap"}
+            ],
             resetRenderer: "Reset Renderer",
             attribute: "Attribute"
         }
