@@ -64,7 +64,7 @@ export default class TocRendererChangerWidgetFactory {
 
     #createBinding(vm) {
         return Binding.for(this._model, vm)
-            .syncAll("color")
+            .syncAll("color", "outlineColor")
             .syncAllToRight("selectedLayerId", "selectedRenderer", "selectedLayerAttributes", "selectedAttribute");
     }
 
