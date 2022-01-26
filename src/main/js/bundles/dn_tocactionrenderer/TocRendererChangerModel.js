@@ -22,6 +22,7 @@ export default declare({
     selectedAttribute: undefined,
     selectedLayerAttributes: [],
     color: [0, 255, 0, 0],
+    outlineColor: [0, 255, 0, 0],
     heatmapRenderer: []
 
 });
