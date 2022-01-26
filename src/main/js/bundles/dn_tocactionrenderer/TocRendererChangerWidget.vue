@@ -162,10 +162,6 @@ export default {
             if (renderer) {
                 this.updateRenderer();
             }
-        },
-        colorPickerValue: function (attr) {
-        },
-        outlineColorPickerValue: function (attr) {
         }
     },
     methods: {
