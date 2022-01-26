@@ -90,15 +90,9 @@ export default {
             selectedLayerId: undefined,
             selectedAttribute: undefined,
             selectedRenderer: "simple",
-            rendererOptions: [
-                {value: "simple", text: "Simple"},
-                {value: "class breaks", text: "Class Breaks"},
-                {value: "size", text: "Size"},
-                {value: "unique values", text: "Unique Values"},
-                {value: "heatmap", text: "Heatmap"}
-            ],
             color: [],
-            outlineColor: []
+            outlineColor: [],
+            allowedRenderers: []
         };
     },
 
@@ -149,6 +143,29 @@ export default {
             set(value) {
                 const rgba = value.rgba;
                 this.outlineColor = [rgba.r, rgba.g, rgba.b, rgba.a];
+            }
+        },
+        rendererOptions: {
+            get() {
+                let renderers = [];
+
+                // predefined array of available renderers
+                const availableRenderers = [
+                    {value: "simple", text: "Simple"},
+                    {value: "class breaks", text: "Class Breaks"},
+                    {value: "size", text: "Size"},
+                    {value: "unique values", text: "Unique Values"},
+                    {value: "heatmap", text: "Heatmap"}
+                ]
+
+                // if renderer is within the allowedRenderers array defined in the WidgetFactory properties make renderer selectable in UI
+                availableRenderers.forEach(renderer => {
+                    if(this.allowedRenderers.includes(renderer.value)){
+                        renderers.push(renderer);
+                    }
+                })
+
+                return renderers;
             }
         }
     },
