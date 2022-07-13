@@ -1,6 +1,6 @@
 {
     "name": "dn_tocactionrenderer",
-    "version": "1.2.1-SNAPSHOT",
+    "version": "1.3.0",
     "title": "${bundleName}",
     "description": "${bundleDescription}",
     "vendor": "con terra GmbH",
@@ -45,7 +45,7 @@
             "propertiesConstructor": true,
             "properties": {
                 "selectedRenderer": "simple",
-                "allowedRenderers": ["simple", "class_breaks", "size", "unique_values", "heatmap"],
+                "allowedRenderers": ["simple", "symbol", "class_breaks", "size", "unique_values", "heatmap"],
                 "heatmapRenderer": {
                     "colorStops": [
                         {
