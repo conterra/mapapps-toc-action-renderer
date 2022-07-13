@@ -25,6 +25,7 @@ module.exports = {
         renderer: "Art der Symbolisierung",
         renderers: [
             {value: "simple", text: "Simple"},
+            {value: "symbol", text: "Symbol"},
             {value: "class_breaks", text: "Class Breaks"},
             {value: "size", text: "Size"},
             {value: "unique_values", text: "Unique Values"},
@@ -33,6 +34,9 @@ module.exports = {
         resetRenderer: "Symbolisierung zurücksetzen",
         attribute: "Attribut",
         fillColor: "Füllfarbe",
-        outlineColor: "Umrandfarbe"
+        outlineColor: "Umrandfarbe",
+        symbolUrlLabel: "Symbol URL",
+        symbolHeightLabel: "Symbolhöhe",
+        symbolWidthLabel: "Symbolbreite"
     }
 };

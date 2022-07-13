@@ -24,6 +24,9 @@ export default declare({
     color: [],
     outlineColor: [],
     heatmapRenderer: [],
-    allowedRenderers: []
+    allowedRenderers: [],
+    symbolURL: "https://developers.arcgis.com/javascript/latest//sample-code/popup-custom-action/live/beer.png",
+    symbolHeight: 12,
+    symbolWidth: 12
 
 });

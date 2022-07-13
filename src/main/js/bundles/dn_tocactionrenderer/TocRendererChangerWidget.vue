@@ -32,7 +32,7 @@
                     :label="i18n.renderer"
                     hide-details
                 />
-                <div v-if="selectedLayerId && selectedRenderer !== 'simple' && selectedRenderer !== 'heatmap'">
+                <div v-if="selectedLayerId && selectedRenderer !== 'simple' && selectedRenderer !== 'symbol' && selectedRenderer !== 'heatmap'">
                     <v-select
                         v-model="selectedAttribute"
                         :items="selectedLayerAttributes"
@@ -55,6 +55,28 @@
                         <div class="tocactionrenderer_color_picker">
                             <color-picker v-model="outlineColorPickerValue" />
                         </div>
+                    </v-card>
+                </div>
+                <div v-if="selectedRenderer === 'symbol'">
+                    <v-card class="pa-3 secondary">
+                        <v-text-field
+                            v-model="symbolURL"
+                            :label="i18n.symbolUrlLabel"
+                        />
+                        <v-slider
+                            v-model="symbolHeight"
+                            thumb-label
+                            :label="i18n.symbolHeightLabel"
+                            :min="12"
+                            :max="200"
+                        />
+                        <v-slider
+                            v-model="symbolWidth"
+                            thumb-label
+                            :label="i18n.symbolWidthLabel"
+                            :min="12"
+                            :max="200"
+                        />
                     </v-card>
                 </div>
             </v-flex>
@@ -104,7 +126,16 @@
                 selectedRenderer: "simple",
                 color: [],
                 outlineColor: [],
-                allowedRenderers: []
+                allowedRenderers: [],
+                symbolURL: "",
+                symbolHeight: {
+                    type: Number,
+                    default: 12
+                },
+                symbolWidth : {
+                    type: Number,
+                    default: 12
+                }
             };
         },
 

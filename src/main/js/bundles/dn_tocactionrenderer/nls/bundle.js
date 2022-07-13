@@ -26,6 +26,7 @@ module.exports = {
             renderer: "Renderer",
             renderers: [
                 {value: "simple", text: "Simple"},
+                {value: "symbol", text: "Symbol"},
                 {value: "class_breaks", text: "Class Breaks"},
                 {value: "size", text: "Size"},
                 {value: "unique_values", text: "Unique Values"},
@@ -34,7 +35,10 @@ module.exports = {
             resetRenderer: "Reset Renderer",
             attribute: "Attribute",
             fillColor: "Fill Color",
-            outlineColor: "Outline Color"
+            outlineColor: "Outline Color",
+            symbolUrlLabel: "Symbol URL",
+            symbolHeightLabel: "Symbol Height",
+            symbolWidthLabel: "Symbol Width"
         }
     }),
     "de": true

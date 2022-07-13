@@ -38,6 +38,20 @@ export default class TocRendererChangerController {
         model.watch("outlineColor", ({value}) => {
             this.updateSimpleRenderer(this.model.color, value);
         });
+
+        model.watch("symbolURL", () => {
+            this.updateSymbolRenderer(this.model);
+        });
+
+        model.watch("symbolHeight", () => {
+            this.updateSymbolRenderer(this.model);
+        });
+
+        model.watch("symbolWidth", () => {
+            this.updateSymbolRenderer(this.model);
+        });
+
+
     }
 
     initProperties() {
@@ -104,6 +118,18 @@ export default class TocRendererChangerController {
         }
     }
 
+    updateSymbolRenderer(model){
+        this.selectedLayer.renderer = {
+            type: "simple",  // autocasts as new PictureMarkerSymbol()
+            symbol: {
+                type: "picture-marker",
+                url: model.symbolURL,
+                height: model.symbolHeight,
+                width: model.symbolWidth
+            }
+        }
+    }
+
     createRendererWidget(evt) {
         this.removeRendererWidget();
         if (evt?.renderer) {
@@ -122,6 +148,9 @@ export default class TocRendererChangerController {
                     break;
                 case "simple":
                     // do nothing
+                    break;
+                case "symbol":
+                    this.setSymbolRenderer();
                     break;
                 default:
                     break;
@@ -163,6 +192,18 @@ export default class TocRendererChangerController {
             attribute,
             this.vm.$refs["ctSmartRendererWidgets"]
         );
+    }
+
+    setSymbolRenderer(){
+        this.selectedLayer.renderer = {
+            type: "simple",  // autocasts as new PictureMarkerSymbol()
+            symbol: {
+                type: "picture-marker",
+                url: this.model.symbolURL,
+                height: this.model.symbolHeight,
+                width: this.model.symbolWidth
+            }
+        }
     }
 
     removeRendererWidget() {
