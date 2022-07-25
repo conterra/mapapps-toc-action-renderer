@@ -71,7 +71,10 @@
                     ]
                 },
                 "color": [0, 255, 0, 0],
-                "outlineColor": [0, 255, 0, 0]
+                "outlineColor": [0, 255, 0, 0],
+                "symbolURL": "https://www.conterra.de/sites/default/files/images/icons/rocket.svg",
+                "symbolHeight": 24,
+                "symbolWidth": 24
             }
         },
         {

@@ -127,6 +127,7 @@
                 color: [],
                 outlineColor: [],
                 allowedRenderers: [],
+                symbolApplicable: undefined,
                 symbolURL: "",
                 symbolHeight: {
                     type: Number,
@@ -190,7 +191,12 @@
             },
             rendererItems: {
                 get() {
-                    return this.i18n.renderers.filter((renderer) => this.allowedRenderers.includes(renderer.value));
+                    if(this.symbolApplicable){
+                        return this.i18n.renderers.filter((renderer) => this.allowedRenderers.includes(renderer.value));
+                    } else {
+                        const tempRendererList = this.i18n.renderers.filter((renderer) => this.allowedRenderers.includes(renderer.value));
+                        return tempRendererList.filter(renderer => renderer.value !== "symbol");
+                    }
                 }
             }
         },

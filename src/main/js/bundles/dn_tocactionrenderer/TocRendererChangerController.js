@@ -50,8 +50,6 @@ export default class TocRendererChangerController {
         model.watch("symbolWidth", () => {
             this.updateSymbolRenderer(this.model);
         });
-
-
     }
 
     initProperties() {
@@ -69,6 +67,8 @@ export default class TocRendererChangerController {
             });
             this.oldRenderer[this.selectedLayer.id] = this.selectedLayer.renderer.clone();
         }
+        // hide/show symbol renderer in renderer selection
+       this.model.symbolApplicable = this.selectedLayer.geometryType === "point";
     }
 
     updateSimpleRenderer(color, outlineColor) {
@@ -118,15 +118,20 @@ export default class TocRendererChangerController {
         }
     }
 
-    updateSymbolRenderer(model){
-        this.selectedLayer.renderer = {
-            type: "simple",  // autocasts as new PictureMarkerSymbol()
-            symbol: {
-                type: "picture-marker",
-                url: model.symbolURL,
-                height: model.symbolHeight,
-                width: model.symbolWidth
+    updateSymbolRenderer(model) {
+        const geomType = this.selectedLayer.geometryType;
+
+        if (geomType === "point") {
+            this.selectedLayer.renderer = {
+                type: "simple",  // autocasts as new PictureMarkerSymbol()
+                symbol: {
+                    type: "picture-marker",
+                    url: model.symbolURL,
+                    height: model.symbolHeight,
+                    width: model.symbolWidth
+                }
             }
+        } else {
         }
     }
 
@@ -194,15 +199,20 @@ export default class TocRendererChangerController {
         );
     }
 
-    setSymbolRenderer(){
-        this.selectedLayer.renderer = {
-            type: "simple",  // autocasts as new PictureMarkerSymbol()
-            symbol: {
-                type: "picture-marker",
-                url: this.model.symbolURL,
-                height: this.model.symbolHeight,
-                width: this.model.symbolWidth
+    setSymbolRenderer() {
+        const geomType = this.selectedLayer.geometryType;
+
+        if (geomType === "point") {
+            this.selectedLayer.renderer = {
+                type: "simple",  // autocasts as new PictureMarkerSymbol()
+                symbol: {
+                    type: "picture-marker",
+                    url: this.model.symbolURL,
+                    height: this.model.symbolHeight,
+                    width: this.model.symbolWidth
+                }
             }
+        } else {
         }
     }
 
