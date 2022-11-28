@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (C) 2021 con terra GmbH (info@conterra.de)
+    Copyright (C) 2022 con terra GmbH (info@conterra.de)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -191,10 +191,12 @@
             },
             rendererItems: {
                 get() {
-                    if(this.symbolApplicable){
-                        return this.i18n.renderers.filter((renderer) => this.allowedRenderers.includes(renderer.value));
+                    const rendererArray = Object.keys(this.i18n.renderers).map(key => this.i18n.renderers[key]);
+
+                    if (this.symbolApplicable) {
+                        return rendererArray.filter((renderer) => this.allowedRenderers.includes(renderer.value));
                     } else {
-                        const tempRendererList = this.i18n.renderers.filter((renderer) => this.allowedRenderers.includes(renderer.value));
+                        const tempRendererList = rendererArray.filter((renderer) => this.allowedRenderers.includes(renderer.value));
                         return tempRendererList.filter(renderer => renderer.value !== "symbol");
                     }
                 }
