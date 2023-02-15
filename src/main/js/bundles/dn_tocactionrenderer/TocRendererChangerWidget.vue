@@ -108,11 +108,11 @@
     - heatmap renderer
     */
     import Bindable from "apprt-vue/mixins/Bindable";
-    import {Slider} from 'dn_vuecolor';
+    import ColorPicker from "./components/ColorPicker.vue";
 
     export default {
         components: {
-            'color-picker': Slider
+            'color-picker': ColorPicker
         },
         mixins: [Bindable],
         data: function () {
@@ -156,7 +156,7 @@
                             r: 255,
                             g: 0,
                             b: 0,
-                            a: 0
+                            a: 0.5
                         };
                     }
                 },
@@ -180,7 +180,7 @@
                             r: 255,
                             g: 0,
                             b: 0,
-                            a: 0
+                            a: 0.5
                         };
                     }
                 },
