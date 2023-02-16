@@ -22,17 +22,16 @@
         offset-y
         max-width="220px"
     >
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
             <v-btn
                 small
                 block
                 :style="`background-color: ${backgroundColor}`"
                 class="ma-0"
                 v-on="on"
-            >
-            </v-btn>
+            />
         </template>
-        <sketch-picker v-model="pickerColor"></sketch-picker>
+        <sketch-picker v-model="pickerColor" />
     </v-menu>
 </template>
 
