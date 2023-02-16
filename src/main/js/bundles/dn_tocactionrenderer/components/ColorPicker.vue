@@ -20,7 +20,7 @@
         v-model="menu"
         :close-on-content-click="false"
         offset-y
-        full-width
+        max-width="220px"
     >
         <template v-slot:activator="{ on }">
             <v-btn
