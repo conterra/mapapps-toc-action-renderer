@@ -28,3 +28,7 @@
 .ctAppRoot .tocactionrenderer .tocactionrenderer_color_picker {
     width: 100%;
 }
+
+.ctAppRoot .vuetify-menues .vc-sketch {
+    color: #45474d;
+}
