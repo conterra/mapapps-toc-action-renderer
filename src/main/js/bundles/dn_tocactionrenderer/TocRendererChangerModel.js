@@ -23,6 +23,7 @@ export default declare({
     selectedLayerAttributes: [],
     color: [],
     outlineColor: [],
+    outlineWidth: undefined,
     heatmapRenderer: [],
     allowedRenderers: [],
     symbolURL: "",

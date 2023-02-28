@@ -32,23 +32,25 @@ export default class TocRendererChangerController {
         });
 
         model.watch("color", ({value}) => {
-            this.updateSimpleRenderer(value, this.model.outlineColor);
+            this.updateSimpleRenderer(value, model.outlineColor, model.outlineWidth);
         });
 
         model.watch("outlineColor", ({value}) => {
-            this.updateSimpleRenderer(this.model.color, value);
+            this.updateSimpleRenderer(model.color, value, model.outlineWidth);
         });
-
+        model.watch("outlineWidth", ({value}) => {
+            this.updateSimpleRenderer(model.color, model.outlineColor, value);
+        });
         model.watch("symbolURL", () => {
-            this.updateSymbolRenderer(this.model);
+            this.updateSymbolRenderer(model);
         });
 
         model.watch("symbolHeight", () => {
-            this.updateSymbolRenderer(this.model);
+            this.updateSymbolRenderer(model);
         });
 
         model.watch("symbolWidth", () => {
-            this.updateSymbolRenderer(this.model);
+            this.updateSymbolRenderer(model);
         });
     }
 
@@ -68,10 +70,10 @@ export default class TocRendererChangerController {
             this.oldRenderer[this.selectedLayer.id] = this.selectedLayer.renderer.clone();
         }
         // hide/show symbol renderer in renderer selection
-       this.model.symbolApplicable = this.selectedLayer.geometryType === "point";
+        this.model.symbolApplicable = this.selectedLayer.geometryType === "point";
     }
 
-    updateSimpleRenderer(color, outlineColor) {
+    updateSimpleRenderer(color, outlineColor, outlineWidth) {
         const geomType = this.selectedLayer.geometryType;
 
         switch (geomType) {
@@ -82,7 +84,7 @@ export default class TocRendererChangerController {
                         type: "simple-fill",
                         color: color,
                         outline: {
-                            width: 1,
+                            width: outlineWidth,
                             color: outlineColor
                         }
                     }
@@ -96,7 +98,7 @@ export default class TocRendererChangerController {
                         size: 6,
                         color: color,
                         outline: {
-                            width: 0.5,
+                            width: outlineWidth,
                             color: outlineColor
                         }
                     }
@@ -108,7 +110,7 @@ export default class TocRendererChangerController {
                     symbol: {
                         type: "simple-line",
                         color: color,
-                        width: "3px",
+                        width: outlineWidth,
                         style: "solid"
                     }
                 };
@@ -130,8 +132,7 @@ export default class TocRendererChangerController {
                     height: model.symbolHeight,
                     width: model.symbolWidth
                 }
-            }
-        } else {
+            };
         }
     }
 
@@ -211,8 +212,7 @@ export default class TocRendererChangerController {
                     height: this.model.symbolHeight,
                     width: this.model.symbolWidth
                 }
-            }
-        } else {
+            };
         }
     }
 
@@ -226,7 +226,7 @@ export default class TocRendererChangerController {
 
     resetRenderer() {
         this.selectedLayer.renderer = this.oldRenderer[this.selectedLayer.id];
-        this.removeRendererWidget()
+        this.removeRendererWidget();
         this.model.selectedRenderer = undefined;
         this.model.selectedAttribute = undefined;
     }

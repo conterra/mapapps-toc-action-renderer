@@ -36,6 +36,7 @@ module.exports = {
             attribute: "Attribute",
             fillColor: "Fill Color",
             outlineColor: "Outline Color",
+            outlineWidth: "Outline Width",
             symbolUrlLabel: "Symbol URL",
             symbolHeightLabel: "Symbol Height",
             symbolWidthLabel: "Symbol Width"

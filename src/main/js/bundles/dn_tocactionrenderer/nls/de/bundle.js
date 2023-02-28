@@ -35,6 +35,7 @@ module.exports = {
         attribute: "Attribut",
         fillColor: "Füllfarbe",
         outlineColor: "Umrandfarbe",
+        outlineWidth: "Umriss-Breite",
         symbolUrlLabel: "Symbol URL",
         symbolHeightLabel: "Symbolhöhe",
         symbolWidthLabel: "Symbolbreite"

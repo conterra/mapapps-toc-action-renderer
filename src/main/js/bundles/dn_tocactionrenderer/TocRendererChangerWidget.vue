@@ -55,6 +55,16 @@
                         <div class="tocactionrenderer_color_picker">
                             <color-picker v-model="outlineColorPickerValue" />
                         </div>
+                        <div class="mb-4" />
+                        <p>{{ i18n.outlineWidth }}</p>
+                        <v-text-field
+                            v-model="outlineWidth"
+                            type="number"
+                            min="1"
+                            single-line
+                            hide-details
+                            class="tocactionrenderer_outlineWidth_textfield"
+                        />
                     </v-card>
                 </div>
                 <div v-if="selectedRenderer === 'symbol'">
@@ -126,6 +136,7 @@
                 selectedRenderer: "simple",
                 color: [],
                 outlineColor: [],
+                outlineWidth: undefined,
                 allowedRenderers: [],
                 symbolApplicable: undefined,
                 symbolURL: "",
@@ -139,7 +150,6 @@
                 }
             };
         },
-
         computed: {
             colorPickerValue: {
                 get() {
@@ -202,7 +212,6 @@
                 }
             }
         },
-
         watch: {
             selectedAttribute: function (attr) {
                 if (attr) {

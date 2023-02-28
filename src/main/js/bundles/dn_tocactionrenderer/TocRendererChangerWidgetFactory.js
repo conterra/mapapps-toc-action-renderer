@@ -65,7 +65,7 @@ export default class TocRendererChangerWidgetFactory {
     #createBinding(vm) {
         const model = this._model;
         return Binding.for(model, vm)
-            .syncAll("color", "outlineColor", "symbolURL", "symbolHeight", "symbolWidth")
+            .syncAll("color", "outlineColor", "outlineWidth", "symbolURL", "symbolHeight", "symbolWidth")
             .syncAllToRight("allowedRenderers", "selectedLayerId",
                 "selectedRenderer", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable");
     }
