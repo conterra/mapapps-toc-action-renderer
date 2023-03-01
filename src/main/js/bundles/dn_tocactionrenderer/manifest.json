@@ -1,6 +1,6 @@
 {
     "name": "dn_tocactionrenderer",
-    "version": "1.3.4",
+    "version": "1.3.5-SNAPSHOT",
     "title": "${bundleName}",
     "description": "${bundleDescription}",
     "vendor": "con terra GmbH",
