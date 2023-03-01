@@ -24,11 +24,13 @@ export default declare({
     color: [],
     outlineColor: [],
     outlineWidth: undefined,
+    pointSize: undefined,
     heatmapRenderer: [],
     allowedRenderers: [],
     symbolURL: "",
     symbolHeight: undefined,
     symbolWidth: undefined,
-    symbolApplicable: undefined
+    symbolApplicable: undefined,
+    currentGeometryType: undefined
 
 });

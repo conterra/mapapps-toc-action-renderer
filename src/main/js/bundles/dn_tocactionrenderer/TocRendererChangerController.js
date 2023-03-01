@@ -32,19 +32,20 @@ export default class TocRendererChangerController {
         });
 
         model.watch("color", ({value}) => {
-            this.updateSimpleRenderer(value, model.outlineColor, model.outlineWidth);
+            this.updateSimpleRenderer(value, model.outlineColor, model.outlineWidth, model.pointSize);
         });
-
         model.watch("outlineColor", ({value}) => {
-            this.updateSimpleRenderer(model.color, value, model.outlineWidth);
+            this.updateSimpleRenderer(model.color, value, model.outlineWidth, model.pointSize);
         });
         model.watch("outlineWidth", ({value}) => {
-            this.updateSimpleRenderer(model.color, model.outlineColor, value);
+            this.updateSimpleRenderer(model.color, model.outlineColor, value, model.pointSize);
+        });
+        model.watch("pointSize", ({value}) => {
+            this.updateSimpleRenderer(model.color, model.outlineColor, model.outlineWidth, value);
         });
         model.watch("symbolURL", () => {
             this.updateSymbolRenderer(model);
         });
-
         model.watch("symbolHeight", () => {
             this.updateSymbolRenderer(model);
         });
@@ -59,22 +60,25 @@ export default class TocRendererChangerController {
     }
 
     getLayerAttributes(layerId) {
-        this.selectedLayer = this._mapWidgetModel.map.findLayerById(layerId);
-        if (this.selectedLayer) {
-            this.model.selectedLayerAttributes = this.selectedLayer.fields.map(item => {
+        const model = this.model;
+        const selectedLayer = this.selectedLayer = this._mapWidgetModel.map.findLayerById(layerId);
+
+        if (selectedLayer) {
+            model.selectedLayerAttributes = selectedLayer.fields.map(item => {
                 return {
                     name: item.name,
                     type: item.type
                 };
             });
-            this.oldRenderer[this.selectedLayer.id] = this.selectedLayer.renderer.clone();
+            this.oldRenderer[selectedLayer.id] = selectedLayer.renderer.clone();
         }
         // hide/show symbol renderer in renderer selection
-        this.model.symbolApplicable = this.selectedLayer.geometryType === "point";
+        model.symbolApplicable = selectedLayer.geometryType === "point";
+        model.currentGeometryType = selectedLayer.geometryType;
     }
 
-    updateSimpleRenderer(color, outlineColor, outlineWidth) {
-        const geomType = this.selectedLayer.geometryType;
+    updateSimpleRenderer(color, outlineColor, outlineWidth, pointSize) {
+        const geomType = this.model.currentGeometryType;
 
         switch (geomType) {
             case "polygon":
@@ -95,7 +99,7 @@ export default class TocRendererChangerController {
                     type: "simple",
                     symbol: {
                         type: "simple-marker",
-                        size: 6,
+                        size: pointSize,
                         color: color,
                         outline: {
                             width: outlineWidth,

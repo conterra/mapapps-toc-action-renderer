@@ -36,6 +36,7 @@ module.exports = {
         fillColor: "Füllfarbe",
         outlineColor: "Umrandfarbe",
         outlineWidth: "Umriss-Breite",
+        pointSize: "Punktgröße",
         symbolUrlLabel: "Symbol URL",
         symbolHeightLabel: "Symbolhöhe",
         symbolWidthLabel: "Symbolbreite"

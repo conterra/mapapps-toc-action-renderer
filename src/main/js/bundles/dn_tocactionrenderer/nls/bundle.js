@@ -37,6 +37,7 @@ module.exports = {
             fillColor: "Fill Color",
             outlineColor: "Outline Color",
             outlineWidth: "Outline Width",
+            pointSize: "Point Size",
             symbolUrlLabel: "Symbol URL",
             symbolHeightLabel: "Symbol Height",
             symbolWidthLabel: "Symbol Width"

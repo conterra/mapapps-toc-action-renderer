@@ -65,6 +65,18 @@
                             hide-details
                             class="tocactionrenderer_outlineWidth_textfield"
                         />
+                        <div v-if="currentGeometryType==='point'">
+                            <div class="mb-4" />
+                            <p>{{ i18n.pointSize }}</p>
+                            <v-text-field
+                                v-model="pointSize"
+                                type="number"
+                                min="1"
+                                single-line
+                                hide-details
+                                class="tocactionrenderer_outlineWidth_textfield"
+                            />
+                        </div>
                     </v-card>
                 </div>
                 <div v-if="selectedRenderer === 'symbol'">
@@ -137,8 +149,10 @@
                 color: [],
                 outlineColor: [],
                 outlineWidth: undefined,
+                pointSize: undefined,
                 allowedRenderers: [],
                 symbolApplicable: undefined,
+                currentGeometryType: undefined,
                 symbolURL: "",
                 symbolHeight: {
                     type: Number,
