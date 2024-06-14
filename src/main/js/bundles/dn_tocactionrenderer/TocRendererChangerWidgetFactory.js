@@ -23,7 +23,6 @@ export default class TocRendererChangerWidgetFactory {
 
     #vm = undefined;
     #widget = undefined;
-    #controller = undefined
 
     activate() {
         this.#initComponent();
@@ -41,7 +40,7 @@ export default class TocRendererChangerWidgetFactory {
         const vm = this.#vm = new Vue(TocRendererChangerWidget);
         vm.i18n = this._i18n.get().ui;
 
-        const controller = this.#controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
+        const controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
         this.#watchForEvents(vm, controller);
         const widget = this.#widget = VueDijit(vm, {class: "tocactionrenderer"});
 

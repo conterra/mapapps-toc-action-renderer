@@ -31,7 +31,7 @@ export default function createHeatMapRenderer(layer, properties, mapWidgetModel,
             layer.renderer = rendererResult.renderer;
         })
         .catch(function (error) {
-            console.log("there was an error: ", error);
+            console.error("there was an error: ", error);
         });
 
     const slider = new HeatmapSlider();
@@ -48,4 +48,4 @@ export default function createHeatMapRenderer(layer, properties, mapWidgetModel,
         renderer.colorStops = slider.stops;
         layer.renderer = renderer;
     }
-};
+}

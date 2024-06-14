@@ -90,6 +90,6 @@ export default function createSizeRenderer(layer, view, attribute, domNode) {
             );
         })
         .catch(function (error) {
-            console.log("there was an error: ", error);
+            console.error("there was an error: ", error);
         });
-};
+}

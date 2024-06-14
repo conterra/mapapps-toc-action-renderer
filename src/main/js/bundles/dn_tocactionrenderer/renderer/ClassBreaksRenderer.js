@@ -39,7 +39,7 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
     // the renderer, and visual variable
 
     let rendererResult = null;
-    let slider = undefined;
+    let slider;
 
     colorRendererCreator
         .createClassBreaksRenderer(rendererParams)
@@ -61,7 +61,7 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
             });
         })
         .catch(function (error) {
-            console.log("there was an error: ", error);
+            console.error("there was an error: ", error);
         });
 
     function updateColorSlider(rendererResult) {
@@ -71,6 +71,13 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
             view: view,
             numBins: 100
         }).then(function (histogramResult) {
+            function changeEventHandler() {
+                const renderer = layer.renderer.clone();
+                renderer.classBreakInfos = slider.updateClassBreakInfos(
+                    renderer.classBreakInfos
+                );
+                layer.renderer = renderer;
+            }
             if (!slider) {
 
                 slider = ClassedColorSlider.fromRendererResult(
@@ -80,13 +87,6 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
                 slider.container = domNode;
                 slider.viewModel.precision = 1;
 
-                function changeEventHandler() {
-                    const renderer = layer.renderer.clone();
-                    renderer.classBreakInfos = slider.updateClassBreakInfos(
-                        renderer.classBreakInfos
-                    );
-                    layer.renderer = renderer;
-                }
 
                 slider.on(
                     ["thumb-change", "thumb-drag", "min-change", "max-change"],
@@ -97,4 +97,4 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
             }
         });
     }
-};
+}
