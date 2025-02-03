@@ -23,7 +23,6 @@
         >
             <v-flex
                 v-if="selectedLayerId"
-                xs12
                 mb-2
             >
                 <v-select
@@ -43,16 +42,16 @@
                     />
                 </div>
             </v-flex>
-            <v-flex x12>
+            <v-flex class="tocactionrenderer--renderer-settings">
                 <div v-if="selectedRenderer === 'simple'">
-                    <v-card class="pa-3 secondary">
+                    <v-card class="pa-3">
                         <p>{{ i18n.fillColor }}</p>
-                        <div class="tocactionrenderer_color_picker">
+                        <div class="tocactionrenderer--color-picker">
                             <color-picker v-model="colorPickerValue" />
                         </div>
                         <div class="mb-4" />
                         <p>{{ i18n.outlineColor }}</p>
-                        <div class="tocactionrenderer_color_picker">
+                        <div class="tocactionrenderer--color-picker">
                             <color-picker v-model="outlineColorPickerValue" />
                         </div>
                         <div class="mb-4" />
@@ -63,7 +62,7 @@
                             min="1"
                             single-line
                             hide-details
-                            class="tocactionrenderer_outlineWidth_textfield"
+                            class="tocactionrenderer--outlineWidth-textfield"
                         />
                         <div v-if="currentGeometryType==='point'">
                             <div class="mb-4" />
@@ -74,13 +73,13 @@
                                 min="1"
                                 single-line
                                 hide-details
-                                class="tocactionrenderer_outlineWidth_textfield"
+                                class="tocactionrenderer--outlineWidth-textfield"
                             />
                         </div>
                     </v-card>
                 </div>
                 <div v-if="selectedRenderer === 'symbol'">
-                    <v-card class="pa-3 secondary">
+                    <v-card class="pa-3">
                         <v-text-field
                             v-model="symbolURL"
                             :label="i18n.symbolUrlLabel"
@@ -104,10 +103,9 @@
             </v-flex>
             <v-flex
                 v-if="selectedRenderer"
-                xs12
             >
                 <v-btn
-                    class="secondary ml-0"
+                    class="primary ml-0"
                     @click="$emit('reset-renderer')"
                 >
                     {{ i18n.resetRenderer }}
