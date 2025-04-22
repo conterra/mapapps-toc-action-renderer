@@ -79,13 +79,17 @@
                     <v-card class="pa-3">
                         <p>{{ i18n.fillColor }}</p>
                         <div class="tocactionrenderer--color-picker">
-                            <color-picker v-model="colorPickerValue" />
-                        </div>
+                            <color-picker
+                                v-model="colorPickerValue"
+                                :aria-label="`${i18n.colorSelectionFor} ${i18n.fillColor}`"
+                            />                        </div>
                         <div class="mb-4" />
                         <p>{{ i18n.outlineColor }}</p>
                         <div class="tocactionrenderer--color-picker">
-                            <color-picker v-model="outlineColorPickerValue" />
-                        </div>
+                            <color-picker
+                                v-model="outlineColorPickerValue"
+                                :aria-label="`${i18n.colorSelectionFor} ${i18n.outlineColor}`"
+                            />                        </div>
                         <div class="mb-4" />
                         <p>{{ i18n.outlineWidth }}</p>
                         <v-text-field
@@ -294,6 +298,7 @@
                         ],
                         resetRenderer: "Reset Renderer",
                         attribute: "Attribute",
+                        colorSelectionFor: "Color selection for",
                         fillColor: "Fill Color",
                         outlineColor: "Outline Color",
                         outlineWidth: "Outline Width",

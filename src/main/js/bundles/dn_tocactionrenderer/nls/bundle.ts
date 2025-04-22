@@ -43,6 +43,7 @@ const i18n = {
             ],
             resetRenderer: "Reset Renderer",
             attribute: "Attribute",
+            colorSelectionFor: "Color selection for",
             fillColor: "Fill Color",
             outlineColor: "Outline Color",
             outlineWidth: "Outline Width",
