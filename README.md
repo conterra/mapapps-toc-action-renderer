@@ -6,7 +6,7 @@ This bundle adds another action to the TOC which allows to customize the rendere
 [![devnet-bundle-snapshot](https://github.com/conterra/mapapps-toc-action-renderer/actions/workflows/devnet-bundle-snapshot.yml/badge.svg)](https://github.com/conterra/mapapps-toc-action-renderer/actions/workflows/devnet-bundle-snapshot.yml)
 
 ## Sample App
-https://demos.conterra.de/mapapps/resources/apps/downloads_toc_action_renderer/index.html
+https://demos.conterra.de/mapapps/resources/apps/public_demo_tocactionrenderer/index.html
 
 ## Installation Guide
 **Requirement: map.apps 4.7.0**
