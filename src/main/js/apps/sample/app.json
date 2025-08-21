@@ -98,6 +98,67 @@
                 "map": {
                     "layers": [
                         {
+                            "id": "testLayers",
+                            "title": "Test-Layer",
+                            "type": "GROUP",
+                            "visible": true,
+                            "layers": [
+                                {
+                                    "id": "csvLayer",
+                                    "title": "Köln CSV Beispielpunkte",
+                                    "type": "CSV",
+                                    "url": "resource('${app}:/assets/sample-data.csv')",
+                                    "delimiter": ",",
+                                    "latitudeField": "latitude",
+                                    "longitudeField": "longitude",
+                                    "visible": true,
+                                    "popupTemplate": {
+                                        "title": "{name}",
+                                        "content": [
+                                            {
+                                                "type": "fields",
+                                                "fieldInfos": [
+                                                    {
+                                                        "fieldName": "category",
+                                                        "label": "Kategorie"
+                                                    },
+                                                    {
+                                                        "fieldName": "value",
+                                                        "label": "Wert"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "id": "geojsonLayer",
+                                    "title": "Köln GeoJSON Beispielpunkte",
+                                    "type": "GEOJSON",
+                                    "url": "resource('${app}:/assets/cologne-points.geojson')",
+                                    "visible": true,
+                                    "popupTemplate": {
+                                        "title": "{name}",
+                                        "content": [
+                                            {
+                                                "type": "fields",
+                                                "fieldInfos": [
+                                                    {
+                                                        "fieldName": "category",
+                                                        "label": "Kategorie"
+                                                    },
+                                                    {
+                                                        "fieldName": "value",
+                                                        "label": "Wert"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        {
                             "id": "koeln1",
                             "title": "${map.koeln1.title}",
                             "type": "GROUP",
@@ -400,6 +461,27 @@
                                     }
                                 }
                             ]
+                        },
+                        {
+                            "id": "kitas-nrw",
+                            "title": "Kitas NRW",
+                            "url": "https://ogc-api.nrw.de/inspire-us-kindergarten/v1",
+                            "type": "OGC_FEATURE",
+                            "options": {
+                                "searchAttr": "name",
+                                "useIn": [
+                                    "search",
+                                    "selection"
+                                ]
+                            },
+                            "collectionId": "governmentalservice",
+                            "objectIdField": "id",
+                            "displayField": "name",
+                            "visible": true,
+                            "_popupTemplate": {
+                                "title": "{serviceType.title}",
+                                "content": "<a href='{serviceType.href}'>Webseite</a>"
+                            }
                         }
                     ]
                 },
@@ -420,7 +502,7 @@
                 "showLayerLegend": true
             }
         },
-      "toolrules": {
+        "toolrules": {
             "ToolActiveStateManager": {
                 "activateOnStartToolIds": [
                     "tocToggleTool"
