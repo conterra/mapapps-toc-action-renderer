@@ -17,8 +17,7 @@ import * as sizeRendererCreator from "@arcgis/core/smartMapping/renderers/size";
 import histogram from "@arcgis/core/smartMapping/statistics/histogram";
 import SizeSlider from "@arcgis/core/widgets/smartMapping/SizeSlider";
 
-export default function createSizeRenderer(layer, view, attribute, domNode) {
-
+export default function createSizeRenderer(layer, view, attribute, domNode, color) {
     const sizeParams = {
         layer: layer,
         view: view,
@@ -38,6 +37,7 @@ export default function createSizeRenderer(layer, view, attribute, domNode) {
     // the renderer, and visual variable
 
     let rendererResult = null;
+    let sizeSlider = null;
 
     sizeRendererCreator
         .createContinuousRenderer(sizeParams)
@@ -45,6 +45,12 @@ export default function createSizeRenderer(layer, view, attribute, domNode) {
             // Set the output renderer on the layer
 
             rendererResult = response;
+
+            // If color is provided, update all class break symbols
+            if (color) {
+                rendererResult.renderer.classBreakInfos[0].symbol.color = color;
+            }
+
             layer.renderer = rendererResult.renderer;
 
             // generate a histogram for use in the slider. Input the layer
@@ -59,7 +65,7 @@ export default function createSizeRenderer(layer, view, attribute, domNode) {
         .then(histogramResult => {
             // Create a size slider from the renderer and histogram result
 
-            const sizeSlider = SizeSlider.fromRendererResult(
+            sizeSlider = SizeSlider.fromRendererResult(
                 rendererResult,
                 histogramResult
             );
@@ -67,7 +73,6 @@ export default function createSizeRenderer(layer, view, attribute, domNode) {
 
             // Color the slider track to match the renderer
             sizeSlider.style.trackFillColor = rendererResult.renderer.classBreakInfos[0].symbol.color;
-
             sizeSlider.labelFormatFunction = function (value) {
                 return value.toFixed(1);
             };
@@ -92,4 +97,15 @@ export default function createSizeRenderer(layer, view, attribute, domNode) {
         .catch(function (error) {
             console.error("there was an error: ", error);
         });
+
+    const updateSizeSliderColor = (newColor) => {
+        if (sizeSlider && newColor) {
+            sizeSlider.style.trackFillColor = newColor;
+        }
+    };
+
+    return {
+        updateSizeSliderColor
+    };
 }
+

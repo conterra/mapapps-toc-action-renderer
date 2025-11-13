@@ -27,20 +27,20 @@ export default class TocRendererChangerController {
 
         this.initProperties();
 
-        model.watch("selectedLayerId", ({value}) => {
+        model.watch("selectedLayerId", ({ value }) => {
             this.getLayerAttributes(value);
         });
 
-        model.watch("color", ({value}) => {
+        model.watch("color", ({ value }) => {
             this.updateSimpleRenderer(value, model.outlineColor, model.outlineWidth, model.pointSize);
         });
-        model.watch("outlineColor", ({value}) => {
+        model.watch("outlineColor", ({ value }) => {
             this.updateSimpleRenderer(model.color, value, model.outlineWidth, model.pointSize);
         });
-        model.watch("outlineWidth", ({value}) => {
+        model.watch("outlineWidth", ({ value }) => {
             this.updateSimpleRenderer(model.color, model.outlineColor, value, model.pointSize);
         });
-        model.watch("pointSize", ({value}) => {
+        model.watch("pointSize", ({ value }) => {
             this.updateSimpleRenderer(model.color, model.outlineColor, model.outlineWidth, value);
         });
         model.watch("symbolURL", () => {
@@ -52,6 +52,9 @@ export default class TocRendererChangerController {
 
         model.watch("symbolWidth", () => {
             this.updateSymbolRenderer(model);
+        });
+        model.watch("sizeRendererColor", ({ value }) => {
+            this.updateSizeRenderer(value);
         });
     }
 
@@ -75,6 +78,15 @@ export default class TocRendererChangerController {
         // hide/show symbol renderer in renderer selection
         model.symbolApplicable = selectedLayer.geometryType === "point";
         model.currentGeometryType = selectedLayer.geometryType;
+    }
+
+    updateSizeRenderer(color) {
+        if (!this.selectedLayer || !this.selectedLayer.renderer || !this.selectedLayer.renderer.classBreakInfos) {
+            return;
+        }
+        const attribute = this.selectedLayer.renderer.visualVariables[0]?.valueExpression?.split(".")[1];
+
+        this.createRendererWidget({ renderer: "size", attribute: attribute, color: color });
     }
 
     updateSimpleRenderer(color, outlineColor, outlineWidth, pointSize) {
@@ -148,7 +160,7 @@ export default class TocRendererChangerController {
                     this.setClassBreaksRenderer(evt.attribute);
                     break;
                 case "size":
-                    this.setSizeRenderer(evt.attribute);
+                    this.setSizeRenderer(evt.attribute, evt.color);
                     break;
                 case "unique_values":
                     this.setTypeRenderer(evt.attribute);
@@ -186,12 +198,13 @@ export default class TocRendererChangerController {
         );
     }
 
-    setSizeRenderer(attribute) {
+    setSizeRenderer(attribute, color) {
         createSizeRenderer(
             this.selectedLayer,
             this._mapWidgetModel.view,
             attribute,
-            this.vm.$refs["ctSmartRendererWidgets"]
+            this.vm.$refs["ctSmartRendererWidgets"],
+            color
         );
     }
 
@@ -233,6 +246,9 @@ export default class TocRendererChangerController {
         this.removeRendererWidget();
         this.model.selectedRenderer = undefined;
         this.model.selectedAttribute = undefined;
+        this.model.color = [];
+        this.model.outlineColor = [];
+        this.model.sizeRendererColor = [];
     }
 
 }

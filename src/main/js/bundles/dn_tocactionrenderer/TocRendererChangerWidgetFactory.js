@@ -42,7 +42,7 @@ export default class TocRendererChangerWidgetFactory {
 
         const controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
         this.#watchForEvents(vm, controller);
-        const widget = this.#widget = VueDijit(vm, {class: "tocactionrenderer"});
+        const widget = this.#widget = VueDijit(vm, { class: "tocactionrenderer" });
 
         let binding = this.#createBinding(vm);
         widget.enableBinding = function () {
@@ -64,7 +64,7 @@ export default class TocRendererChangerWidgetFactory {
     #createBinding(vm) {
         const model = this._model;
         return Binding.for(model, vm)
-            .syncAll("color", "outlineColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth")
+            .syncAll("color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth")
             .syncAllToRight("allowedRenderers", "selectedLayerId",
                 "selectedRenderer", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType");
     }

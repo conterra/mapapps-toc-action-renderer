@@ -78,6 +78,14 @@
                         </div>
                     </v-card>
                 </div>
+                <div v-if="selectedRenderer === 'size'">
+                    <v-card class="pa-3">
+                        <p>{{ i18n.fillColor }}</p>
+                        <div class="tocactionrenderer--color-picker">
+                            <color-picker v-model="sizeRendererColorValue" />
+                        </div>
+                    </v-card>
+                </div>
                 <div v-if="selectedRenderer === 'symbol'">
                     <v-card class="pa-3">
                         <v-text-field
@@ -146,6 +154,7 @@
                 selectedRenderer: "simple",
                 color: [],
                 outlineColor: [],
+                sizeRendererColor: [],
                 outlineWidth: undefined,
                 pointSize: undefined,
                 allowedRenderers: [],
@@ -163,6 +172,30 @@
             };
         },
         computed: {
+            sizeRendererColorValue: {
+                get() {
+                    const color = this.sizeRendererColor;
+                    if (color.length === 4) {
+                        return {
+                            r: color[0],
+                            g: color[1],
+                            b: color[2],
+                            a: color[3]
+                        };
+                    } else {
+                        return {
+                            r: 200,
+                            g: 200,
+                            b: 200,
+                            a: 1
+                        };
+                    }
+                },
+                set(value) {
+                    const rgba = value.rgba;
+                    this.sizeRendererColor = [rgba.r, rgba.g, rgba.b, rgba.a];
+                }
+            },
             colorPickerValue: {
                 get() {
                     const color = this.color;
@@ -240,7 +273,8 @@
             updateRenderer() {
                 this.$emit("update-renderer", {
                     attribute: this.selectedAttribute,
-                    renderer: this.selectedRenderer
+                    renderer: this.selectedRenderer,
+                    color: undefined
                 });
             }
         }
