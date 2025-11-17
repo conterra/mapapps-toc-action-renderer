@@ -8,9 +8,13 @@
     To run checks yourself (e.g. to update the allow list or to get details), install
     license-checker yourself and run it from the project root directory:
 
-        $ npm install -g license-checker
+        $ pnpm install -g license-checker
         $ license-checker --summary # outputs list of used licenses
         $ license-checker --json    # outputs details
+
+
+    NOTE: This script only checks production licenses by default.
+    Alter this script if you want to check development dependencies as well (see below).
 
 
     NOTE: This script only checks production licenses by default.
@@ -20,6 +24,7 @@
 */
 
 import { init as initChecker } from "license-checker";
+import { cwd, exit } from "node:process";
 import { cwd, exit } from "node:process";
 
 // Licenses known to be OK.
@@ -40,14 +45,14 @@ const ACCEPTED_LICENSES = [
 
 // Packages with licenses that are not recognized properly by license-checker.
 // These must be checked manually.
-const SKIP_PACKAGES: string[] = [
-    "arcgis-js-api@4.31.6"
-];
+const SKIP_PACKAGES: string[] = ["@arcgis/core@4.33.14"];
 
 initChecker(
     {
         start: cwd(),
         onlyAllow: ACCEPTED_LICENSES.join(";"),
+        excludePackages: SKIP_PACKAGES.join(";"),
+        production: true
         excludePackages: SKIP_PACKAGES.join(";"),
         production: true
     },
