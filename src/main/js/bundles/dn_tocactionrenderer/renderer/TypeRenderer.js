@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as typeRendererCreator from "esri/smartMapping/renderers/type";
+import * as typeRendererCreator from "@arcgis/core/smartMapping/renderers/type";
 
 export default function createTypeRenderer(layer, view, attribute) {
 

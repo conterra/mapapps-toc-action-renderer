@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as sizeRendererCreator from "esri/smartMapping/renderers/size";
-import histogram from "esri/smartMapping/statistics/histogram";
-import SizeSlider from "esri/widgets/smartMapping/SizeSlider";
+import * as sizeRendererCreator from "@arcgis/core/smartMapping/renderers/size";
+import histogram from "@arcgis/core/smartMapping/statistics/histogram";
+import SizeSlider from "@arcgis/core/widgets/smartMapping/SizeSlider";
 
 export default function createSizeRenderer(layer, view, attribute, domNode) {
 

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import HeatmapSlider from "esri/widgets/smartMapping/HeatmapSlider";
-import * as heatmapRendererCreator from "esri/smartMapping/renderers/heatmap";
+import HeatmapSlider from "@arcgis/core/widgets/smartMapping/HeatmapSlider";
+import * as heatmapRendererCreator from "@arcgis/core/smartMapping/renderers/heatmap";
 
 export default function createHeatMapRenderer(layer, properties, mapWidgetModel, domNode) {
     const params = {
