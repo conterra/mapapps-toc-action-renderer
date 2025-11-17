@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as colorRendererCreator from "esri/smartMapping/renderers/color";
-import histogram from "esri/smartMapping/statistics/histogram";
-import ClassedColorSlider from "esri/widgets/smartMapping/ClassedColorSlider";
+import * as colorRendererCreator from "@arcgis/core/smartMapping/renderers/color";
+import histogram from "@arcgis/core/smartMapping/statistics/histogram";
+import ClassedColorSlider from "@arcgis/core/widgets/smartMapping/ClassedColorSlider";
 
 export default function createClassBreaksRenderer(layer, view, attribute, domNode) {
     const rendererParams = {
