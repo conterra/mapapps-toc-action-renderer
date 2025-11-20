@@ -16,33 +16,64 @@
 
 -->
 <template>
-    <v-container pa-0>
-        <v-layout
-            column
-            wrap
+    <v-container
+        pa-0
+        class="tocactionrenderer-main-container"
+    >
+        <!-- Renderer Selection Tabs -->
+        <v-flex
+            v-if="selectedLayerId"
+            mb-2
         >
-            <v-flex
-                v-if="selectedLayerId"
-                mb-2
+            <v-select
+                v-model="selectedRenderer"
+                :items="rendererItems"
+                :label="i18n.renderer"
+                hide-details
+            />
+        </v-flex>
+
+        <!-- Attribute Selection (for specific renderers) -->
+        <v-flex
+            v-if="selectedLayerId && selectedRenderer !== 'simple' &&
+                selectedRenderer !== 'symbol' && selectedRenderer !== 'heatmap'"
+            mb-2
+        >
+            <v-select
+                v-model="selectedAttribute"
+                :items="selectedLayerAttributes"
+                item-text="name"
+                item-value="name"
+                :label="i18n.attribute"
+                hide-details
+            />
+        </v-flex>
+
+        <!-- Reset Button -->
+        <v-flex
+            v-if="selectedRenderer"
+            mb-3
+        >
+            <v-btn
+                class="primary"
+                @click="$emit('reset-renderer')"
             >
-                <v-select
-                    v-model="selectedRenderer"
-                    :items="rendererItems"
-                    :label="i18n.renderer"
-                    hide-details
-                />
-                <div v-if="selectedLayerId && selectedRenderer !== 'simple' && selectedRenderer !== 'symbol' && selectedRenderer !== 'heatmap'">
-                    <v-select
-                        v-model="selectedAttribute"
-                        :items="selectedLayerAttributes"
-                        item-text="name"
-                        item-value="name"
-                        :label="i18n.attribute"
-                        hide-details
-                    />
-                </div>
-            </v-flex>
-            <v-flex class="tocactionrenderer--renderer-settings">
+                {{ i18n.resetRenderer }}
+            </v-btn>
+        </v-flex>
+
+        <!-- Two Column Layout: Settings Left, Renderer Right -->
+        <v-layout
+            row
+            wrap
+            class="tocactionrenderer-content-layout"
+        >
+            <!-- Left Column: Renderer Settings -->
+            <v-flex
+                xs12
+                md6
+                class="tocactionrenderer-left-column"
+            >
                 <div v-if="selectedRenderer === 'simple'">
                     <v-card class="pa-3">
                         <p>{{ i18n.fillColor }}</p>
@@ -108,22 +139,36 @@
                         />
                     </v-card>
                 </div>
+                <div v-if="selectedRenderer === 'heatmap'">
+                    <div class="heatmap-settings">
+                        <div
+                            v-for="(item, index) in heatmapColorsReverse()"
+                            :key="index"
+                            class="heatmap-color-item"
+                        >
+                            <v-flex class="heatmap-color-container align-center pb-3">
+                                <color-picker
+                                    :value="item.color"
+                                    @input="updateHeatmapColor(index, $event)"
+                                />
+                            </v-flex>
+                        </div>
+                    </div>
+                </div>
             </v-flex>
+
+            <!-- Right Column: Renderer Preview/Widget -->
             <v-flex
-                v-if="selectedRenderer"
+                xs12
+                md6
+                class="tocactionrenderer-right-column"
             >
-                <v-btn
-                    class="primary ml-0"
-                    @click="$emit('reset-renderer')"
-                >
-                    {{ i18n.resetRenderer }}
-                </v-btn>
+                <div
+                    ref="ctSmartRendererWidgets"
+                    class="tocactionrenderer-esri-widgets"
+                />
             </v-flex>
         </v-layout>
-        <div
-            ref="ctSmartRendererWidgets"
-            class="tocactionrenderer-esri-widgets"
-        />
     </v-container>
 </template>
 
@@ -168,7 +213,8 @@
                 symbolWidth : {
                     type: Number,
                     default: 12
-                }
+                },
+                heatmapColors: []
             };
         },
         computed: {
@@ -249,9 +295,11 @@
                     const rendererArray = Object.keys(this.i18n.renderers).map(key => this.i18n.renderers[key]);
 
                     if (this.symbolApplicable) {
-                        return rendererArray.filter((renderer) => this.allowedRenderers.includes(renderer.value));
+                        return rendererArray.filter((renderer) =>
+                            this.allowedRenderers.includes(renderer.value));
                     } else {
-                        const tempRendererList = rendererArray.filter((renderer) => this.allowedRenderers.includes(renderer.value));
+                        const tempRendererList = rendererArray.filter((renderer) =>
+                            this.allowedRenderers.includes(renderer.value));
                         return tempRendererList.filter(renderer => renderer.value !== "symbol");
                     }
                 }
@@ -270,6 +318,24 @@
             }
         },
         methods: {
+            heatmapColorsReverse() {
+                return [...this.heatmapColors].reverse();
+            },
+            updateHeatmapColor(index, colorValue) {
+                const rgba = colorValue.rgba;
+                // Calculate the actual index in the original array
+                const actualIndex = this.heatmapColors.length - 1 - index;
+                this.heatmapColors[actualIndex].color = {
+                    r: rgba.r,
+                    g: rgba.g,
+                    b: rgba.b,
+                    a: rgba.a
+                };
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    heatmapColors: this.heatmapColors
+                });
+            },
             updateRenderer() {
                 this.$emit("update-renderer", {
                     attribute: this.selectedAttribute,
