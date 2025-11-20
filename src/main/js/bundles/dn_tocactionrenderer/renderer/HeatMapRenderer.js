@@ -15,15 +15,32 @@
  */
 import HeatmapSlider from "@arcgis/core/widgets/smartMapping/HeatmapSlider";
 import * as heatmapRendererCreator from "@arcgis/core/smartMapping/renderers/heatmap";
+import Color from "@arcgis/core/Color";
 
 export default function createHeatMapRenderer(layer, properties, mapWidgetModel, domNode) {
+    const colorStops = properties.colorStops;
+    const heatmapSchemeColors = colorStops.map(stop => {
+        const color = new Color(stop.color);
+        return color;
+    });
     const params = {
         layer: layer,
-        view: mapWidgetModel.view
+        view: mapWidgetModel.view,
+        heatmapScheme:
+        {
+            id: "custom-heatmap-scheme-1",
+            name: "custom-1",
+            tags: [
+                "new",
+                "custom"
+            ],
+            colors: [...heatmapSchemeColors],
+            opacity: 0.7
+        }
+
     };
 
     let rendererResult = null;
-    const colorStops = properties.colorStops;
 
     heatmapRendererCreator.createRenderer(params)
         .then(function (response) {
@@ -35,7 +52,17 @@ export default function createHeatMapRenderer(layer, properties, mapWidgetModel,
         });
 
     const slider = new HeatmapSlider();
-    slider.stops = colorStops;
+
+    // Convert colorStops to the format HeatmapSlider expects
+    const sliderStops = colorStops.map(stop => {
+        const color = new Color(stop.color);
+        return {
+            ratio: stop.ratio,
+            color: color.toCss(true) // Convert to "rgba(r,g,b,a)" string format
+        };
+    });
+
+    slider.stops = sliderStops;
     slider.container = domNode;
     slider.on(
         ["thumb-change", "thumb-drag"],
