@@ -34,6 +34,53 @@
     margin-top: -10px;
 }
 
-.ctAppRoot .vuetify-menues .vc-sketch {
-    color: #45474d;
+/* Main Container Layout */
+.ctAppRoot .tocactionrenderer .tocactionrenderer-main-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.ctAppRoot .tocactionrenderer .tocactionrenderer-content-layout {
+    min-height: 350px;
+}
+
+/* Left Column: Settings */
+.ctAppRoot .tocactionrenderer .tocactionrenderer-left-column {
+    padding: 16px;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Right Column: Renderer Widget */
+.ctAppRoot .tocactionrenderer .tocactionrenderer-right-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.ctAppRoot .tocactionrenderer .tocactionrenderer-esri-widgets {
+    width: 100%;
+    max-width: 300px;
+    padding-top: 0;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+    .ctAppRoot .tocactionrenderer .tocactionrenderer-left-column {
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+}
+
+.ctAppRoot .tocactionrenderer .heatmap-color-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.ctAppRoot .tocactionrenderer .heatmap-color-container .tocactionrenderer--color-picker {
+    width: 100%;
+    max-width: 100;
 }

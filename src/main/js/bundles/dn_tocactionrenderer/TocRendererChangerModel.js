@@ -26,7 +26,7 @@ export default declare({
     sizeRendererColor: [],
     outlineWidth: undefined,
     pointSize: undefined,
-    heatmapRenderer: [],
+    heatmapRenderer: {},
     allowedRenderers: [],
     symbolURL: "",
     symbolHeight: undefined,

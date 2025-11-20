@@ -19,6 +19,8 @@ import Binding from "apprt-binding/Binding";
 import TocRendererChangerWidget from "./TocRendererChangerWidget.vue";
 import TocRendererChangerController from "./TocRendererChangerController";
 
+import { debounceOrCancel, ifDefined } from "apprt-binding/Transformers";
+
 export default class TocRendererChangerWidgetFactory {
 
     #vm = undefined;
@@ -39,7 +41,6 @@ export default class TocRendererChangerWidgetFactory {
     #initComponent() {
         const vm = this.#vm = new Vue(TocRendererChangerWidget);
         vm.i18n = this._i18n.get().ui;
-
         const controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
         this.#watchForEvents(vm, controller);
         const widget = this.#widget = VueDijit(vm, { class: "tocactionrenderer" });
@@ -66,11 +67,13 @@ export default class TocRendererChangerWidgetFactory {
         return Binding.for(model, vm)
             .syncAll("color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth")
             .syncAllToRight("allowedRenderers", "selectedLayerId",
-                "selectedRenderer", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType");
+                "selectedRenderer", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType")
+            .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops));
     }
 
     #watchForEvents(vm, controller) {
         vm.$on('update-renderer', (evt) => {
+            console.info(evt);
             controller.createRendererWidget(evt);
         });
 

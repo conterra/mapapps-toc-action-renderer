@@ -166,6 +166,10 @@ export default class TocRendererChangerController {
                     this.setTypeRenderer(evt.attribute);
                     break;
                 case "heatmap":
+                    console.info(this.model);
+                    if (evt.heatmapColors) {
+                        this.model.heatmapRenderer.colorStops = evt.heatmapColors;
+                    }
                     this.setHeatmapRenderer();
                     break;
                 case "simple":
