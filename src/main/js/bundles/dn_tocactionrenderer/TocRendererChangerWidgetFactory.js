@@ -19,7 +19,7 @@ import Binding from "apprt-binding/Binding";
 import TocRendererChangerWidget from "./TocRendererChangerWidget.vue";
 import TocRendererChangerController from "./TocRendererChangerController";
 
-import { debounceOrCancel, ifDefined } from "apprt-binding/Transformers";
+import { ifDefined } from "apprt-binding/Transformers";
 
 export default class TocRendererChangerWidgetFactory {
 
@@ -68,7 +68,8 @@ export default class TocRendererChangerWidgetFactory {
             .syncAll("color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth")
             .syncAllToRight("allowedRenderers", "selectedLayerId",
                 "selectedRenderer", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType")
-            .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops));
+            .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops))
+            .syncToRight("classBreaksRenderer", ["classBreaksColors"], ifDefined((classBreaksRenderer) => classBreaksRenderer.colors));
     }
 
     #watchForEvents(vm, controller) {

@@ -142,7 +142,7 @@
                 <div v-if="selectedRenderer === 'heatmap'">
                     <div class="heatmap-settings">
                         <div
-                            v-for="(item, index) in heatmapColorsReverse()"
+                            v-for="(item, index) in reverseArray(heatmapColors)"
                             :key="index"
                             class="heatmap-color-item"
                         >
@@ -150,6 +150,22 @@
                                 <color-picker
                                     :value="item.color"
                                     @input="updateHeatmapColor(index, $event)"
+                                />
+                            </v-flex>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="selectedRenderer === 'class_breaks'">
+                    <div class="classbreaks-settings">
+                        <div
+                            v-for="(item, index) in reverseArray(classBreaksColors)"
+                            :key="index"
+                            class="classbreaks-color-item"
+                        >
+                            <v-flex class="classbreaks-color-container align-center pb-3">
+                                <color-picker
+                                    :value="item"
+                                    @input="updateClassBreaksColor(index, $event)"
                                 />
                             </v-flex>
                         </div>
@@ -214,7 +230,8 @@
                     type: Number,
                     default: 12
                 },
-                heatmapColors: []
+                heatmapColors: [],
+                classBreaksColors: []
             };
         },
         computed: {
@@ -318,8 +335,8 @@
             }
         },
         methods: {
-            heatmapColorsReverse() {
-                return [...this.heatmapColors].reverse();
+            reverseArray(arr) {
+                return [...arr].reverse();
             },
             updateHeatmapColor(index, colorValue) {
                 const rgba = colorValue.rgba;
@@ -339,8 +356,7 @@
             updateRenderer() {
                 this.$emit("update-renderer", {
                     attribute: this.selectedAttribute,
-                    renderer: this.selectedRenderer,
-                    color: undefined
+                    renderer: this.selectedRenderer
                 });
             }
         }
