@@ -27,7 +27,7 @@ export default declare({
     outlineWidth: undefined,
     pointSize: undefined,
     heatmapRenderer: {},
-    classBreaksRenderer:{},
+    classBreaksColors: [],
     allowedRenderers: [],
     symbolURL: "",
     symbolHeight: undefined,

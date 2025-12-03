@@ -65,16 +65,14 @@ export default class TocRendererChangerWidgetFactory {
     #createBinding(vm) {
         const model = this._model;
         return Binding.for(model, vm)
-            .syncAll("color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth")
+            .syncAll("classBreaksColors", "color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth")
             .syncAllToRight("allowedRenderers", "selectedLayerId",
                 "selectedRenderer", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType")
-            .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops))
-            .syncToRight("classBreaksRenderer", ["classBreaksColors"], ifDefined((classBreaksRenderer) => classBreaksRenderer.colors));
+            .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops));
     }
 
     #watchForEvents(vm, controller) {
         vm.$on('update-renderer', (evt) => {
-            console.info(evt);
             controller.createRendererWidget(evt);
         });
 

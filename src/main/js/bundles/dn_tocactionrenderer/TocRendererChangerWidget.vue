@@ -64,6 +64,7 @@
 
         <!-- Two Column Layout: Settings Left, Renderer Right -->
         <v-layout
+            v-if="selectedRenderer"
             row
             wrap
             class="tocactionrenderer-content-layout"
@@ -109,7 +110,7 @@
                         </div>
                     </v-card>
                 </div>
-                <div v-if="selectedRenderer === 'size'">
+                <div v-if="selectedRenderer === 'size' && selectedAttribute">
                     <v-card class="pa-3">
                         <p>{{ i18n.fillColor }}</p>
                         <div class="tocactionrenderer--color-picker">
@@ -139,7 +140,7 @@
                         />
                     </v-card>
                 </div>
-                <div v-if="selectedRenderer === 'heatmap'">
+                <div v-if="selectedRenderer === 'heatmap' && selectedAttribute">
                     <div class="heatmap-settings">
                         <div
                             v-for="(item, index) in reverseArray(heatmapColors)"
@@ -155,7 +156,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="selectedRenderer === 'class_breaks'">
+                <div v-if="selectedRenderer === 'class_breaks' && selectedAttribute">
                     <div class="classbreaks-settings">
                         <div
                             v-for="(item, index) in reverseArray(classBreaksColors)"
@@ -175,6 +176,8 @@
 
             <!-- Right Column: Renderer Preview/Widget -->
             <v-flex
+                v-if="selectedRenderer !== 'simple' &&
+                    selectedRenderer !== 'symbol'"
                 xs12
                 md6
                 class="tocactionrenderer-right-column"
@@ -351,6 +354,21 @@
                 this.$emit("update-renderer", {
                     renderer: this.selectedRenderer,
                     heatmapColors: this.heatmapColors
+                });
+            },
+            updateClassBreaksColor(index, colorValue) {
+                const rgba = colorValue.rgba;
+                // Calculate the actual index in the original array
+                const actualIndex = this.classBreaksColors.length - 1 - index;
+                this.classBreaksColors[actualIndex].r = rgba.r;
+                this.classBreaksColors[actualIndex].g = rgba.g;
+                this.classBreaksColors[actualIndex].b = rgba.b;
+                this.classBreaksColors[actualIndex].a = rgba.a;
+
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    attribute: this.selectedAttribute,
+                    classBreaksColors: this.classBreaksColors
                 });
             },
             updateRenderer() {
