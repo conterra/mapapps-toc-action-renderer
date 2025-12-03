@@ -157,7 +157,9 @@ export default class TocRendererChangerController {
         if (evt?.renderer) {
             switch (evt.renderer) {
                 case "class_breaks":
-                    this.setClassBreaksRenderer(evt.attribute);
+                    if (evt.attribute) {
+                        this.setClassBreaksRenderer(evt.attribute);
+                    }
                     break;
                 case "size":
                     this.setSizeRenderer(evt.attribute, evt.color);
@@ -166,7 +168,6 @@ export default class TocRendererChangerController {
                     this.setTypeRenderer(evt.attribute);
                     break;
                 case "heatmap":
-                    console.info(this.model);
                     if (evt.heatmapColors) {
                         this.model.heatmapRenderer.colorStops = evt.heatmapColors;
                     }
@@ -189,7 +190,8 @@ export default class TocRendererChangerController {
             this.selectedLayer,
             this._mapWidgetModel.view,
             attribute,
-            this.vm.$refs["ctSmartRendererWidgets"]
+            this.vm.$refs["ctSmartRendererWidgets"],
+            this.model
         );
     }
 
@@ -253,6 +255,7 @@ export default class TocRendererChangerController {
         this.model.color = [];
         this.model.outlineColor = [];
         this.model.sizeRendererColor = [];
+        this.model.classBreaksColors = [];
     }
 
 }
