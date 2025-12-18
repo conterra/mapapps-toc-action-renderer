@@ -65,9 +65,8 @@ export default class TocRendererChangerWidgetFactory {
     #createBinding(vm) {
         const model = this._model;
         return Binding.for(model, vm)
-            .syncAll("classBreaksColors", "color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth")
-            .syncAllToRight("allowedRenderers", "selectedLayerId",
-                "selectedRenderer", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType")
+            .syncAll("classBreaksColors", "color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth", "selectedRenderer", "selectedAttribute")
+            .syncAllToRight("allowedRenderers", "selectedLayerId", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType")
             .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops));
     }
 
