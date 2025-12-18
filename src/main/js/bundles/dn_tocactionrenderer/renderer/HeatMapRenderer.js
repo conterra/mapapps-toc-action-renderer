@@ -52,13 +52,11 @@ export default function createHeatMapRenderer(layer, properties, mapWidgetModel,
         });
 
     const slider = new HeatmapSlider();
-
-    // Convert colorStops to the format HeatmapSlider expects
     const sliderStops = colorStops.map(stop => {
         const color = new Color(stop.color);
         return {
             ratio: stop.ratio,
-            color: color.toCss(true) // Convert to "rgba(r,g,b,a)" string format
+            color: color.toCss(true)
         };
     });
 

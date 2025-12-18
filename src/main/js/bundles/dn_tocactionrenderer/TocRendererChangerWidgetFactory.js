@@ -74,7 +74,14 @@ export default class TocRendererChangerWidgetFactory {
         vm.$on('update-renderer', (evt) => {
             controller.createRendererWidget(evt);
         });
-
+        vm.$on('update-simple-renderer', (evt) => {
+            controller.updateSimpleRenderer(
+                evt.color,
+                evt.outlineColor,
+                evt.outlineWidth,
+                evt.pointSize
+            );
+        });
         vm.$on('reset-renderer', () => {
             controller.resetRenderer();
         });

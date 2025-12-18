@@ -140,7 +140,7 @@
                         />
                     </v-card>
                 </div>
-                <div v-if="selectedRenderer === 'heatmap' && selectedAttribute">
+                <div v-if="selectedRenderer === 'heatmap'">
                     <div class="heatmap-settings">
                         <div
                             v-for="(item, index) in reverseArray(heatmapColors)"
@@ -174,7 +174,6 @@
                 </div>
             </v-flex>
 
-            <!-- Right Column: Renderer Preview/Widget -->
             <v-flex
                 v-if="selectedRenderer !== 'simple' &&
                     selectedRenderer !== 'symbol'"
@@ -284,6 +283,7 @@
                 set(value) {
                     const rgba = value.rgba;
                     this.color = [rgba.r, rgba.g, rgba.b, rgba.a];
+                    this.updateSimpleRenderer();
                 }
             },
             outlineColorPickerValue: {
@@ -308,6 +308,7 @@
                 set(value) {
                     const rgba = value.rgba;
                     this.outlineColor = [rgba.r, rgba.g, rgba.b, rgba.a];
+                    this.updateSimpleRenderer();
                 }
             },
             rendererItems: {
@@ -340,6 +341,16 @@
         methods: {
             reverseArray(arr) {
                 return [...arr].reverse();
+            },
+            updateSimpleRenderer(){
+
+                this.$emit("update-simple-renderer", {
+                    renderer: this.selectedRenderer,
+                    color: this.color,
+                    outlineColor: this.outlineColor,
+                    outlineWidth: this.outlineWidth,
+                    pointSize: this.pointSize
+                });
             },
             updateHeatmapColor(index, colorValue) {
                 const rgba = colorValue.rgba;
