@@ -26,8 +26,8 @@
                 "title": "${windowTitle}",
                 "dockTool": "tocRendererChangerToggleTool",
                 "marginBox": {
-                    "w": 650,
-                    "h": 450
+                    "w": 550,
+                    "h": 550
                 },
                 "closable": true,
                 "resizable": true,

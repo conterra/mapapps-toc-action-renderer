@@ -33,7 +33,6 @@
             />
         </v-flex>
 
-        <!-- Attribute Selection (for specific renderers) -->
         <v-flex
             v-if="selectedLayerId && selectedRenderer !== 'simple' &&
                 selectedRenderer !== 'symbol' && selectedRenderer !== 'heatmap'"
@@ -62,14 +61,12 @@
             </v-btn>
         </v-flex>
 
-        <!-- Two Column Layout: Settings Left, Renderer Right -->
         <v-layout
-            v-if="selectedRenderer"
+            v-if="selectedRenderer && selectedRenderer !== 'unique_values'"
             row
             wrap
             class="tocactionrenderer-content-layout"
         >
-            <!-- Left Column: Renderer Settings -->
             <v-flex
                 xs12
                 md6
@@ -141,36 +138,43 @@
                     </v-card>
                 </div>
                 <div v-if="selectedRenderer === 'heatmap'">
-                    <div class="heatmap-settings">
-                        <div
-                            v-for="(item, index) in reverseArray(heatmapColors)"
-                            :key="index"
-                            class="heatmap-color-item"
-                        >
-                            <v-flex class="heatmap-color-container align-center pb-3">
-                                <color-picker
-                                    :value="item.color"
-                                    @input="updateHeatmapColor(index, $event)"
-                                />
-                            </v-flex>
+                    <v-card class="pa-3">
+                        <div class="heatmap-settings">
+                            <div
+                                v-for="(item, index) in reverseArray(heatmapColors)"
+                                :key="index"
+                                class="heatmap-color-item"
+                            >
+                                <v-flex class="heatmap-color-container align-center pb-3">
+                                    <color-picker
+                                        :value="item.color"
+                                        @input="updateHeatmapColor(index, $event)"
+                                    />
+                                </v-flex>
+                            </div>
                         </div>
-                    </div>
+                    </v-card>
                 </div>
                 <div v-if="selectedRenderer === 'class_breaks' && selectedAttribute">
-                    <div class="classbreaks-settings">
-                        <div
-                            v-for="(item, index) in reverseArray(classBreaksColors)"
-                            :key="index"
-                            class="classbreaks-color-item"
-                        >
-                            <v-flex class="classbreaks-color-container align-center pb-3">
-                                <color-picker
-                                    :value="item"
-                                    @input="updateClassBreaksColor(index, $event)"
-                                />
-                            </v-flex>
+                    <v-card class="pa-3">
+                        <div class="classbreaks-settings">
+                            <div
+                                v-for="(item, index) in reverseArray(classBreaksColors)"
+                                :key="index"
+                                class="classbreaks-color-item"
+                            >
+                                <div class="v-label theme--light mb-2">
+                                    {{ item.label }}
+                                </div>
+                                <v-flex class="classbreaks-color-container align-center pb-3">
+                                    <color-picker
+                                        :value="item"
+                                        @input="updateClassBreaksColor(index, $event)"
+                                    />
+                                </v-flex>
+                            </div>
                         </div>
-                    </div>
+                    </v-card>
                 </div>
             </v-flex>
 

@@ -94,6 +94,11 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
             if (response.colorScheme.name == "Blue 3") {
                 properties.classBreaksColors = response.colorScheme.colors;
             }
+            response.renderer.classBreakInfos.forEach((info, index) => {
+                if (properties.classBreaksColors[index]) {
+                    properties.classBreaksColors[index].label = info.label;
+                }
+            });
             return histogram({
                 layer: layer,
                 valueExpression: rendererParams.valueExpression,
@@ -117,6 +122,12 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
                     renderer.classBreakInfos
                 );
                 layer.renderer = renderer;
+                console.info("Changed renderer:", renderer.classBreakInfos);
+                renderer.classBreakInfos.forEach((info, index) => {
+                    if (properties.classBreaksColors[index]) {
+                        properties.classBreaksColors[index].label = info.label;
+                    }
+                });
             }
             if (!slider) {
 
@@ -132,6 +143,13 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
                     ["thumb-change", "thumb-drag", "min-change", "max-change"],
                     changeEventHandler
                 );
+
+                slider.on("thumb-change", () => {
+                    console.info("TEST", rendererResult);
+                });
+                slider.on("max-change", (event) => {
+                    console.info("Max wurde geändert", event);
+                });
             } else {
                 slider.updateFromRendererResult(rendererResult, histogramResult);
             }
