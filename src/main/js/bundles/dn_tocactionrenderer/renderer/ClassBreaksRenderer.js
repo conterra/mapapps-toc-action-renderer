@@ -93,12 +93,14 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
 
             if (response.colorScheme.name == "Blue 3") {
                 properties.classBreaksColors = response.colorScheme.colors;
+
+                response.renderer.classBreakInfos.forEach((info, index) => {
+                    if (properties.classBreaksColors[index]) {
+                        properties.classBreaksColors[index].label = info.label;
+                    }
+                });
             }
-            response.renderer.classBreakInfos.forEach((info, index) => {
-                if (properties.classBreaksColors[index]) {
-                    properties.classBreaksColors[index].label = info.label;
-                }
-            });
+
             return histogram({
                 layer: layer,
                 valueExpression: rendererParams.valueExpression,
@@ -116,19 +118,35 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
             view: view,
             numBins: 100
         }).then(function (histogramResult) {
-            function changeEventHandler() {
-                const renderer = layer.renderer.clone();
-                renderer.classBreakInfos = slider.updateClassBreakInfos(
-                    renderer.classBreakInfos
-                );
-                layer.renderer = renderer;
-                console.info("Changed renderer:", renderer.classBreakInfos);
-                renderer.classBreakInfos.forEach((info, index) => {
+
+            function updateLabels(classBreakInfos) {
+                classBreakInfos.forEach((info, index) => {
+                    const min = info.minValue;
+                    const max = info.maxValue;
+
+                    if (index === 0) {
+                        info.label = `${min.toFixed(1)} – ${max.toFixed(1)}`;
+                    } else {
+                        info.label = `> ${min.toFixed(1)} – ${max.toFixed(1)}`;
+                    }
+
                     if (properties.classBreaksColors[index]) {
                         properties.classBreaksColors[index].label = info.label;
                     }
                 });
             }
+
+            function changeEventHandler(event) {
+                layer.renderer.classBreakInfos = slider.updateClassBreakInfos(
+                    layer.renderer.classBreakInfos
+                );
+
+                updateLabels(layer.renderer.classBreakInfos);
+
+                console.info("Changed renderer:", layer.renderer.classBreakInfos);
+                console.info("Event:", event);
+            }
+
             if (!slider) {
 
                 slider = ClassedColorSlider.fromRendererResult(
@@ -138,18 +156,10 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
                 slider.container = domNode;
                 slider.viewModel.precision = 1;
 
-
                 slider.on(
                     ["thumb-change", "thumb-drag", "min-change", "max-change"],
                     changeEventHandler
                 );
-
-                slider.on("thumb-change", () => {
-                    console.info("TEST", rendererResult);
-                });
-                slider.on("max-change", (event) => {
-                    console.info("Max wurde geändert", event);
-                });
             } else {
                 slider.updateFromRendererResult(rendererResult, histogramResult);
             }
