@@ -27,20 +27,13 @@ export default class TocRendererChangerController {
 
         this.initProperties();
 
-        model.watch("selectedLayerId", ({value}) => {
+        model.watch("selectedLayerId", ({ value }) => {
             this.getLayerAttributes(value);
         });
-
-        model.watch("color", ({value}) => {
-            this.updateSimpleRenderer(value, model.outlineColor, model.outlineWidth, model.pointSize);
-        });
-        model.watch("outlineColor", ({value}) => {
-            this.updateSimpleRenderer(model.color, value, model.outlineWidth, model.pointSize);
-        });
-        model.watch("outlineWidth", ({value}) => {
+        model.watch("outlineWidth", ({ value }) => {
             this.updateSimpleRenderer(model.color, model.outlineColor, value, model.pointSize);
         });
-        model.watch("pointSize", ({value}) => {
+        model.watch("pointSize", ({ value }) => {
             this.updateSimpleRenderer(model.color, model.outlineColor, model.outlineWidth, value);
         });
         model.watch("symbolURL", () => {
@@ -53,10 +46,14 @@ export default class TocRendererChangerController {
         model.watch("symbolWidth", () => {
             this.updateSymbolRenderer(model);
         });
+        model.watch("sizeRendererColor", ({ value }) => {
+            this.updateSizeRenderer(value);
+        });
     }
 
     initProperties() {
         this.oldRenderer = [];
+        this.originalHeatmapColorStops = JSON.parse(JSON.stringify(this.model.heatmapRenderer || null));
     }
 
     getLayerAttributes(layerId) {
@@ -72,9 +69,18 @@ export default class TocRendererChangerController {
             });
             this.oldRenderer[selectedLayer.id] = selectedLayer.renderer.clone();
         }
-        // hide/show symbol renderer in renderer selection
+
         model.symbolApplicable = selectedLayer.geometryType === "point";
         model.currentGeometryType = selectedLayer.geometryType;
+    }
+
+    updateSizeRenderer(color) {
+        if (!this.selectedLayer || !this.selectedLayer.renderer || !this.selectedLayer.renderer.classBreakInfos) {
+            return;
+        }
+        const attribute = this.selectedLayer.renderer.visualVariables[0]?.valueExpression?.split(".")[1];
+
+        this.createRendererWidget({ renderer: "size", attribute: attribute, color: color });
     }
 
     updateSimpleRenderer(color, outlineColor, outlineWidth, pointSize) {
@@ -143,28 +149,82 @@ export default class TocRendererChangerController {
     createRendererWidget(evt) {
         this.removeRendererWidget();
         if (evt?.renderer) {
-            switch (evt.renderer) {
-                case "class_breaks":
-                    this.setClassBreaksRenderer(evt.attribute);
-                    break;
-                case "size":
-                    this.setSizeRenderer(evt.attribute);
-                    break;
-                case "unique_values":
-                    this.setTypeRenderer(evt.attribute);
-                    break;
-                case "heatmap":
-                    this.setHeatmapRenderer();
-                    break;
-                case "simple":
-                    // do nothing
-                    break;
-                case "symbol":
-                    this.setSymbolRenderer();
-                    break;
-                default:
-                    break;
-            }
+
+            this.vm.$nextTick(() => {
+                switch (evt.renderer) {
+                    case "class_breaks":
+                        if (evt.attribute) {
+                            this.setClassBreaksRenderer(evt.attribute);
+                        }
+                        break;
+                    case "size":
+                        this.setSizeRenderer(evt.attribute, evt.color);
+                        break;
+                    case "unique_values":
+                        this.setTypeRenderer(evt.attribute);
+                        break;
+                    case "heatmap":
+                        if (evt.heatmapColors) {
+                            this.model.heatmapRenderer.colorStops = evt.heatmapColors;
+                        }
+                        this.setHeatmapRenderer();
+                        break;
+                    case "simple":
+                        // do nothing
+                        break;
+                    case "symbol":
+                        this.setSymbolRenderer();
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+    }
+    setSimpleRenderer(color, outlineColor, outlineWidth, pointSize) {
+        const geomType = this.model.currentGeometryType;
+
+        switch (geomType) {
+            case "polygon":
+                this.selectedLayer.renderer = {
+                    type: "simple",
+                    symbol: {
+                        type: "simple-fill",
+                        color: color,
+                        outline: {
+                            width: outlineWidth,
+                            color: outlineColor
+                        }
+                    }
+                };
+                break;
+            case "point":
+                this.selectedLayer.renderer = {
+                    type: "simple",
+                    symbol: {
+                        type: "simple-marker",
+                        size: pointSize,
+                        color: color,
+                        outline: {
+                            width: outlineWidth,
+                            color: outlineColor
+                        }
+                    }
+                };
+                break;
+            case "polyline":
+                this.selectedLayer.renderer = {
+                    type: "simple",
+                    symbol: {
+                        type: "simple-line",
+                        color: color,
+                        width: outlineWidth,
+                        style: "solid"
+                    }
+                };
+                break;
+            default:
+                break;
         }
     }
 
@@ -173,7 +233,8 @@ export default class TocRendererChangerController {
             this.selectedLayer,
             this._mapWidgetModel.view,
             attribute,
-            this.vm.$refs["ctSmartRendererWidgets"]
+            this.vm.$refs["ctSmartRendererWidgets"],
+            this.model
         );
     }
 
@@ -186,12 +247,13 @@ export default class TocRendererChangerController {
         );
     }
 
-    setSizeRenderer(attribute) {
+    setSizeRenderer(attribute, color) {
         createSizeRenderer(
             this.selectedLayer,
             this._mapWidgetModel.view,
             attribute,
-            this.vm.$refs["ctSmartRendererWidgets"]
+            this.vm.$refs["ctSmartRendererWidgets"],
+            color
         );
     }
 
@@ -233,6 +295,13 @@ export default class TocRendererChangerController {
         this.removeRendererWidget();
         this.model.selectedRenderer = undefined;
         this.model.selectedAttribute = undefined;
+        this.model.color = [];
+        this.model.outlineColor = [];
+        this.model.sizeRendererColor = [];
+        this.model.classBreaksColors = [];
+
+        this.model.heatmapRenderer = null;
+        this.model.heatmapRenderer = JSON.parse(JSON.stringify(this.originalHeatmapColorStops));
     }
 
 }

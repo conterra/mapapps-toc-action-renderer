@@ -19,6 +19,8 @@ import Binding from "apprt-binding/Binding";
 import TocRendererChangerWidget from "./TocRendererChangerWidget.vue";
 import TocRendererChangerController from "./TocRendererChangerController";
 
+import { ifDefined } from "apprt-binding/Transformers";
+
 export default class TocRendererChangerWidgetFactory {
 
     #vm = undefined;
@@ -39,10 +41,9 @@ export default class TocRendererChangerWidgetFactory {
     #initComponent() {
         const vm = this.#vm = new Vue(TocRendererChangerWidget);
         vm.i18n = this._i18n.get().ui;
-
         const controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
         this.#watchForEvents(vm, controller);
-        const widget = this.#widget = VueDijit(vm, {class: "tocactionrenderer"});
+        const widget = this.#widget = VueDijit(vm, { class: "tocactionrenderer" });
 
         let binding = this.#createBinding(vm);
         widget.enableBinding = function () {
@@ -64,16 +65,23 @@ export default class TocRendererChangerWidgetFactory {
     #createBinding(vm) {
         const model = this._model;
         return Binding.for(model, vm)
-            .syncAll("color", "outlineColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth")
-            .syncAllToRight("allowedRenderers", "selectedLayerId",
-                "selectedRenderer", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType");
+            .syncAll("classBreaksColors", "color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth", "selectedRenderer", "selectedAttribute")
+            .syncAllToRight("allowedRenderers", "selectedLayerId", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType")
+            .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops));
     }
 
     #watchForEvents(vm, controller) {
         vm.$on('update-renderer', (evt) => {
             controller.createRendererWidget(evt);
         });
-
+        vm.$on('update-simple-renderer', (evt) => {
+            controller.updateSimpleRenderer(
+                evt.color,
+                evt.outlineColor,
+                evt.outlineWidth,
+                evt.pointSize
+            );
+        });
         vm.$on('reset-renderer', () => {
             controller.resetRenderer();
         });

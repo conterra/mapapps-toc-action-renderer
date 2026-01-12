@@ -16,20 +16,59 @@
 import * as colorRendererCreator from "@arcgis/core/smartMapping/renderers/color";
 import histogram from "@arcgis/core/smartMapping/statistics/histogram";
 import ClassedColorSlider from "@arcgis/core/widgets/smartMapping/ClassedColorSlider";
+import Color from "@arcgis/core/Color";
 
-export default function createClassBreaksRenderer(layer, view, attribute, domNode) {
-    const rendererParams = {
-        layer: layer,
-        view: view,
-        valueExpression: "$feature." + attribute,
-        classificationMethod: 'natural-breaks',
-        numClasses: 5,
+export default function createClassBreaksRenderer(layer, view, attribute, domNode, properties) {
+    let rendererParams = null;
+    if (properties.classBreaksColors.length === 5) {
 
-        // does not work for client side graphics?
-        outlineOptimizationEnabled: false,
-        sizeOptimizationEnabled: false
-    };
+        const colorStops = properties.classBreaksColors;
+        const classBreaksColors = colorStops.map(stop => {
+            const color = new Color(stop);
+            return color;
+        });
 
+        const customColorScheme = {
+            id: "custom",
+            tags: ["custom", "user-defined"],
+            colors: classBreaksColors,
+            noDataColor: new Color([128, 128, 128, 0.5]),
+            colorsForClassBreaks: [{
+                colors: classBreaksColors,
+                numClasses: classBreaksColors.length
+            }],
+            outline: {
+                color: new Color([255, 255, 255, 0.5]),
+                width: 0.5
+            },
+            size: 8,
+            occupancy: 1
+        };
+
+        rendererParams = {
+            layer: layer,
+            view: view,
+            valueExpression: "$feature." + attribute,
+            classificationMethod: 'natural-breaks',
+            colorScheme: customColorScheme,
+
+            // does not work for client side graphics?
+            outlineOptimizationEnabled: false,
+            sizeOptimizationEnabled: false
+        };
+    }
+    else {
+        rendererParams = {
+            layer: layer,
+            view: view,
+            valueExpression: "$feature." + attribute,
+            classificationMethod: 'natural-breaks',
+
+            // does not work for client side graphics?
+            outlineOptimizationEnabled: false,
+            sizeOptimizationEnabled: false
+        };
+    }
     // Generate a continuous size renderer based on the
     // statistics of the data in the provided layer
     // and field.
@@ -44,15 +83,23 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
     colorRendererCreator
         .createClassBreaksRenderer(rendererParams)
         .then(response => {
-            // Set the output renderer on the layer
 
             rendererResult = response;
             layer.renderer = rendererResult.renderer;
 
             // generate a histogram for use in the slider. Input the layer
             // and field name to generate it.
-            updateColorSlider(response);
+            updateColorSlider(rendererResult);
 
+            if (response.colorScheme.name == "Blue 3") {
+                properties.classBreaksColors = response.colorScheme.colors;
+
+                response.renderer.classBreakInfos.forEach((info, index) => {
+                    if (properties.classBreaksColors[index]) {
+                        properties.classBreaksColors[index].label = info.label;
+                    }
+                });
+            }
 
             return histogram({
                 layer: layer,
@@ -71,13 +118,35 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
             view: view,
             numBins: 100
         }).then(function (histogramResult) {
-            function changeEventHandler() {
-                const renderer = layer.renderer.clone();
-                renderer.classBreakInfos = slider.updateClassBreakInfos(
-                    renderer.classBreakInfos
-                );
-                layer.renderer = renderer;
+
+            function updateLabels(classBreakInfos) {
+                classBreakInfos.forEach((info, index) => {
+                    const min = info.minValue;
+                    const max = info.maxValue;
+
+                    if (index === 0) {
+                        info.label = `${min.toFixed(1)} – ${max.toFixed(1)}`;
+                    } else {
+                        info.label = `> ${min.toFixed(1)} – ${max.toFixed(1)}`;
+                    }
+
+                    if (properties.classBreaksColors[index]) {
+                        properties.classBreaksColors[index].label = info.label;
+                    }
+                });
             }
+
+            function changeEventHandler(event) {
+                layer.renderer.classBreakInfos = slider.updateClassBreakInfos(
+                    layer.renderer.classBreakInfos
+                );
+
+                updateLabels(layer.renderer.classBreakInfos);
+
+                console.info("Changed renderer:", layer.renderer.classBreakInfos);
+                console.info("Event:", event);
+            }
+
             if (!slider) {
 
                 slider = ClassedColorSlider.fromRendererResult(
@@ -86,7 +155,6 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
                 );
                 slider.container = domNode;
                 slider.viewModel.precision = 1;
-
 
                 slider.on(
                     ["thumb-change", "thumb-drag", "min-change", "max-change"],

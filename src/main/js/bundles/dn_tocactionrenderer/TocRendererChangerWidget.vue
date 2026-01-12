@@ -16,33 +16,62 @@
 
 -->
 <template>
-    <v-container pa-0>
+    <v-container
+        pa-0
+        class="tocactionrenderer-main-container"
+    >
+        <!-- Renderer Selection Tabs -->
+        <v-flex
+            v-if="selectedLayerId"
+            mb-2
+        >
+            <v-select
+                v-model="selectedRenderer"
+                :items="rendererItems"
+                :label="i18n.renderer"
+                hide-details
+            />
+        </v-flex>
+
+        <v-flex
+            v-if="selectedLayerId && selectedRenderer !== 'simple' &&
+                selectedRenderer !== 'symbol' && selectedRenderer !== 'heatmap'"
+            mb-2
+        >
+            <v-select
+                v-model="selectedAttribute"
+                :items="selectedLayerAttributes"
+                item-text="name"
+                item-value="name"
+                :label="i18n.attribute"
+                hide-details
+            />
+        </v-flex>
+
+        <!-- Reset Button -->
+        <v-flex
+            v-if="selectedRenderer"
+            mb-3
+        >
+            <v-btn
+                class="primary"
+                @click="$emit('reset-renderer')"
+            >
+                {{ i18n.resetRenderer }}
+            </v-btn>
+        </v-flex>
+
         <v-layout
-            column
+            v-if="selectedRenderer && selectedRenderer !== 'unique_values'"
+            row
             wrap
+            class="tocactionrenderer-content-layout"
         >
             <v-flex
-                v-if="selectedLayerId"
-                mb-2
+                xs12
+                md6
+                class="tocactionrenderer-left-column"
             >
-                <v-select
-                    v-model="selectedRenderer"
-                    :items="rendererItems"
-                    :label="i18n.renderer"
-                    hide-details
-                />
-                <div v-if="selectedLayerId && selectedRenderer !== 'simple' && selectedRenderer !== 'symbol' && selectedRenderer !== 'heatmap'">
-                    <v-select
-                        v-model="selectedAttribute"
-                        :items="selectedLayerAttributes"
-                        item-text="name"
-                        item-value="name"
-                        :label="i18n.attribute"
-                        hide-details
-                    />
-                </div>
-            </v-flex>
-            <v-flex class="tocactionrenderer--renderer-settings">
                 <div v-if="selectedRenderer === 'simple'">
                     <v-card class="pa-3">
                         <p>{{ i18n.fillColor }}</p>
@@ -78,6 +107,14 @@
                         </div>
                     </v-card>
                 </div>
+                <div v-if="selectedRenderer === 'size' && selectedAttribute">
+                    <v-card class="pa-3">
+                        <p>{{ i18n.fillColor }}</p>
+                        <div class="tocactionrenderer--color-picker">
+                            <color-picker v-model="sizeRendererColorValue" />
+                        </div>
+                    </v-card>
+                </div>
                 <div v-if="selectedRenderer === 'symbol'">
                     <v-card class="pa-3">
                         <v-text-field
@@ -100,22 +137,60 @@
                         />
                     </v-card>
                 </div>
+                <div v-if="selectedRenderer === 'heatmap'">
+                    <v-card class="pa-3">
+                        <div class="heatmap-settings">
+                            <div
+                                v-for="(item, index) in reverseArray(heatmapColors)"
+                                :key="index"
+                                class="heatmap-color-item"
+                            >
+                                <v-flex class="heatmap-color-container align-center pb-3">
+                                    <color-picker
+                                        :value="item.color"
+                                        @input="updateHeatmapColor(index, $event)"
+                                    />
+                                </v-flex>
+                            </div>
+                        </div>
+                    </v-card>
+                </div>
+                <div v-if="selectedRenderer === 'class_breaks' && selectedAttribute">
+                    <v-card class="pa-3">
+                        <div class="classbreaks-settings">
+                            <div
+                                v-for="(item, index) in reverseArray(classBreaksColors)"
+                                :key="index"
+                                class="classbreaks-color-item"
+                            >
+                                <div class="v-label theme--light mb-2">
+                                    {{ item.label }}
+                                </div>
+                                <v-flex class="classbreaks-color-container align-center pb-3">
+                                    <color-picker
+                                        :value="item"
+                                        @input="updateClassBreaksColor(index, $event)"
+                                    />
+                                </v-flex>
+                            </div>
+                        </div>
+                    </v-card>
+                </div>
             </v-flex>
+
             <v-flex
-                v-if="selectedRenderer"
+                v-if="selectedRenderer !== 'simple' &&
+                    selectedRenderer !== 'symbol'"
+                xs12
+                md6
+                class="tocactionrenderer-right-column"
             >
-                <v-btn
-                    class="primary ml-0"
-                    @click="$emit('reset-renderer')"
-                >
-                    {{ i18n.resetRenderer }}
-                </v-btn>
+                <div
+                    ref="ctSmartRendererWidgets"
+                    class="tocactionrenderer-esri-widgets"
+                />
             </v-flex>
         </v-layout>
-        <div
-            ref="ctSmartRendererWidgets"
-            class="tocactionrenderer-esri-widgets"
-        />
     </v-container>
 </template>
 
@@ -146,6 +221,7 @@
                 selectedRenderer: "simple",
                 color: [],
                 outlineColor: [],
+                sizeRendererColor: [],
                 outlineWidth: undefined,
                 pointSize: undefined,
                 allowedRenderers: [],
@@ -159,10 +235,36 @@
                 symbolWidth : {
                     type: Number,
                     default: 12
-                }
+                },
+                heatmapColors: [],
+                classBreaksColors: []
             };
         },
         computed: {
+            sizeRendererColorValue: {
+                get() {
+                    const color = this.sizeRendererColor;
+                    if (color.length === 4) {
+                        return {
+                            r: color[0],
+                            g: color[1],
+                            b: color[2],
+                            a: color[3]
+                        };
+                    } else {
+                        return {
+                            r: 200,
+                            g: 200,
+                            b: 200,
+                            a: 1
+                        };
+                    }
+                },
+                set(value) {
+                    const rgba = value.rgba;
+                    this.sizeRendererColor = [rgba.r, rgba.g, rgba.b, rgba.a];
+                }
+            },
             colorPickerValue: {
                 get() {
                     const color = this.color;
@@ -185,6 +287,7 @@
                 set(value) {
                     const rgba = value.rgba;
                     this.color = [rgba.r, rgba.g, rgba.b, rgba.a];
+                    this.updateSimpleRenderer();
                 }
             },
             outlineColorPickerValue: {
@@ -209,6 +312,7 @@
                 set(value) {
                     const rgba = value.rgba;
                     this.outlineColor = [rgba.r, rgba.g, rgba.b, rgba.a];
+                    this.updateSimpleRenderer();
                 }
             },
             rendererItems: {
@@ -216,9 +320,11 @@
                     const rendererArray = Object.keys(this.i18n.renderers).map(key => this.i18n.renderers[key]);
 
                     if (this.symbolApplicable) {
-                        return rendererArray.filter((renderer) => this.allowedRenderers.includes(renderer.value));
+                        return rendererArray.filter((renderer) =>
+                            this.allowedRenderers.includes(renderer.value));
                     } else {
-                        const tempRendererList = rendererArray.filter((renderer) => this.allowedRenderers.includes(renderer.value));
+                        const tempRendererList = rendererArray.filter((renderer) =>
+                            this.allowedRenderers.includes(renderer.value));
                         return tempRendererList.filter(renderer => renderer.value !== "symbol");
                     }
                 }
@@ -237,6 +343,49 @@
             }
         },
         methods: {
+            reverseArray(arr) {
+                return [...arr].reverse();
+            },
+            updateSimpleRenderer(){
+
+                this.$emit("update-simple-renderer", {
+                    renderer: this.selectedRenderer,
+                    color: this.color,
+                    outlineColor: this.outlineColor,
+                    outlineWidth: this.outlineWidth,
+                    pointSize: this.pointSize
+                });
+            },
+            updateHeatmapColor(index, colorValue) {
+                const rgba = colorValue.rgba;
+                // Calculate the actual index in the original array
+                const actualIndex = this.heatmapColors.length - 1 - index;
+                this.heatmapColors[actualIndex].color = {
+                    r: rgba.r,
+                    g: rgba.g,
+                    b: rgba.b,
+                    a: rgba.a
+                };
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    heatmapColors: this.heatmapColors
+                });
+            },
+            updateClassBreaksColor(index, colorValue) {
+                const rgba = colorValue.rgba;
+                // Calculate the actual index in the original array
+                const actualIndex = this.classBreaksColors.length - 1 - index;
+                this.classBreaksColors[actualIndex].r = rgba.r;
+                this.classBreaksColors[actualIndex].g = rgba.g;
+                this.classBreaksColors[actualIndex].b = rgba.b;
+                this.classBreaksColors[actualIndex].a = rgba.a;
+
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    attribute: this.selectedAttribute,
+                    classBreaksColors: this.classBreaksColors
+                });
+            },
             updateRenderer() {
                 this.$emit("update-renderer", {
                     attribute: this.selectedAttribute,
