@@ -16,15 +16,10 @@
     NOTE: This script only checks production licenses by default.
     Alter this script if you want to check development dependencies as well (see below).
 
-
-    NOTE: This script only checks production licenses by default.
-    Alter this script if you want to check development dependencies as well (see below).
-
     See also https://www.npmjs.com/package/license-checker
 */
 
 import { init as initChecker } from "license-checker";
-import { cwd, exit } from "node:process";
 import { cwd, exit } from "node:process";
 
 // Licenses known to be OK.
@@ -51,8 +46,6 @@ initChecker(
     {
         start: cwd(),
         onlyAllow: ACCEPTED_LICENSES.join(";"),
-        excludePackages: SKIP_PACKAGES.join(";"),
-        production: true
         excludePackages: SKIP_PACKAGES.join(";"),
         production: true
     },

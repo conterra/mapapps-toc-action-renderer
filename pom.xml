@@ -659,9 +659,6 @@
                             <!--
                             No longer required when the rollup build is in use, because the calculation of the dependencies is done via rollup build.
                             -->
-                            <!--
-                            No longer required when the rollup build is in use, because the calculation of the dependencies is done via rollup build.
-                            -->
                             <execution>
                                 <id>calculate js dependencies</id>
                                 <goals>
