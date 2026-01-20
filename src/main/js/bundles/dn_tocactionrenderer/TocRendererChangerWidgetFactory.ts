@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2025 con terra GmbH (info@conterra.de)
  *
@@ -16,36 +17,48 @@
 import Vue from "apprt-vue/Vue";
 import VueDijit from "apprt-vue/VueDijit";
 import Binding from "apprt-binding/Binding";
+import MapWidgetModel from "map-widget/MapWidgetModel";
+
 import TocRendererChangerWidget from "./TocRendererChangerWidget.vue";
 import TocRendererChangerController from "./TocRendererChangerController";
-
 import { ifDefined } from "apprt-binding/Transformers";
 
-export default class TocRendererChangerWidgetFactory {
+import type { InjectedReference } from "apprt-core/InjectedReference";
+import type { MessagesReference } from "./nls/bundle";
+import type { TocRendererChangerModel } from "./TocRendererChangerModel";
 
-    #vm = undefined;
-    #widget = undefined;
+export class TocRendererChangerWidgetFactory {
 
-    activate() {
+    private vm?: Vue;
+    private widget?: any;
+    private binding?: Binding;
+
+    private _i18n!: InjectedReference<MessagesReference>;
+    private _mapWidgetModel!: InjectedReference<MapWidgetModel>;
+    private _model!: InjectedReference<TocRendererChangerModel>;
+
+    activate():void {
         this.#initComponent();
     }
 
-    deactivate() {
-        this.#vm.$off();
+    deactivate():void {
+        this.vm?.$off();
     }
 
-    createInstance() {
-        return this.#widget;
+    createInstance(): any {
+        return this.widget;
     }
 
     #initComponent() {
-        const vm = this.#vm = new Vue(TocRendererChangerWidget);
-        vm.i18n = this._i18n.get().ui;
+        const vm = this.vm = new Vue(TocRendererChangerWidget);
+        const model = this._model!;
+        vm.i18n = this._i18n!.get().ui;
         const controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
         this.#watchForEvents(vm, controller);
-        const widget = this.#widget = VueDijit(vm, { class: "tocactionrenderer" });
+        const widget = this.widget = VueDijit(vm, { class: "tocactionrenderer" });
 
-        let binding = this.#createBinding(vm);
+        const binding = this.binding = this.createBinding(vm);
+
         widget.enableBinding = function () {
             binding.enable().syncToRightNow();
         };
@@ -56,25 +69,24 @@ export default class TocRendererChangerWidgetFactory {
         widget.own({
             remove() {
                 binding.unbind();
-                binding = undefined;
                 widget.enableBinding = widget.disableBinding = undefined;
             }
         });
     }
 
-    #createBinding(vm) {
-        const model = this._model;
+    private createBinding(vm: Vue): Binding {
+        const model = this._model!;
         return Binding.for(model, vm)
             .syncAll("classBreaksColors", "color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth", "selectedRenderer", "selectedAttribute")
             .syncAllToRight("allowedRenderers", "selectedLayerId", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType")
             .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops));
     }
 
-    #watchForEvents(vm, controller) {
-        vm.$on('update-renderer', (evt) => {
+    #watchForEvents(vm: Vue, controller: TocRendererChangerController) {
+        vm.$on('update-renderer', (evt: any) => {
             controller.createRendererWidget(evt);
         });
-        vm.$on('update-simple-renderer', (evt) => {
+        vm.$on('update-simple-renderer', (evt: any) => {
             controller.updateSimpleRenderer(
                 evt.color,
                 evt.outlineColor,
