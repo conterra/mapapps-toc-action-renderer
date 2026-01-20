@@ -13,16 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import type Tool from "ct/tools/Tool";
+
+import { InjectedReference } from "apprt-core/InjectedReference";
+import { MessagesReference } from "./nls/bundle";
+import { TocRendererChangerModel } from "./TocRendererChangerModel";
+
 const ID = "change-renderer-action";
 
 export default class TocRendererChangerActionDefinitionFactory {
+
+    private supportedIds: string[];
+
+    private _i18n!: InjectedReference<MessagesReference>;
+    private _tool!: InjectedReference<typeof Tool>;
+    private _model!: InjectedReference<TocRendererChangerModel>;
 
     constructor() {
         this.supportedIds = [ID];
     }
 
-    createDefinitionById(id) {
-        const i18n = this._i18n.get();
+    public createDefinitionById(id:string): any {
+        const i18n = this._i18n!.get();
         const tool = this._tool;
         const model = this._model;
 
@@ -32,19 +44,19 @@ export default class TocRendererChangerActionDefinitionFactory {
             label: i18n.tool.title,
             icon: "color_lens",
 
-            isVisibleForItem(tocItem) {
+            isVisibleForItem(tocItem: any) {
                 if (tocItem?.ref?.type === "feature") {
                     return true;
                 }
             },
 
-            isDisabledForItem(tocItem) {
+            isDisabledForItem(tocItem: any) {
                 return !tocItem?.ref?.visible;
             },
 
-            trigger(tocItem) {
-                tool.set("active", true);
-                model.selectedLayerId = tocItem.ref.id;
+            trigger(tocItem: any) {
+                tool!.set("active", true);
+                model!.selectedLayerId = tocItem.ref.id;
             }
         };
     }
