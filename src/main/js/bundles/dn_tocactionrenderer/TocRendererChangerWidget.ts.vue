@@ -194,7 +194,7 @@
     </v-container>
 </template>
 
-<script>
+<script lang="ts">
     /*
     TODO:
     - different color schemes: https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-smartMapping-symbology-color.html#getSchemes
@@ -202,29 +202,58 @@
     - filter renderer for attr types
     - heatmap renderer
     */
+    import Vue from "vue";
     import Bindable from "apprt-vue/mixins/Bindable";
     import ColorPicker from "./components/ColorPicker.vue";
 
-    export default {
+    import type { ColorPickerObject, HeatmapColorStop, RGBAColor, I18n } from "./api";
+
+    export default Vue.extend({
         components: {
             'color-picker': ColorPicker
         },
         mixins: [Bindable],
+        props:{
+            i18n: {
+                type: Object as () => I18n,
+                default: function (): I18n {
+                    return {
+                        renderer: "Renderer",
+                        renderers: [
+                            {value: "simple", text: "Simple"},
+                            {value: "symbol", text: "Symbol"},
+                            {value: "class_breaks", text: "Class Breaks"},
+                            {value: "size", text: "Size"},
+                            {value: "unique_values", text: "Unique Values"},
+                            {value: "heatmap", text: "Heatmap"}
+                        ],
+                        resetRenderer: "Reset Renderer",
+                        attribute: "Attribute",
+                        fillColor: "Fill Color",
+                        outlineColor: "Outline Color",
+                        outlineWidth: "Outline Width",
+                        pointSize: "Point Size",
+                        symbolUrlLabel: "Symbol URL",
+                        symbolHeightLabel: "Symbol Height",
+                        symbolWidthLabel: "Symbol Width"
+                    };
+                }
+            }
+        },
         data: function () {
             return {
                 name: "",
-                i18n: Object,
                 message: "",
                 selectedLayerAttributes: [],
                 selectedLayerId: undefined,
                 selectedAttribute: undefined,
                 selectedRenderer: "simple",
-                color: [],
-                outlineColor: [],
-                sizeRendererColor: [],
+                color: [] as number[],
+                outlineColor: [] as number[],
+                sizeRendererColor: [] as number[],
                 outlineWidth: undefined,
                 pointSize: undefined,
-                allowedRenderers: [],
+                allowedRenderers: [] as string[],
                 symbolApplicable: undefined,
                 currentGeometryType: undefined,
                 symbolURL: "",
@@ -236,8 +265,8 @@
                     type: Number,
                     default: 12
                 },
-                heatmapColors: [],
-                classBreaksColors: []
+                heatmapColors: [] as HeatmapColorStop[],
+                classBreaksColors: [] as RGBAColor[]
             };
         },
         computed: {
@@ -260,7 +289,7 @@
                         };
                     }
                 },
-                set(value) {
+                set(value: ColorPickerObject) {
                     const rgba = value.rgba;
                     this.sizeRendererColor = [rgba.r, rgba.g, rgba.b, rgba.a];
                 }
@@ -284,7 +313,7 @@
                         };
                     }
                 },
-                set(value) {
+                set(value: ColorPickerObject) {
                     const rgba = value.rgba;
                     this.color = [rgba.r, rgba.g, rgba.b, rgba.a];
                     this.updateSimpleRenderer();
@@ -309,7 +338,7 @@
                         };
                     }
                 },
-                set(value) {
+                set(value: ColorPickerObject) {
                     const rgba = value.rgba;
                     this.outlineColor = [rgba.r, rgba.g, rgba.b, rgba.a];
                     this.updateSimpleRenderer();
@@ -317,7 +346,7 @@
             },
             rendererItems: {
                 get() {
-                    const rendererArray = Object.keys(this.i18n.renderers).map(key => this.i18n.renderers[key]);
+                    const rendererArray = this.i18n.renderers;
 
                     if (this.symbolApplicable) {
                         return rendererArray.filter((renderer) =>
@@ -343,7 +372,7 @@
             }
         },
         methods: {
-            reverseArray(arr) {
+            reverseArray(arr: any[]) {
                 return [...arr].reverse();
             },
             updateSimpleRenderer(){
@@ -356,7 +385,7 @@
                     pointSize: this.pointSize
                 });
             },
-            updateHeatmapColor(index, colorValue) {
+            updateHeatmapColor(index: number, colorValue: ColorPickerObject) {
                 const rgba = colorValue.rgba;
                 // Calculate the actual index in the original array
                 const actualIndex = this.heatmapColors.length - 1 - index;
@@ -371,7 +400,7 @@
                     heatmapColors: this.heatmapColors
                 });
             },
-            updateClassBreaksColor(index, colorValue) {
+            updateClassBreaksColor(index: number, colorValue: ColorPickerObject) {
                 const rgba = colorValue.rgba;
                 // Calculate the actual index in the original array
                 const actualIndex = this.classBreaksColors.length - 1 - index;
@@ -393,5 +422,5 @@
                 });
             }
         }
-    };
+    });
 </script>
