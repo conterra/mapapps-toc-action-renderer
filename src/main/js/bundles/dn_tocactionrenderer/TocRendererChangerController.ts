@@ -1,3 +1,20 @@
+///
+/// Copyright (C) 2025 con terra GmbH (info@conterra.de)
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///         http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+///
+
+
 /*
  * Copyright (C) 2025 con terra GmbH (info@conterra.de)
  *
@@ -13,55 +30,75 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Color from "@arcgis/core/Color";
+import Field from "@arcgis/core/layers/support/Field.js";
+
+import Vue from "apprt-vue/Vue";
+import MapWidgetModel from "map-widget/MapWidgetModel";
+
 import createSizeRenderer from "./renderer/SizeRenderer";
 import createClassBreaksRenderer from "./renderer/ClassBreaksRenderer";
 import createTypeRenderer from "./renderer/TypeRenderer";
 import createHeatMapRenderer from "./renderer/HeatMapRenderer";
 
-export default class TocRendererChangerController {
+import { TocRendererChangerModel } from "./TocRendererChangerModel";
+import type { InjectedReference } from "apprt-core/InjectedReference";
+import { RendererChangeEvent } from "./api";
 
-    constructor(vm, mapWidgetModel, model) {
+export default class TocRendererChangerController {
+    private vm: Vue;
+    private model!: InjectedReference<TocRendererChangerModel>;
+    private _mapWidgetModel: InjectedReference<MapWidgetModel>;
+    private selectedLayer: any;
+    private oldRenderer!: any[];
+    private originalHeatmapColorStops: any;
+
+    constructor(
+        vm: Vue,
+        mapWidgetModel: InjectedReference<MapWidgetModel>,
+        model: InjectedReference<TocRendererChangerModel>) {
+
         this.vm = vm;
         this.model = model;
         this._mapWidgetModel = mapWidgetModel;
 
         this.initProperties();
 
-        model.watch("selectedLayerId", ({ value }) => {
+        model!.watch("selectedLayerId", ({ value }: { value: string }) => {
             this.getLayerAttributes(value);
         });
-        model.watch("outlineWidth", ({ value }) => {
-            this.updateSimpleRenderer(model.color, model.outlineColor, value, model.pointSize);
+        model!.watch("outlineWidth", ({ value }: { value: number }) => {
+            this.updateSimpleRenderer(model!.color, model!.outlineColor, value, model!.pointSize);
         });
-        model.watch("pointSize", ({ value }) => {
-            this.updateSimpleRenderer(model.color, model.outlineColor, model.outlineWidth, value);
+        model!.watch("pointSize", ({ value }: { value: number }) => {
+            this.updateSimpleRenderer(model!.color, model!.outlineColor, model!.outlineWidth, value);
         });
-        model.watch("symbolURL", () => {
+        model!.watch("symbolURL", () => {
             this.updateSymbolRenderer(model);
         });
-        model.watch("symbolHeight", () => {
+        model!.watch("symbolHeight", () => {
             this.updateSymbolRenderer(model);
         });
 
-        model.watch("symbolWidth", () => {
+        model!.watch("symbolWidth", () => {
             this.updateSymbolRenderer(model);
         });
-        model.watch("sizeRendererColor", ({ value }) => {
+        model!.watch("sizeRendererColor", ({ value }: { value: any }) => {
             this.updateSizeRenderer(value);
         });
     }
 
-    initProperties() {
+    initProperties(): void {
         this.oldRenderer = [];
-        this.originalHeatmapColorStops = JSON.parse(JSON.stringify(this.model.heatmapRenderer || null));
+        this.originalHeatmapColorStops = JSON.parse(JSON.stringify(this.model!.heatmapRenderer || null));
     }
 
-    getLayerAttributes(layerId) {
-        const model = this.model;
-        const selectedLayer = this.selectedLayer = this._mapWidgetModel.map.findLayerById(layerId);
+    private getLayerAttributes(layerId: string) {
+        const model = this.model!;
+        const selectedLayer = this.selectedLayer = this._mapWidgetModel!.map.findLayerById(layerId);
 
         if (selectedLayer) {
-            model.selectedLayerAttributes = selectedLayer.fields.map(item => {
+            model.selectedLayerAttributes = selectedLayer.fields.map((item: Field) => {
                 return {
                     name: item.name,
                     type: item.type
@@ -70,11 +107,11 @@ export default class TocRendererChangerController {
             this.oldRenderer[selectedLayer.id] = selectedLayer.renderer.clone();
         }
 
-        model.symbolApplicable = selectedLayer.geometryType === "point";
-        model.currentGeometryType = selectedLayer.geometryType;
+        model.symbolApplicable = selectedLayer!.geometryType === "point";
+        model.currentGeometryType = selectedLayer!.geometryType;
     }
 
-    updateSizeRenderer(color) {
+    private updateSizeRenderer(color: Color): void {
         if (!this.selectedLayer || !this.selectedLayer.renderer || !this.selectedLayer.renderer.classBreakInfos) {
             return;
         }
@@ -83,8 +120,8 @@ export default class TocRendererChangerController {
         this.createRendererWidget({ renderer: "size", attribute: attribute, color: color });
     }
 
-    updateSimpleRenderer(color, outlineColor, outlineWidth, pointSize) {
-        const geomType = this.model.currentGeometryType;
+    public updateSimpleRenderer(color: Color, outlineColor: Color, outlineWidth: number, pointSize: number): void {
+        const geomType = this.model!.currentGeometryType;
 
         switch (geomType) {
             case "polygon":
@@ -130,7 +167,7 @@ export default class TocRendererChangerController {
         }
     }
 
-    updateSymbolRenderer(model) {
+    private updateSymbolRenderer(model: TocRendererChangerModel): void {
         const geomType = this.selectedLayer.geometryType;
 
         if (geomType === "point") {
@@ -146,26 +183,33 @@ export default class TocRendererChangerController {
         }
     }
 
-    createRendererWidget(evt) {
+    public createRendererWidget(evt: RendererChangeEvent): void {
         this.removeRendererWidget();
         if (evt?.renderer) {
 
             this.vm.$nextTick(() => {
                 switch (evt.renderer) {
                     case "class_breaks":
-                        if (evt.attribute) {
-                            this.setClassBreaksRenderer(evt.attribute);
+                        if (!evt.attribute) {
+                            return;
                         }
+                        this.setClassBreaksRenderer(evt.attribute);
                         break;
                     case "size":
-                        this.setSizeRenderer(evt.attribute, evt.color);
+                        if(!evt.attribute) {
+                            return;
+                        }
+                        this.setSizeRenderer(evt.attribute, evt.color!);
                         break;
                     case "unique_values":
+                        if(!evt.attribute) {
+                            return;
+                        }
                         this.setTypeRenderer(evt.attribute);
                         break;
                     case "heatmap":
                         if (evt.heatmapColors) {
-                            this.model.heatmapRenderer.colorStops = evt.heatmapColors;
+                            this.model!.heatmapRenderer.colorStops = evt.heatmapColors;
                         }
                         this.setHeatmapRenderer();
                         break;
@@ -181,8 +225,8 @@ export default class TocRendererChangerController {
             });
         }
     }
-    setSimpleRenderer(color, outlineColor, outlineWidth, pointSize) {
-        const geomType = this.model.currentGeometryType;
+    private setSimpleRenderer(color: Color, outlineColor: Color, outlineWidth: number, pointSize: number): void {
+        const geomType = this.model!.currentGeometryType;
 
         switch (geomType) {
             case "polygon":
@@ -228,61 +272,61 @@ export default class TocRendererChangerController {
         }
     }
 
-    setClassBreaksRenderer(attribute) {
+    private setClassBreaksRenderer(attribute: string) {
         createClassBreaksRenderer(
             this.selectedLayer,
-            this._mapWidgetModel.view,
+            this._mapWidgetModel!.view,
             attribute,
             this.vm.$refs["ctSmartRendererWidgets"],
             this.model
         );
     }
 
-    setHeatmapRenderer() {
+    private setHeatmapRenderer() {
         createHeatMapRenderer(
             this.selectedLayer,
-            this.model.heatmapRenderer,
+            this.model!.heatmapRenderer,
             this._mapWidgetModel,
             this.vm.$refs["ctSmartRendererWidgets"]
         );
     }
 
-    setSizeRenderer(attribute, color) {
+    private setSizeRenderer(attribute: string, color: Color): void {
+        // debugger;
         createSizeRenderer(
             this.selectedLayer,
-            this._mapWidgetModel.view,
+            this._mapWidgetModel!.view,
             attribute,
             this.vm.$refs["ctSmartRendererWidgets"],
             color
         );
     }
 
-    setTypeRenderer(attribute) {
+    private setTypeRenderer(attribute: string) {
         createTypeRenderer(
             this.selectedLayer,
-            this._mapWidgetModel.view,
-            attribute,
-            this.vm.$refs["ctSmartRendererWidgets"]
+            this._mapWidgetModel!.view,
+            attribute
         );
     }
 
-    setSymbolRenderer() {
+    private setSymbolRenderer() {
         const geomType = this.selectedLayer.geometryType;
-
+        const model = this.model!;
         if (geomType === "point") {
             this.selectedLayer.renderer = {
                 type: "simple",  // autocasts as new PictureMarkerSymbol()
                 symbol: {
                     type: "picture-marker",
-                    url: this.model.symbolURL,
-                    height: this.model.symbolHeight,
-                    width: this.model.symbolWidth
+                    url: model.symbolURL,
+                    height: model.symbolHeight,
+                    width: model.symbolWidth
                 }
             };
         }
     }
 
-    removeRendererWidget() {
+    private removeRendererWidget(): void {
         if (this.vm.$refs.ctSmartRendererWidgets && this.vm.$refs.ctSmartRendererWidgets.childNodes) {
             this.vm.$refs.ctSmartRendererWidgets.childNodes.forEach(el => {
                 el.remove();
@@ -290,18 +334,18 @@ export default class TocRendererChangerController {
         }
     }
 
-    resetRenderer() {
+    public resetRenderer(): void {
         this.selectedLayer.renderer = this.oldRenderer[this.selectedLayer.id];
         this.removeRendererWidget();
-        this.model.selectedRenderer = undefined;
-        this.model.selectedAttribute = undefined;
-        this.model.color = [];
-        this.model.outlineColor = [];
-        this.model.sizeRendererColor = [];
-        this.model.classBreaksColors = [];
+        this.model!.selectedRenderer = undefined;
+        this.model!.selectedAttribute = undefined;
+        this.model!.color = [];
+        this.model!.outlineColor = [];
+        this.model!.sizeRendererColor = [];
+        this.model!.classBreaksColors = [];
 
-        this.model.heatmapRenderer = null;
-        this.model.heatmapRenderer = JSON.parse(JSON.stringify(this.originalHeatmapColorStops));
+        this.model!.heatmapRenderer = null;
+        this.model!.heatmapRenderer = JSON.parse(JSON.stringify(this.originalHeatmapColorStops));
     }
 
 }
