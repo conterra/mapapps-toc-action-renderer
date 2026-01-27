@@ -33,6 +33,7 @@ export default {
         ],
         resetRenderer: "Symbolisierung zurücksetzen",
         attribute: "Attribut",
+        colorSelectionFor: "Farbauswahl für",
         fillColor: "Füllfarbe",
         outlineColor: "Umrandfarbe",
         outlineWidth: "Umriss-Breite",

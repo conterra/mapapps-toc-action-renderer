@@ -27,6 +27,7 @@
                 small
                 block
                 :style="`background-color: ${backgroundColor}`"
+                :aria-label="ariaLabel"
                 class="ma-0"
                 v-on="on"
             />
@@ -48,6 +49,10 @@
                 default: () => {
                     return {};
                 }
+            },
+            ariaLabel: {
+                type: String,
+                default: ""
             }
         },
         data() {
