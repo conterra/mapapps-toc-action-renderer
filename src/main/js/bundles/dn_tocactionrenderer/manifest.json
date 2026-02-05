@@ -6,6 +6,9 @@
     "vendor": "con terra GmbH",
     "productName": "devnet-mapapps-toc-action-renderer",
     "dependencies": {
+        "apprt-core": "^4.20.0",
+        "apprt-binding": "^4.20.0",
+        "ct": "^4.20.0",
         "apprt-vue": "^4.20.0",
         "apprt-vuetify": "^4.20.0",
         "@arcgis/core": "^4.33.0",
@@ -45,6 +48,7 @@
             "propertiesConstructor": true,
             "properties": {
                 "selectedRenderer": "simple",
+                "selectedSymbol": "circle",
                 "allowedRenderers": [
                     "simple",
                     "symbol",
