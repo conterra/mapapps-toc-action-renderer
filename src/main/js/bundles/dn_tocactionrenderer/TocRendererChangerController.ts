@@ -45,7 +45,7 @@ import { TocRendererChangerModel } from "./TocRendererChangerModel";
 import type { InjectedReference } from "apprt-core/InjectedReference";
 import { RendererChangeEvent } from "./api";
 
-export default class TocRendererChangerController {
+export class TocRendererChangerController {
     private vm: Vue;
     private model!: InjectedReference<TocRendererChangerModel>;
     private _mapWidgetModel: InjectedReference<MapWidgetModel>;
