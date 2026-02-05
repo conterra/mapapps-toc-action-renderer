@@ -62,7 +62,7 @@
         </v-flex>
 
         <v-layout
-            v-if="selectedRenderer && selectedRenderer !== 'unique_values'"
+            v-if="selectedRenderer"
             row
             wrap
             class="tocactionrenderer-content-layout"
@@ -105,6 +105,27 @@
                                 class="tocactionrenderer--outlineWidth-textfield"
                             />
                         </div>
+                    </v-card>
+                </div>
+                <div v-if="selectedRenderer === 'unique_values' && selectedAttribute">
+                    <v-card class="pa-3">
+                        <p>{{ i18n.symbol }}</p>
+                        <v-select
+                            v-model="selectedSymbol"
+                            :items="symbolItems"
+                            :label="i18n.symbol"
+                            hide-details
+                        />
+                        <div class="mb-4" />
+                        <p>{{ i18n.outlineWidth }}</p>
+                        <v-text-field
+                            v-model="outlineWidth"
+                            type="number"
+                            min="1"
+                            single-line
+                            hide-details
+                            class="tocactionrenderer--outlineWidth-textfield"
+                        />
                     </v-card>
                 </div>
                 <div v-if="selectedRenderer === 'size' && selectedAttribute">
@@ -206,7 +227,7 @@
     import Bindable from "apprt-vue/mixins/Bindable";
     import ColorPicker from "./components/ColorPicker.vue";
 
-    import type { ColorPickerObject, HeatmapColorStop, RGBAColor, I18n } from "./api";
+    import type { ColorPickerObject, HeatmapColorStop, RGBAColor, I18n, RendererType, SymbolObjectType} from "./api";
 
     export default Vue.extend({
         components: {
@@ -226,6 +247,15 @@
                             {value: "size", text: "Size"},
                             {value: "unique_values", text: "Unique Values"},
                             {value: "heatmap", text: "Heatmap"}
+                        ],
+                        symbol:"Symbol",
+                        symbols: [
+                            {value: "circle", text: "Kreis"},
+                            {value: "square", text: "Quadrat"},
+                            {value: "triangle", text: "Dreieck"},
+                            {value: "diamond", text: "Raute"},
+                            {value: "cross", text: "Kreuz"},
+                            {value: "x", text: "X"}
                         ],
                         resetRenderer: "Reset Renderer",
                         attribute: "Attribute",
@@ -248,6 +278,7 @@
                 selectedLayerId: undefined,
                 selectedAttribute: undefined,
                 selectedRenderer: "simple",
+                selectedSymbol: "circle",
                 color: [] as number[],
                 outlineColor: [] as number[],
                 sizeRendererColor: [] as number[],
@@ -346,7 +377,9 @@
             },
             rendererItems: {
                 get() {
-                    const rendererArray = this.i18n.renderers;
+                    const rendererArray = (Array.isArray(this.i18n.renderers)
+                        ? this.i18n.renderers
+                        : Object.values(this.i18n.renderers));
 
                     if (this.symbolApplicable) {
                         return rendererArray.filter((renderer) =>
@@ -354,8 +387,17 @@
                     } else {
                         const tempRendererList = rendererArray.filter((renderer) =>
                             this.allowedRenderers.includes(renderer.value));
-                        return tempRendererList.filter(renderer => renderer.value !== "symbol");
+                        const temp = tempRendererList.filter(renderer => renderer.value !== "symbol");
+                        return temp;
                     }
+                }
+            },
+            symbolItems: {
+                get() {
+                    const symbolArray = (Array.isArray(this.i18n.symbols)
+                        ? this.i18n.symbols
+                        : Object.values(this.i18n.symbols));
+                    return symbolArray;
                 }
             }
         },
@@ -367,6 +409,11 @@
             },
             selectedRenderer: function (renderer) {
                 if (renderer) {
+                    this.updateRenderer();
+                }
+            },
+            selectedSymbol: function (symbol) {
+                if (symbol) {
                     this.updateRenderer();
                 }
             }
@@ -418,7 +465,8 @@
             updateRenderer() {
                 this.$emit("update-renderer", {
                     attribute: this.selectedAttribute,
-                    renderer: this.selectedRenderer
+                    renderer: this.selectedRenderer,
+                    symbol: this.selectedSymbol
                 });
             }
         }

@@ -33,6 +33,15 @@ const i18n = {
                 {value: "unique_values", text: "Unique Values"},
                 {value: "heatmap", text: "Heatmap"}
             ],
+            symbol: "Symbol",
+            symbols: [
+                {value: "circle", text: "Circle"},
+                {value: "square", text: "Square"},
+                {value: "triangle", text: "Triangle"},
+                {value: "diamond", text: "Diamond"},
+                {value: "cross", text: "Cross"},
+                {value: "x", text: "X"}
+            ],
             resetRenderer: "Reset Renderer",
             attribute: "Attribute",
             fillColor: "Fill Color",

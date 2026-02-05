@@ -19,13 +19,13 @@ import VueDijit from "apprt-vue/VueDijit";
 import Binding from "apprt-binding/Binding";
 import MapWidgetModel from "map-widget/MapWidgetModel";
 
-import TocRendererChangerWidget from "./TocRendererChangerWidget.vue";
-import TocRendererChangerController from "./TocRendererChangerController";
-import { ifDefined } from "apprt-binding/Transformers";
+import TocRendererChangerWidget from "./TocRendererChangerWidget.ts.vue";
 
-import type { InjectedReference } from "apprt-core/InjectedReference";
-import type { MessagesReference } from "./nls/bundle";
-import type { TocRendererChangerModel } from "./TocRendererChangerModel";
+import { ifDefined } from "apprt-binding/Transformers";
+import { InjectedReference } from "apprt-core/InjectedReference";
+import { MessagesReference } from "./nls/bundle";
+import { TocRendererChangerModel } from "./TocRendererChangerModel";
+import { TocRendererChangerController } from "./TocRendererChangerController";
 
 export class TocRendererChangerWidgetFactory {
 
@@ -51,7 +51,6 @@ export class TocRendererChangerWidgetFactory {
 
     #initComponent() {
         const vm = this.vm = new Vue(TocRendererChangerWidget);
-        const model = this._model!;
         vm.i18n = this._i18n!.get().ui;
         const controller = new TocRendererChangerController(vm, this._mapWidgetModel, this._model);
         this.#watchForEvents(vm, controller);
@@ -77,7 +76,7 @@ export class TocRendererChangerWidgetFactory {
     private createBinding(vm: Vue): Binding {
         const model = this._model!;
         return Binding.for(model, vm)
-            .syncAll("classBreaksColors", "color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth", "selectedRenderer", "selectedAttribute")
+            .syncAll("classBreaksColors", "color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth", "selectedRenderer", "selectedSymbol", "selectedAttribute")
             .syncAllToRight("allowedRenderers", "selectedLayerId", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType")
             .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops));
     }

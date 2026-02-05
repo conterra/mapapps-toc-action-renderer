@@ -49,10 +49,9 @@ export interface ColorPickerObject{
 
 export interface I18n {
     renderer: string;
-    renderers: Array<{
-        value: "simple" | "symbol" | "class_breaks" | "size" | "unique_values" | "heatmap";
-        text: string;
-    }>;
+    renderers: Array<RendererObjectType>;
+    symbol: string;
+    symbols: Array<SymbolObjectType>;
     resetRenderer: string;
     attribute: string;
     fillColor: string;
@@ -63,3 +62,18 @@ export interface I18n {
     symbolHeightLabel: string;
     symbolWidthLabel: string;
 }
+
+export interface RendererObjectType {
+    value: RendererType;
+    text: string;
+}
+
+export type RendererType = "simple" | "symbol" | "class_breaks" | "size" | "unique_values" | "heatmap";#
+
+export interface SymbolObjectType {
+    value: SymbolType;
+    text: string;
+}
+export type SymbolType = "circle" | "square" | "triangle" | "diamond" | "cross" | "x";
+
+

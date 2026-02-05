@@ -15,7 +15,7 @@
  */
 import * as typeRendererCreator from "@arcgis/core/smartMapping/renderers/type";
 
-export default function createTypeRenderer(layer, view, attribute) {
+export default function createTypeRenderer(layer, view, attribute, symbol) {
 
     const rendererParams = {
         layer: layer,
@@ -30,8 +30,11 @@ export default function createTypeRenderer(layer, view, attribute) {
         .createRenderer(rendererParams)
         .then(response => {
             // Set the output renderer on the layer
-
+            // debugger;
             rendererResult = response;
+            rendererResult.renderer.uniqueValueInfos.forEach(info => {
+                info.symbol.style = symbol;
+            });
             layer.renderer = rendererResult.renderer;
         })
         .catch(function (error) {

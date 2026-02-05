@@ -31,8 +31,8 @@
  * limitations under the License.
  */
 import { Mutable, properties } from "apprt-core/Mutable";
+import { RendererType, SymbolType } from "./api";
 
-export type RendererType = "simple" | "symbol" | "class_breaks" | "size" | "unique_values" | "heatmap";
 
 export interface TocRendererChangerModelProperties {
 
@@ -40,6 +40,7 @@ export interface TocRendererChangerModelProperties {
     selectedLayerId: string | undefined;
     selectedAttribute: string | undefined;
     selectedLayerAttributes: string[];
+    selectedSymbol: SymbolType | undefined;
     color: number[];
     outlineColor: number[];
     sizeRendererColor: number[];
@@ -63,6 +64,7 @@ properties(TocRendererChangerModel, {
     selectedLayerId: undefined,
     selectedAttribute: undefined,
     selectedLayerAttributes: [],
+    selectedSymbol: undefined,
     color: [],
     outlineColor: [],
     sizeRendererColor: [],

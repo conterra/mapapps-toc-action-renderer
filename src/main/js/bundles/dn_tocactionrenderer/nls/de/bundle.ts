@@ -34,6 +34,15 @@ export default {
             {value: "unique_values", text: "Unique Values"},
             {value: "heatmap", text: "Heatmap"}
         ],
+        symbol: "Symbol",
+        symbols: [
+            {value: "circle", text: "Kreis"},
+            {value: "square", text: "Quadrat"},
+            {value: "triangle", text: "Dreieck"},
+            {value: "diamond", text: "Raute"},
+            {value: "cross", text: "Kreuz"},
+            {value: "x", text: "X"}
+        ],
         resetRenderer: "Symbolisierung zurücksetzen",
         attribute: "Attribut",
         fillColor: "Füllfarbe",
