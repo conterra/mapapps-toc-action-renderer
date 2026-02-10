@@ -15,7 +15,7 @@
  */
 import * as typeRendererCreator from "@arcgis/core/smartMapping/renderers/type";
 
-export default function createTypeRenderer(layer, view, attribute, symbol) {
+export default async function createTypeRenderer(layer, view, attribute, symbol, size, uniqueValueInfos) {
 
     const rendererParams = {
         layer: layer,
@@ -24,20 +24,29 @@ export default function createTypeRenderer(layer, view, attribute, symbol) {
         numTypes: -1
     };
 
-    let rendererResult = null;
-
-    typeRendererCreator
-        .createRenderer(rendererParams)
-        .then(response => {
-            // Set the output renderer on the layer
-            // debugger;
-            rendererResult = response;
-            rendererResult.renderer.uniqueValueInfos.forEach(info => {
+    const colorAndValueInfo = [];
+    try {
+        const rendererResult = await typeRendererCreator.createRenderer(rendererParams);
+        if (uniqueValueInfos) {
+            rendererResult.renderer.uniqueValueInfos.forEach((info, index) => {
                 info.symbol.style = symbol;
+                info.symbol.size = size;
+                info.symbol.color = uniqueValueInfos[index].color;
+                colorAndValueInfo.push({ value: info.value, color: info.symbol.color });
             });
-            layer.renderer = rendererResult.renderer;
-        })
-        .catch(function (error) {
-            console.error("there was an error: ", error);
-        });
+        } else {
+            rendererResult.renderer.uniqueValueInfos.forEach( info => {
+                info.symbol.style = symbol;
+                info.symbol.size = size;
+                colorAndValueInfo.push({ value: info.value, color: info.symbol.color });
+            });
+        }
+
+        rendererResult.renderer.defaultSymbol.style = symbol;
+        rendererResult.renderer.defaultSymbol.size = size;
+        layer.renderer = rendererResult.renderer;
+    } catch (error) {
+        console.error("there was an error: ", error);
+    }
+    return colorAndValueInfo;
 }

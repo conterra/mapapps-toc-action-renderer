@@ -17,7 +17,9 @@
 import Color from "@arcgis/core/Color";
 
 export interface RendererChangeEvent {
+    uniqueValueInfos?: [{ value: string; color: Color }];
     renderer?: "class_breaks" | "size" | "unique_values" | "heatmap" | "simple" | "symbol";
+    symbol?: string;
     attribute?: string;
     color?: Color;
     heatmapColors?: Array<{
@@ -68,7 +70,7 @@ export interface RendererObjectType {
     text: string;
 }
 
-export type RendererType = "simple" | "symbol" | "class_breaks" | "size" | "unique_values" | "heatmap";#
+export type RendererType = "simple" | "symbol" | "class_breaks" | "size" | "unique_values" | "heatmap";
 
 export interface SymbolObjectType {
     value: SymbolType;

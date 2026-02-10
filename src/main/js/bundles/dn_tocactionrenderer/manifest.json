@@ -48,7 +48,7 @@
             "propertiesConstructor": true,
             "properties": {
                 "selectedRenderer": "simple",
-                "selectedSymbol": "circle",
+                "selectedUniqueValueSymbol": "circle",
                 "allowedRenderers": [
                     "simple",
                     "symbol",
@@ -120,6 +120,7 @@
                 ],
                 "outlineWidth": 1,
                 "pointSize": 6,
+                "uniqueValueSize": 6,
                 "symbolURL": "https://www.conterra.de/sites/default/files/images/icons/rocket.svg",
                 "symbolHeight": 24,
                 "symbolWidth": 24

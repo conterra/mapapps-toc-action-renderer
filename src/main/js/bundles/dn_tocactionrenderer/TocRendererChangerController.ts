@@ -57,6 +57,9 @@ export class TocRendererChangerController {
         model!.watch("pointSize", ({ value }: { value: number }) => {
             this.updateSimpleRenderer(model!.color, model!.outlineColor, model!.outlineWidth, value);
         });
+        model!.watch("uniqueValueSize", ({ value }: { value: number }) => {
+            this.updateTypeRenderer(model!.selectedUniqueValueSymbol, value);
+        });
         model!.watch("symbolURL", () => {
             this.updateSymbolRenderer(model);
         });
@@ -102,6 +105,29 @@ export class TocRendererChangerController {
         const attribute = this.selectedLayer.renderer.visualVariables[0]?.valueExpression?.split(".")[1];
 
         this.createRendererWidget({ renderer: "size", attribute: attribute, color: color });
+    }
+
+    private updateTypeRenderer(symbol: string, pointSize: number): void {
+        if (!this.selectedLayer || !this.selectedLayer.renderer || !this.selectedLayer.renderer.uniqueValueInfos) {
+            return;
+        }
+        const renderer = this.selectedLayer.renderer;
+
+        renderer.uniqueValueInfos.forEach((info: any) => {
+            info.symbol.style = symbol;
+            info.symbol.size = pointSize;
+        });
+        renderer.defaultSymbol.style = symbol;
+        renderer.defaultSymbol.size = pointSize;
+
+        const colorValueInfos = renderer.uniqueValueInfos.map((info: any) => {
+            return {
+                value: info.value,
+                color: info.symbol.color
+            };
+        });
+        this.model!.set("uniqueValueInfos", colorValueInfos);
+        console.info(this.model!.uniqueValueInfos);
     }
 
     public updateSimpleRenderer(color: Color, outlineColor: Color, outlineWidth: number, pointSize: number): void {
@@ -189,7 +215,11 @@ export class TocRendererChangerController {
                         if(!evt.attribute) {
                             return;
                         }
-                        this.setTypeRenderer(evt.attribute, evt.symbol);
+                        this.setTypeRenderer(
+                            evt.attribute,
+                            evt.symbol!,
+                            this.model!.uniqueValueSize,
+                            evt.uniqueValueInfos);
                         break;
                     case "heatmap":
                         if (evt.heatmapColors) {
@@ -207,52 +237,6 @@ export class TocRendererChangerController {
                         break;
                 }
             });
-        }
-    }
-    private setSimpleRenderer(color: Color, outlineColor: Color, outlineWidth: number, pointSize: number): void {
-        const geomType = this.model!.currentGeometryType;
-
-        switch (geomType) {
-            case "polygon":
-                this.selectedLayer.renderer = {
-                    type: "simple",
-                    symbol: {
-                        type: "simple-fill",
-                        color: color,
-                        outline: {
-                            width: outlineWidth,
-                            color: outlineColor
-                        }
-                    }
-                };
-                break;
-            case "point":
-                this.selectedLayer.renderer = {
-                    type: "simple",
-                    symbol: {
-                        type: "simple-marker",
-                        size: pointSize,
-                        color: color,
-                        outline: {
-                            width: outlineWidth,
-                            color: outlineColor
-                        }
-                    }
-                };
-                break;
-            case "polyline":
-                this.selectedLayer.renderer = {
-                    type: "simple",
-                    symbol: {
-                        type: "simple-line",
-                        color: color,
-                        width: outlineWidth,
-                        style: "solid"
-                    }
-                };
-                break;
-            default:
-                break;
         }
     }
 
@@ -276,7 +260,6 @@ export class TocRendererChangerController {
     }
 
     private setSizeRenderer(attribute: string, color: Color): void {
-        // debugger;
         createSizeRenderer(
             this.selectedLayer,
             this._mapWidgetModel!.view,
@@ -286,13 +269,17 @@ export class TocRendererChangerController {
         );
     }
 
-    private setTypeRenderer(attribute: string, symbol: string) {
+    private setTypeRenderer(attribute: string, symbol: string, pointSize: number, uniqueValueInfos?: any) {
         createTypeRenderer(
             this.selectedLayer,
             this._mapWidgetModel!.view,
             attribute,
-            symbol
-        );
+            symbol,
+            pointSize,
+            uniqueValueInfos
+        ).then((colorAndValueInfo) => {
+            this.model!.uniqueValueInfos = colorAndValueInfo;
+        });
     }
 
     private setSymbolRenderer() {
@@ -323,14 +310,14 @@ export class TocRendererChangerController {
         this.selectedLayer.renderer = this.oldRenderer[this.selectedLayer.id];
         this.removeRendererWidget();
         this.model!.selectedRenderer = undefined;
-        this.model!.selectedSymbol = undefined;
+        this.model!.selectedUniqueValueSymbol = "circle";
         this.model!.selectedAttribute = undefined;
         this.model!.color = [];
         this.model!.outlineColor = [];
         this.model!.sizeRendererColor = [];
         this.model!.classBreaksColors = [];
-
         this.model!.heatmapRenderer = null;
+        this.model!.uniqueValueInfos = [];
         this.model!.heatmapRenderer = JSON.parse(JSON.stringify(this.originalHeatmapColorStops));
     }
 

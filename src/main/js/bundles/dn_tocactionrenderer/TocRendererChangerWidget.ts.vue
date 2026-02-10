@@ -107,25 +107,37 @@
                         </div>
                     </v-card>
                 </div>
-                <div v-if="selectedRenderer === 'unique_values' && selectedAttribute">
+                <div
+                    v-if="selectedRenderer === 'unique_values' && selectedAttribute"
+                    class="unique_value-container"
+                >
                     <v-card class="pa-3">
                         <p>{{ i18n.symbol }}</p>
                         <v-select
-                            v-model="selectedSymbol"
+                            v-model="selectedUniqueValueSymbol"
                             :items="symbolItems"
                             :label="i18n.symbol"
                             hide-details
                         />
                         <div class="mb-4" />
-                        <p>{{ i18n.outlineWidth }}</p>
+                        <p>{{ i18n.pointSize }}</p>
                         <v-text-field
-                            v-model="outlineWidth"
+                            v-model="uniqueValueSize"
+                            type="number"
+                            min="1"
+                            single-line
+                            hide-details
+                            class="tocactionrenderer--pointSize-textfield"
+                        />
+                        <!-- <p>{{ i18n.outlineWidth }}</p>
+                        <v-text-field
+                            v-model="uniqueValueOutlineWidth"
                             type="number"
                             min="1"
                             single-line
                             hide-details
                             class="tocactionrenderer--outlineWidth-textfield"
-                        />
+                        /> -->
                     </v-card>
                 </div>
                 <div v-if="selectedRenderer === 'size' && selectedAttribute">
@@ -200,13 +212,35 @@
             </v-flex>
 
             <v-flex
-                v-if="selectedRenderer !== 'simple' &&
-                    selectedRenderer !== 'symbol'"
+                v-if="selectedRenderer !== 'simple'"
                 xs12
                 md6
                 class="tocactionrenderer-right-column"
             >
                 <div
+                    v-if="selectedRenderer === 'unique_values' && selectedAttribute"
+                    class="unique-value-info-container"
+                >
+                    <v-card class="pa-3">
+                        <div
+                            v-for="(info, index) in uniqueValueInfos"
+                            :key="index"
+                            class="unique-value-info-item"
+                        >
+                            <div class="v-label theme--light mb-2">
+                                {{ info.value }}
+                            </div>
+                            <v-flex class="unique-value-color-container align-center pb-3">
+                                <color-picker
+                                    :value="info.color"
+                                    @input="updateUniqueValueColor(index, $event)"
+                                />
+                            </v-flex>
+                        </div>
+                    </v-card>
+                </div>
+                <div
+                    v-if="selectedRenderer !== 'symbol'"
                     ref="ctSmartRendererWidgets"
                     class="tocactionrenderer-esri-widgets"
                 />
@@ -227,7 +261,7 @@
     import Bindable from "apprt-vue/mixins/Bindable";
     import ColorPicker from "./components/ColorPicker.vue";
 
-    import type { ColorPickerObject, HeatmapColorStop, RGBAColor, I18n, RendererType, SymbolObjectType} from "./api";
+    import type { ColorPickerObject, HeatmapColorStop, RGBAColor, I18n} from "./api";
 
     export default Vue.extend({
         components: {
@@ -278,12 +312,15 @@
                 selectedLayerId: undefined,
                 selectedAttribute: undefined,
                 selectedRenderer: "simple",
-                selectedSymbol: "circle",
+                selectedUniqueValueSymbol: "circle",
                 color: [] as number[],
                 outlineColor: [] as number[],
                 sizeRendererColor: [] as number[],
                 outlineWidth: undefined,
                 pointSize: undefined,
+                uniqueValueOutlineWidth: undefined,
+                uniqueValueSize: undefined,
+                uniqueValueInfos: [] as any[],
                 allowedRenderers: [] as string[],
                 symbolApplicable: undefined,
                 currentGeometryType: undefined,
@@ -412,7 +449,7 @@
                     this.updateRenderer();
                 }
             },
-            selectedSymbol: function (symbol) {
+            selectedUniqueValueSymbol: function (symbol) {
                 if (symbol) {
                     this.updateRenderer();
                 }
@@ -462,11 +499,26 @@
                     classBreaksColors: this.classBreaksColors
                 });
             },
+            updateUniqueValueColor(index: number, colorValue: ColorPickerObject) {
+                const rgba = colorValue.rgba;
+                this.uniqueValueInfos[index].color = {
+                    r: rgba.r,
+                    g: rgba.g,
+                    b: rgba.b,
+                    a: rgba.a
+                };
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    attribute: this.selectedAttribute,
+                    uniqueValueInfos: this.uniqueValueInfos,
+                    symbol: this.selectedUniqueValueSymbol
+                });
+            },
             updateRenderer() {
                 this.$emit("update-renderer", {
                     attribute: this.selectedAttribute,
                     renderer: this.selectedRenderer,
-                    symbol: this.selectedSymbol
+                    symbol: this.selectedUniqueValueSymbol
                 });
             }
         }
