@@ -15,15 +15,14 @@
 ///
 
 import { Mutable, properties } from "apprt-core/Mutable";
-import { RendererType, SymbolType } from "./api";
-import Color from "@arcgis/core/Color";
+import { RendererType, SymbolType, LayerAttribute, UniqueValueInfo, ClassBreakColor } from "./api";
 
 export interface TocRendererChangerModelProperties {
 
     selectedRenderer: RendererType | undefined;
     selectedLayerId: string | undefined;
     selectedAttribute: string | undefined;
-    selectedLayerAttributes: string[];
+    selectedLayerAttributes: LayerAttribute[];
     selectedUniqueValueSymbol: SymbolType | undefined;
     color: number[];
     outlineColor: number[];
@@ -32,10 +31,10 @@ export interface TocRendererChangerModelProperties {
     pointSize: number | undefined;
     uniqueValueSize: number | undefined;
     uniqueValueOutlineWidth: number | undefined;
-    uniqueValueInfos?: [{ value: string; color: Color }];
+    uniqueValueInfos: UniqueValueInfo[];
     uniqueValueSymbolURL?: string;
     heatmapRenderer: Record<string, any>;
-    classBreaksColors: number[][];
+    classBreaksColors: ClassBreakColor[];
     allowedRenderers: string[];
     symbolURL: string;
     symbolHeight: number | undefined;

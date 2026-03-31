@@ -17,7 +17,7 @@
 import Color from "@arcgis/core/Color";
 
 export interface RendererChangeEvent {
-    uniqueValueInfos?: [{ value: string; color: Color }];
+    uniqueValueInfos?: UniqueValueInfo[];
     renderer?: "class_breaks" | "size" | "unique_values" | "heatmap" | "simple" | "symbol";
     symbol?: string;
     attribute?: string;
@@ -78,5 +78,19 @@ export interface SymbolObjectType {
     text: string;
 }
 export type SymbolType = "circle" | "square" | "triangle" | "diamond" | "path";
+
+export interface LayerAttribute {
+    name: string;
+    type: string;
+}
+
+export interface UniqueValueInfo {
+    value: string;
+    color: RGBAColor;
+}
+
+export interface ClassBreakColor extends RGBAColor {
+    label?: string;
+}
 
 
