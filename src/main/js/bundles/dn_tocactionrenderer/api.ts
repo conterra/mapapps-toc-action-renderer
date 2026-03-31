@@ -14,7 +14,7 @@
 /// limitations under the License.
 ///
 
-import Color from "@arcgis/core/Color";
+import type Color from "@arcgis/core/Color";
 
 export interface RendererChangeEvent {
     uniqueValueInfos?: UniqueValueInfo[];

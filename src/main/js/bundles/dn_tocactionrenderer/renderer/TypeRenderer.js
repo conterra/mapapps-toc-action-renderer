@@ -38,7 +38,10 @@ export default async function createTypeRenderer(
         if (uniqueValueInfos) {
             rendererResult.renderer.uniqueValueInfos.forEach((info, index) => {
                 applySymbolStyle(info.symbol, symbol, size, pathString);
-                info.symbol.color = uniqueValueInfos[index].color;
+                const matchingInfo = uniqueValueInfos.find((u) => u && u.value === info.value);
+                if(matchingInfo && matchingInfo.color) {
+                    info.symbol.color = matchingInfo.color;
+                }
                 colorAndValueInfo.push({ value: info.value, color: info.symbol.color });
             });
         } else {
