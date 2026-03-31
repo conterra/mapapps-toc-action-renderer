@@ -32,6 +32,7 @@ export interface RendererChangeEvent {
     symbolURL?: string;
     symbolHeight?: number;
     symbolWidth?: number;
+    pathString?: string;
 }
 
 export interface RGBAColor {
@@ -76,6 +77,6 @@ export interface SymbolObjectType {
     value: SymbolType;
     text: string;
 }
-export type SymbolType = "circle" | "square" | "triangle" | "diamond" | "cross" | "x";
+export type SymbolType = "circle" | "square" | "triangle" | "diamond" | "path";
 
 

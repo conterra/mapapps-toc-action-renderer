@@ -40,8 +40,7 @@ export default {
             {value: "square", text: "Quadrat"},
             {value: "triangle", text: "Dreieck"},
             {value: "diamond", text: "Raute"},
-            {value: "cross", text: "Kreuz"},
-            {value: "x", text: "X"}
+            {value: "path", text: "Benutzerdefiniertes Symbol"}
         ],
         resetRenderer: "Symbolisierung zurücksetzen",
         attribute: "Attribut",

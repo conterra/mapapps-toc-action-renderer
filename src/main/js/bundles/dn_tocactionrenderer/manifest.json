@@ -123,7 +123,8 @@
                 "uniqueValueSize": 6,
                 "symbolURL": "https://www.conterra.de/sites/default/files/images/icons/rocket.svg",
                 "symbolHeight": 24,
-                "symbolWidth": 24
+                "symbolWidth": 24,
+                "uniqueValueSymbolURL": ""
             }
         },
         {

@@ -62,7 +62,9 @@
         </v-flex>
 
         <v-layout
-            v-if="selectedRenderer"
+            v-if="selectedRenderer === 'simple' ||
+                selectedRenderer === 'symbol' ||
+                (selectedRenderer && selectedAttribute)"
             row
             wrap
             class="tocactionrenderer-content-layout"
@@ -91,7 +93,7 @@
                             min="1"
                             single-line
                             hide-details
-                            class="tocactionrenderer--outlineWidth-textfield"
+                            class="tocactionrenderer--textfield"
                         />
                         <div v-if="currentGeometryType==='point'">
                             <div class="mb-4" />
@@ -102,7 +104,7 @@
                                 min="1"
                                 single-line
                                 hide-details
-                                class="tocactionrenderer--outlineWidth-textfield"
+                                class="tocactionrenderer--textfield"
                             />
                         </div>
                     </v-card>
@@ -112,7 +114,6 @@
                     class="unique_value-container"
                 >
                     <v-card class="pa-3">
-                        <p>{{ i18n.symbol }}</p>
                         <v-select
                             v-model="selectedUniqueValueSymbol"
                             :items="symbolItems"
@@ -127,17 +128,17 @@
                             min="1"
                             single-line
                             hide-details
-                            class="tocactionrenderer--pointSize-textfield"
+                            class="tocactionrenderer--textfield"
                         />
-                        <!-- <p>{{ i18n.outlineWidth }}</p>
-                        <v-text-field
-                            v-model="uniqueValueOutlineWidth"
-                            type="number"
-                            min="1"
-                            single-line
-                            hide-details
-                            class="tocactionrenderer--outlineWidth-textfield"
-                        /> -->
+                        <div class="mb-4" />
+                        <div v-if="selectedUniqueValueSymbol === 'path'">
+                            <v-text-field
+                                v-model="uniqueValueSymbolSvg"
+                                :label="i18n.symbolUrlLabel"
+                                :append-outer-icon="uniqueValueSymbolSvg ? 'check' : ''"
+                                @click:append-outer="updateUniqueValueRenderer"
+                            />
+                        </div>
                     </v-card>
                 </div>
                 <div v-if="selectedRenderer === 'size' && selectedAttribute">
@@ -212,7 +213,7 @@
             </v-flex>
 
             <v-flex
-                v-if="selectedRenderer !== 'simple'"
+                v-if="(selectedRenderer !== 'simple' && selectedRenderer !== 'symbol')"
                 xs12
                 md6
                 class="tocactionrenderer-right-column"
@@ -288,8 +289,7 @@
                             {value: "square", text: "Quadrat"},
                             {value: "triangle", text: "Dreieck"},
                             {value: "diamond", text: "Raute"},
-                            {value: "cross", text: "Kreuz"},
-                            {value: "x", text: "X"}
+                            {value: "path", text: "Custom Symbol"}
                         ],
                         resetRenderer: "Reset Renderer",
                         attribute: "Attribute",
@@ -321,6 +321,7 @@
                 uniqueValueOutlineWidth: undefined,
                 uniqueValueSize: undefined,
                 uniqueValueInfos: [] as any[],
+                uniqueValueSymbolSvg:"",
                 allowedRenderers: [] as string[],
                 symbolApplicable: undefined,
                 currentGeometryType: undefined,
@@ -445,13 +446,15 @@
                 }
             },
             selectedRenderer: function (renderer) {
-                if (renderer) {
+                if (renderer === "unique_values" && this.selectedAttribute) {
+                    this.updateUniqueValueRenderer();
+                } else if(renderer){
                     this.updateRenderer();
                 }
             },
             selectedUniqueValueSymbol: function (symbol) {
                 if (symbol) {
-                    this.updateRenderer();
+                    this.updateUniqueValueRenderer();
                 }
             }
         },
@@ -499,6 +502,15 @@
                     classBreaksColors: this.classBreaksColors
                 });
             },
+            updateUniqueValueRenderer() {
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    attribute: this.selectedAttribute,
+                    uniqueValueInfos: this.uniqueValueInfos,
+                    symbol: this.selectedUniqueValueSymbol,
+                    pathString: this.uniqueValueSymbolSvg
+                });
+            },
             updateUniqueValueColor(index: number, colorValue: ColorPickerObject) {
                 const rgba = colorValue.rgba;
                 this.uniqueValueInfos[index].color = {
@@ -511,7 +523,8 @@
                     renderer: this.selectedRenderer,
                     attribute: this.selectedAttribute,
                     uniqueValueInfos: this.uniqueValueInfos,
-                    symbol: this.selectedUniqueValueSymbol
+                    symbol: this.selectedUniqueValueSymbol,
+                    pathString: this.uniqueValueSymbolSvg
                 });
             },
             updateRenderer() {
@@ -520,6 +533,7 @@
                     renderer: this.selectedRenderer,
                     symbol: this.selectedUniqueValueSymbol
                 });
+
             }
         }
     });

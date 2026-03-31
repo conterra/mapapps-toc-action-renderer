@@ -15,8 +15,15 @@
  */
 import * as typeRendererCreator from "@arcgis/core/smartMapping/renderers/type";
 
-export default async function createTypeRenderer(layer, view, attribute, symbol, size, uniqueValueInfos) {
-
+export default async function createTypeRenderer(
+    layer,
+    view,
+    attribute,
+    symbol,
+    size,
+    uniqueValueInfos,
+    pathString
+) {
     const rendererParams = {
         layer: layer,
         view: view,
@@ -27,26 +34,32 @@ export default async function createTypeRenderer(layer, view, attribute, symbol,
     const colorAndValueInfo = [];
     try {
         const rendererResult = await typeRendererCreator.createRenderer(rendererParams);
+
         if (uniqueValueInfos) {
             rendererResult.renderer.uniqueValueInfos.forEach((info, index) => {
-                info.symbol.style = symbol;
-                info.symbol.size = size;
+                applySymbolStyle(info.symbol, symbol, size, pathString);
                 info.symbol.color = uniqueValueInfos[index].color;
                 colorAndValueInfo.push({ value: info.value, color: info.symbol.color });
             });
         } else {
-            rendererResult.renderer.uniqueValueInfos.forEach( info => {
-                info.symbol.style = symbol;
-                info.symbol.size = size;
+            rendererResult.renderer.uniqueValueInfos.forEach(info => {
+                applySymbolStyle(info.symbol, symbol, size, pathString);
                 colorAndValueInfo.push({ value: info.value, color: info.symbol.color });
             });
         }
 
-        rendererResult.renderer.defaultSymbol.style = symbol;
-        rendererResult.renderer.defaultSymbol.size = size;
+        applySymbolStyle(rendererResult.renderer.defaultSymbol, symbol, size, pathString);
         layer.renderer = rendererResult.renderer;
     } catch (error) {
         console.error("there was an error: ", error);
     }
     return colorAndValueInfo;
+}
+
+function applySymbolStyle(symbolObj, style, size, pathString) {
+    symbolObj.style = style;
+    symbolObj.size = size;
+    if (style === "path" && pathString) {
+        symbolObj.path = pathString;
+    }
 }

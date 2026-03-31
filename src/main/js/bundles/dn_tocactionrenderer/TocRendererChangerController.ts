@@ -28,11 +28,13 @@ import createHeatMapRenderer from "./renderer/HeatMapRenderer";
 import { TocRendererChangerModel } from "./TocRendererChangerModel";
 import type { InjectedReference } from "apprt-core/InjectedReference";
 import { RendererChangeEvent } from "./api";
+import { MessagesReference } from "./nls/bundle";
 
 export class TocRendererChangerController {
     private vm: Vue;
     private model!: InjectedReference<TocRendererChangerModel>;
     private _mapWidgetModel: InjectedReference<MapWidgetModel>;
+    private _i18n!: InjectedReference<MessagesReference>;
     private selectedLayer: any;
     private oldRenderer!: any[];
     private originalHeatmapColorStops: any;
@@ -45,7 +47,6 @@ export class TocRendererChangerController {
         this.vm = vm;
         this.model = model;
         this._mapWidgetModel = mapWidgetModel;
-
         this.initProperties();
 
         model!.watch("selectedLayerId", ({ value }: { value: string }) => {
@@ -96,6 +97,54 @@ export class TocRendererChangerController {
 
         model.symbolApplicable = selectedLayer!.geometryType === "point";
         model.currentGeometryType = selectedLayer!.geometryType;
+    }
+
+    public createRendererWidget(evt: RendererChangeEvent): void {
+        this.removeRendererWidget();
+        if (evt?.renderer) {
+
+            this.vm.$nextTick(() => {
+                switch (evt.renderer) {
+                    case "class_breaks":
+                        if (!evt.attribute) {
+                            return;
+                        }
+                        this.setClassBreaksRenderer(evt.attribute);
+                        break;
+                    case "size":
+                        if(!evt.attribute) {
+                            return;
+                        }
+                        this.setSizeRenderer(evt.attribute, evt.color!);
+                        break;
+                    case "unique_values":
+                        if(!evt.attribute) {
+                            return;
+                        }
+                        this.setTypeRenderer(
+                            evt.attribute,
+                            evt.symbol!,
+                            this.model!.uniqueValueSize,
+                            evt.uniqueValueInfos,
+                            evt.pathString);
+                        break;
+                    case "heatmap":
+                        if (evt.heatmapColors) {
+                            this.model!.heatmapRenderer.colorStops = evt.heatmapColors;
+                        }
+                        this.setHeatmapRenderer();
+                        break;
+                    case "simple":
+                        // do nothing
+                        break;
+                    case "symbol":
+                        this.setSymbolRenderer();
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
     }
 
     private updateSizeRenderer(color: Color): void {
@@ -193,53 +242,6 @@ export class TocRendererChangerController {
         }
     }
 
-    public createRendererWidget(evt: RendererChangeEvent): void {
-        this.removeRendererWidget();
-        if (evt?.renderer) {
-
-            this.vm.$nextTick(() => {
-                switch (evt.renderer) {
-                    case "class_breaks":
-                        if (!evt.attribute) {
-                            return;
-                        }
-                        this.setClassBreaksRenderer(evt.attribute);
-                        break;
-                    case "size":
-                        if(!evt.attribute) {
-                            return;
-                        }
-                        this.setSizeRenderer(evt.attribute, evt.color!);
-                        break;
-                    case "unique_values":
-                        if(!evt.attribute) {
-                            return;
-                        }
-                        this.setTypeRenderer(
-                            evt.attribute,
-                            evt.symbol!,
-                            this.model!.uniqueValueSize,
-                            evt.uniqueValueInfos);
-                        break;
-                    case "heatmap":
-                        if (evt.heatmapColors) {
-                            this.model!.heatmapRenderer.colorStops = evt.heatmapColors;
-                        }
-                        this.setHeatmapRenderer();
-                        break;
-                    case "simple":
-                        // do nothing
-                        break;
-                    case "symbol":
-                        this.setSymbolRenderer();
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
-    }
-
     private setClassBreaksRenderer(attribute: string) {
         createClassBreaksRenderer(
             this.selectedLayer,
@@ -269,14 +271,20 @@ export class TocRendererChangerController {
         );
     }
 
-    private setTypeRenderer(attribute: string, symbol: string, pointSize: number, uniqueValueInfos?: any) {
+    private setTypeRenderer(
+        attribute: string,
+        symbol: string,
+        pointSize: number,
+        uniqueValueInfos?: any,
+        pathString?: string): void {
         createTypeRenderer(
             this.selectedLayer,
             this._mapWidgetModel!.view,
             attribute,
             symbol,
             pointSize,
-            uniqueValueInfos
+            uniqueValueInfos,
+            pathString
         ).then((colorAndValueInfo) => {
             this.model!.uniqueValueInfos = colorAndValueInfo;
         });

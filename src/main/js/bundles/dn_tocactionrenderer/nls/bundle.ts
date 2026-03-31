@@ -39,8 +39,7 @@ const i18n = {
                 {value: "square", text: "Square"},
                 {value: "triangle", text: "Triangle"},
                 {value: "diamond", text: "Diamond"},
-                {value: "cross", text: "Cross"},
-                {value: "x", text: "X"}
+                {value: "path", text: "Custom Symbol"}
             ],
             resetRenderer: "Reset Renderer",
             attribute: "Attribute",
