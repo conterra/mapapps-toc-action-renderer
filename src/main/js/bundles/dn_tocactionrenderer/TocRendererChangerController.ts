@@ -111,10 +111,10 @@ export class TocRendererChangerController {
                         this.setClassBreaksRenderer(evt.attribute);
                         break;
                     case "size":
-                        if(!evt.attribute || !evt.color) {
+                        if(!evt.attribute) {
                             return;
                         }
-                        this.setSizeRenderer(evt.attribute, evt.color);
+                        this.setSizeRenderer(evt.attribute, evt.color ?? this.model!.sizeRendererColor);
                         break;
                     case "unique_values":
                         if(!evt.attribute || !evt.symbol || !this.model) {
@@ -146,7 +146,7 @@ export class TocRendererChangerController {
         }
     }
 
-    private updateSizeRenderer(color: Color): void {
+    private updateSizeRenderer(color: number[]): void {
         if (!this.selectedLayer || !this.selectedLayer.renderer || !this.selectedLayer.renderer.classBreakInfos) {
             return;
         }
@@ -259,7 +259,7 @@ export class TocRendererChangerController {
         );
     }
 
-    private setSizeRenderer(attribute: string, color: Color): void {
+    private setSizeRenderer(attribute: string, color?: Color | number[]): void {
         createSizeRenderer(
             this.selectedLayer,
             this._mapWidgetModel!.view,

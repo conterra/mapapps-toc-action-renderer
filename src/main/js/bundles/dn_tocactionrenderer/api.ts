@@ -21,7 +21,7 @@ export interface RendererChangeEvent {
     renderer?: "class_breaks" | "size" | "unique_values" | "heatmap" | "simple" | "symbol";
     symbol?: string;
     attribute?: string;
-    color?: Color;
+    color?: Color | number[];
     heatmapColors?: Array<{
         color: Color;
         ratio: number;
