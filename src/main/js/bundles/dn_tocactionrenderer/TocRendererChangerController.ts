@@ -93,10 +93,9 @@ export class TocRendererChangerController {
                 };
             });
             this.oldRenderer[selectedLayer.id] = selectedLayer.renderer.clone();
+            model.symbolApplicable = selectedLayer.geometryType === "point";
+            model.currentGeometryType = selectedLayer.geometryType;
         }
-
-        model.symbolApplicable = selectedLayer!.geometryType === "point";
-        model.currentGeometryType = selectedLayer!.geometryType;
     }
 
     public createRendererWidget(evt: RendererChangeEvent): void {
@@ -112,19 +111,19 @@ export class TocRendererChangerController {
                         this.setClassBreaksRenderer(evt.attribute);
                         break;
                     case "size":
-                        if(!evt.attribute) {
+                        if(!evt.attribute || !evt.color) {
                             return;
                         }
-                        this.setSizeRenderer(evt.attribute, evt.color!);
+                        this.setSizeRenderer(evt.attribute, evt.color);
                         break;
                     case "unique_values":
-                        if(!evt.attribute) {
+                        if(!evt.attribute || !evt.symbol || !this.model) {
                             return;
                         }
                         this.setTypeRenderer(
                             evt.attribute,
-                            evt.symbol!,
-                            this.model!.uniqueValueSize,
+                            evt.symbol,
+                            this.model.uniqueValueSize,
                             evt.uniqueValueInfos,
                             evt.pathString);
                         break;
