@@ -78,8 +78,7 @@ export class TocRendererChangerWidgetFactory {
         return Binding.for(model, vm)
             .syncAll("classBreaksColors", "color", "outlineColor", "sizeRendererColor", "outlineWidth", "pointSize", "symbolURL", "symbolHeight", "symbolWidth", "selectedRenderer", "selectedUniqueValueSymbol", "selectedAttribute", "uniqueValueSize", "uniqueValueOutlineWidth")
             .syncAllToRight("uniqueValueSymbolURL", "uniqueValueInfos", "allowedRenderers", "selectedLayerId", "selectedLayerAttributes", "selectedAttribute", "symbolApplicable", "currentGeometryType" )
-            .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops))
-            .enable();
+            .syncToRight("heatmapRenderer", ["heatmapColors"], ifDefined((heatmapRenderer) => heatmapRenderer.colorStops));
     }
 
     #watchForEvents(vm: Vue, controller: TocRendererChangerController) {

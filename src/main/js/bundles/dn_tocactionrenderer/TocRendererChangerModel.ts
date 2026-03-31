@@ -33,6 +33,7 @@ export interface TocRendererChangerModelProperties {
     uniqueValueSize: number | undefined;
     uniqueValueOutlineWidth: number | undefined;
     uniqueValueInfos?: [{ value: string; color: Color }];
+    uniqueValueSymbolURL?: string;
     heatmapRenderer: Record<string, any>;
     classBreaksColors: number[][];
     allowedRenderers: string[];

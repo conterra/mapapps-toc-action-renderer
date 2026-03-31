@@ -133,9 +133,9 @@
                         <div class="mb-4" />
                         <div v-if="selectedUniqueValueSymbol === 'path'">
                             <v-text-field
-                                v-model="uniqueValueSymbolSvg"
+                                v-model="uniqueValueSymbolURL"
                                 :label="i18n.symbolUrlLabel"
-                                :append-outer-icon="uniqueValueSymbolSvg ? 'check' : ''"
+                                :append-outer-icon="uniqueValueSymbolURL ? 'check' : ''"
                                 @click:append-outer="updateUniqueValueRenderer"
                             />
                         </div>
