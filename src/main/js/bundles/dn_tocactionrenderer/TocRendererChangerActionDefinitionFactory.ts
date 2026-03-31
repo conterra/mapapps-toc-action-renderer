@@ -57,8 +57,8 @@ export class TocRendererChangerActionDefinitionFactory {
             },
 
             trigger(tocItem: any) {
-                tool.get().set("active", true);
-                model.get().selectedLayerId = tocItem.ref.id;
+                tool!.set("active", true);
+                model!.selectedLayerId = tocItem.ref.id;
             }
         };
     }
