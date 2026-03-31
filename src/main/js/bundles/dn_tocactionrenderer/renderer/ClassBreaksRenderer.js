@@ -142,9 +142,6 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
                 );
 
                 updateLabels(layer.renderer.classBreakInfos);
-
-                console.info("Changed renderer:", layer.renderer.classBreakInfos);
-                console.info("Event:", event);
             }
 
             if (!slider) {

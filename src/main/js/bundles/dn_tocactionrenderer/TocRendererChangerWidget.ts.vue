@@ -321,7 +321,7 @@
                 uniqueValueOutlineWidth: undefined,
                 uniqueValueSize: undefined,
                 uniqueValueInfos: [] as any[],
-                uniqueValueSymbolSvg:"",
+                uniqueValueSymbolURL:"",
                 allowedRenderers: [] as string[],
                 symbolApplicable: undefined,
                 currentGeometryType: undefined,
@@ -508,7 +508,7 @@
                     attribute: this.selectedAttribute,
                     uniqueValueInfos: this.uniqueValueInfos,
                     symbol: this.selectedUniqueValueSymbol,
-                    pathString: this.uniqueValueSymbolSvg
+                    pathString: this.uniqueValueSymbolURL
                 });
             },
             updateUniqueValueColor(index: number, colorValue: ColorPickerObject) {
@@ -524,7 +524,7 @@
                     attribute: this.selectedAttribute,
                     uniqueValueInfos: this.uniqueValueInfos,
                     symbol: this.selectedUniqueValueSymbol,
-                    pathString: this.uniqueValueSymbolSvg
+                    pathString: this.uniqueValueSymbolURL
                 });
             },
             updateRenderer() {

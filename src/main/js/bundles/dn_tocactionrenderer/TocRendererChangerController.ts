@@ -176,7 +176,6 @@ export class TocRendererChangerController {
             };
         });
         this.model!.set("uniqueValueInfos", colorValueInfos);
-        console.info(this.model!.uniqueValueInfos);
     }
 
     public updateSimpleRenderer(color: Color, outlineColor: Color, outlineWidth: number, pointSize: number): void {
