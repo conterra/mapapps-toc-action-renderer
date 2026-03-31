@@ -26,64 +26,61 @@ import createTypeRenderer from "./renderer/TypeRenderer";
 import createHeatMapRenderer from "./renderer/HeatMapRenderer";
 
 import { TocRendererChangerModel } from "./TocRendererChangerModel";
-import type { InjectedReference } from "apprt-core/InjectedReference";
 import { RendererChangeEvent } from "./api";
-import { MessagesReference } from "./nls/bundle";
 
 export class TocRendererChangerController {
     private vm: Vue;
-    private model!: InjectedReference<TocRendererChangerModel>;
-    private _mapWidgetModel: InjectedReference<MapWidgetModel>;
-    private _i18n!: InjectedReference<MessagesReference>;
+    private model: TocRendererChangerModel;
+    private _mapWidgetModel: MapWidgetModel;
     private selectedLayer: any;
     private oldRenderer!: any[];
     private originalHeatmapColorStops: any;
 
     constructor(
         vm: Vue,
-        mapWidgetModel: InjectedReference<MapWidgetModel>,
-        model: InjectedReference<TocRendererChangerModel>) {
+        mapWidgetModel: MapWidgetModel,
+        model: TocRendererChangerModel) {
 
         this.vm = vm;
         this.model = model;
         this._mapWidgetModel = mapWidgetModel;
         this.initProperties();
 
-        model!.watch("selectedLayerId", ({ value }: { value: string }) => {
+        model.watch("selectedLayerId", ({ value }: { value: string }) => {
             this.getLayerAttributes(value);
         });
-        model!.watch("outlineWidth", ({ value }: { value: number }) => {
-            this.updateSimpleRenderer(model!.color, model!.outlineColor, value, model!.pointSize);
+        model.watch("outlineWidth", ({ value }: { value: number }) => {
+            this.updateSimpleRenderer(model.color, model.outlineColor, value, model.pointSize);
         });
-        model!.watch("pointSize", ({ value }: { value: number }) => {
-            this.updateSimpleRenderer(model!.color, model!.outlineColor, model!.outlineWidth, value);
+        model.watch("pointSize", ({ value }: { value: number }) => {
+            this.updateSimpleRenderer(model.color, model.outlineColor, model.outlineWidth, value);
         });
-        model!.watch("uniqueValueSize", ({ value }: { value: number }) => {
-            this.updateTypeRenderer(model!.selectedUniqueValueSymbol, value);
+        model.watch("uniqueValueSize", ({ value }: { value: number }) => {
+            this.updateTypeRenderer(model.selectedUniqueValueSymbol, value);
         });
-        model!.watch("symbolURL", () => {
+        model.watch("symbolURL", () => {
             this.updateSymbolRenderer(model);
         });
-        model!.watch("symbolHeight", () => {
+        model.watch("symbolHeight", () => {
             this.updateSymbolRenderer(model);
         });
 
-        model!.watch("symbolWidth", () => {
+        model.watch("symbolWidth", () => {
             this.updateSymbolRenderer(model);
         });
-        model!.watch("sizeRendererColor", ({ value }: { value: any }) => {
+        model.watch("sizeRendererColor", ({ value }: { value: any }) => {
             this.updateSizeRenderer(value);
         });
     }
 
     initProperties(): void {
         this.oldRenderer = [];
-        this.originalHeatmapColorStops = JSON.parse(JSON.stringify(this.model!.heatmapRenderer || null));
+        this.originalHeatmapColorStops = JSON.parse(JSON.stringify(this.model.heatmapRenderer || null));
     }
 
     private getLayerAttributes(layerId: string) {
-        const model = this.model!;
-        const selectedLayer = this.selectedLayer = this._mapWidgetModel!.map.findLayerById(layerId);
+        const model = this.model;
+        const selectedLayer = this.selectedLayer = this._mapWidgetModel.map.findLayerById(layerId);
 
         if (selectedLayer) {
             model.selectedLayerAttributes = selectedLayer.fields.map((item: Field) => {
@@ -124,13 +121,13 @@ export class TocRendererChangerController {
                         this.setTypeRenderer(
                             evt.attribute,
                             evt.symbol!,
-                            this.model!.uniqueValueSize,
+                            this.model.uniqueValueSize,
                             evt.uniqueValueInfos,
                             evt.pathString);
                         break;
                     case "heatmap":
                         if (evt.heatmapColors) {
-                            this.model!.heatmapRenderer.colorStops = evt.heatmapColors;
+                            this.model.heatmapRenderer.colorStops = evt.heatmapColors;
                         }
                         this.setHeatmapRenderer();
                         break;
@@ -175,11 +172,11 @@ export class TocRendererChangerController {
                 color: info.symbol.color
             };
         });
-        this.model!.set("uniqueValueInfos", colorValueInfos);
+        this.model.set("uniqueValueInfos", colorValueInfos);
     }
 
     public updateSimpleRenderer(color: Color, outlineColor: Color, outlineWidth: number, pointSize: number): void {
-        const geomType = this.model!.currentGeometryType;
+        const geomType = this.model.currentGeometryType;
 
         switch (geomType) {
             case "polygon":
@@ -244,7 +241,7 @@ export class TocRendererChangerController {
     private setClassBreaksRenderer(attribute: string) {
         createClassBreaksRenderer(
             this.selectedLayer,
-            this._mapWidgetModel!.view,
+            this._mapWidgetModel.view,
             attribute,
             this.vm.$refs["ctSmartRendererWidgets"],
             this.model
@@ -254,7 +251,7 @@ export class TocRendererChangerController {
     private setHeatmapRenderer() {
         createHeatMapRenderer(
             this.selectedLayer,
-            this.model!.heatmapRenderer,
+            this.model.heatmapRenderer,
             this._mapWidgetModel,
             this.vm.$refs["ctSmartRendererWidgets"]
         );
@@ -263,7 +260,7 @@ export class TocRendererChangerController {
     private setSizeRenderer(attribute: string, color: Color): void {
         createSizeRenderer(
             this.selectedLayer,
-            this._mapWidgetModel!.view,
+            this._mapWidgetModel.view,
             attribute,
             this.vm.$refs["ctSmartRendererWidgets"],
             color
@@ -278,20 +275,20 @@ export class TocRendererChangerController {
         pathString?: string): void {
         createTypeRenderer(
             this.selectedLayer,
-            this._mapWidgetModel!.view,
+            this._mapWidgetModel.view,
             attribute,
             symbol,
             pointSize,
             uniqueValueInfos,
             pathString
         ).then((colorAndValueInfo) => {
-            this.model!.uniqueValueInfos = colorAndValueInfo;
+            this.model.uniqueValueInfos = colorAndValueInfo;
         });
     }
 
     private setSymbolRenderer() {
         const geomType = this.selectedLayer.geometryType;
-        const model = this.model!;
+        const model = this.model;
         if (geomType === "point") {
             this.selectedLayer.renderer = {
                 type: "simple",  // autocasts as new PictureMarkerSymbol()
@@ -316,16 +313,16 @@ export class TocRendererChangerController {
     public resetRenderer(): void {
         this.selectedLayer.renderer = this.oldRenderer[this.selectedLayer.id];
         this.removeRendererWidget();
-        this.model!.selectedRenderer = undefined;
-        this.model!.selectedUniqueValueSymbol = "circle";
-        this.model!.selectedAttribute = undefined;
-        this.model!.color = [];
-        this.model!.outlineColor = [];
-        this.model!.sizeRendererColor = [];
-        this.model!.classBreaksColors = [];
-        this.model!.heatmapRenderer = null;
-        this.model!.uniqueValueInfos = [];
-        this.model!.heatmapRenderer = JSON.parse(JSON.stringify(this.originalHeatmapColorStops));
+        this.model.selectedRenderer = undefined;
+        this.model.selectedUniqueValueSymbol = "circle";
+        this.model.selectedAttribute = undefined;
+        this.model.color = [];
+        this.model.outlineColor = [];
+        this.model.sizeRendererColor = [];
+        this.model.classBreaksColors = [];
+        this.model.heatmapRenderer = null;
+        this.model.uniqueValueInfos = [];
+        this.model.heatmapRenderer = JSON.parse(JSON.stringify(this.originalHeatmapColorStops));
     }
 
 }
