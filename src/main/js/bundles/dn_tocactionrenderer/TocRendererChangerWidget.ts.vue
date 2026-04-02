@@ -64,6 +64,7 @@
         <v-layout
             v-if="selectedRenderer === 'simple' ||
                 selectedRenderer === 'symbol' ||
+                selectedRenderer === 'heatmap' ||
                 (selectedRenderer && selectedAttribute)"
             row
             wrap
@@ -313,9 +314,9 @@
                 selectedAttribute: undefined,
                 selectedRenderer: "simple",
                 selectedUniqueValueSymbol: "circle",
-                color: [] as number[],
-                outlineColor: [] as number[],
-                sizeRendererColor: [] as number[],
+                color: undefined as RGBAColor | undefined,
+                outlineColor: undefined as RGBAColor | undefined,
+                sizeRendererColor: undefined as RGBAColor | undefined,
                 outlineWidth: undefined,
                 pointSize: undefined,
                 uniqueValueOutlineWidth: undefined,
@@ -342,13 +343,8 @@
             sizeRendererColorValue: {
                 get() {
                     const color = this.sizeRendererColor;
-                    if (color.length === 4) {
-                        return {
-                            r: color[0],
-                            g: color[1],
-                            b: color[2],
-                            a: color[3]
-                        };
+                    if (color) {
+                        return color;
                     } else {
                         return {
                             r: 200,
@@ -360,19 +356,14 @@
                 },
                 set(value: ColorPickerObject) {
                     const rgba = value.rgba;
-                    this.sizeRendererColor = [rgba.r, rgba.g, rgba.b, rgba.a];
+                    this.sizeRendererColor = { r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a };
                 }
             },
             colorPickerValue: {
                 get() {
                     const color = this.color;
-                    if (color.length === 4) {
-                        return {
-                            r: color[0],
-                            g: color[1],
-                            b: color[2],
-                            a: color[3]
-                        };
+                    if (color) {
+                        return color;
                     } else {
                         return {
                             r: 200,
@@ -384,20 +375,15 @@
                 },
                 set(value: ColorPickerObject) {
                     const rgba = value.rgba;
-                    this.color = [rgba.r, rgba.g, rgba.b, rgba.a];
+                    this.color = { r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a };
                     this.updateSimpleRenderer();
                 }
             },
             outlineColorPickerValue: {
                 get() {
                     const outlineColor = this.outlineColor;
-                    if (outlineColor.length === 4) {
-                        return {
-                            r: outlineColor[0],
-                            g: outlineColor[1],
-                            b: outlineColor[2],
-                            a: outlineColor[3]
-                        };
+                    if (outlineColor) {
+                        return outlineColor;
                     } else {
                         return {
                             r: 200,
@@ -409,7 +395,7 @@
                 },
                 set(value: ColorPickerObject) {
                     const rgba = value.rgba;
-                    this.outlineColor = [rgba.r, rgba.g, rgba.b, rgba.a];
+                    this.outlineColor = { r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a };
                     this.updateSimpleRenderer();
                 }
             },

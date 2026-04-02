@@ -21,12 +21,12 @@ export interface RendererChangeEvent {
     renderer?: "class_breaks" | "size" | "unique_values" | "heatmap" | "simple" | "symbol";
     symbol?: string;
     attribute?: string;
-    color?: Color | number[];
+    color?: Color | RGBAColor;
     heatmapColors?: Array<{
-        color: Color;
+        color: RGBAColor;
         ratio: number;
     }>;
-    outlineColor?: Color;
+    outlineColor?: Color | RGBAColor;
     outlineWidth?: number;
     pointSize?: number;
     symbolURL?: string;

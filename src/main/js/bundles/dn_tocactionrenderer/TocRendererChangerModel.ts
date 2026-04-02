@@ -15,7 +15,7 @@
 ///
 
 import { Mutable, properties } from "apprt-core/Mutable";
-import { RendererType, SymbolType, LayerAttribute, UniqueValueInfo, ClassBreakColor } from "./api";
+import { RendererType, SymbolType, LayerAttribute, UniqueValueInfo, ClassBreakColor, RGBAColor } from "./api";
 
 export interface TocRendererChangerModelProperties {
 
@@ -24,9 +24,9 @@ export interface TocRendererChangerModelProperties {
     selectedAttribute: string | undefined;
     selectedLayerAttributes: LayerAttribute[];
     selectedUniqueValueSymbol: SymbolType | undefined;
-    color: number[];
-    outlineColor: number[];
-    sizeRendererColor: number[];
+    color: RGBAColor | undefined;
+    outlineColor: RGBAColor | undefined;
+    sizeRendererColor: RGBAColor | undefined;
     outlineWidth: number | undefined;
     pointSize: number | undefined;
     uniqueValueSize: number | undefined;
@@ -52,14 +52,15 @@ properties(TocRendererChangerModel, {
     selectedAttribute: undefined,
     selectedLayerAttributes: [],
     selectedUniqueValueSymbol: undefined,
-    color: [],
-    outlineColor: [],
-    sizeRendererColor: [],
+    color: undefined,
+    outlineColor: undefined,
+    sizeRendererColor: undefined,
     outlineWidth: undefined,
     pointSize: undefined,
     uniqueValueSize: undefined,
     uniqueValueOutlineWidth: undefined,
     uniqueValueInfos: [],
+    uniqueValueSymbolURL: undefined,
     heatmapRenderer: {},
     classBreaksColors: [],
     allowedRenderers: [],

@@ -27,7 +27,7 @@ import createHeatMapRenderer from "./renderer/HeatMapRenderer";
 
 import { TocRendererChangerModel } from "./TocRendererChangerModel";
 import type { InjectedReference } from "apprt-core/InjectedReference";
-import { RendererChangeEvent } from "./api";
+import { RendererChangeEvent, RGBAColor } from "./api";
 import { MessagesReference } from "./nls/bundle";
 
 export class TocRendererChangerController {
@@ -146,7 +146,7 @@ export class TocRendererChangerController {
         }
     }
 
-    private updateSizeRenderer(color: number[]): void {
+    private updateSizeRenderer(color: RGBAColor): void {
         if (!this.selectedLayer || !this.selectedLayer.renderer || !this.selectedLayer.renderer.classBreakInfos) {
             return;
         }
@@ -177,8 +177,10 @@ export class TocRendererChangerController {
         this.model!.set("uniqueValueInfos", colorValueInfos);
     }
 
-    public updateSimpleRenderer(color: Color, outlineColor: Color, outlineWidth: number, pointSize: number): void {
+    public updateSimpleRenderer(color: RGBAColor, outlineColor: RGBAColor, outlineWidth: number, pointSize: number): void {
         const geomType = this.model!.currentGeometryType;
+        const fillColor = color ? new Color(color) : new Color({ r: 200, g: 200, b: 200, a: 1 });
+        const strokeColor = outlineColor ? new Color(outlineColor) : new Color({ r: 200, g: 200, b: 200, a: 1 });
 
         switch (geomType) {
             case "polygon":
@@ -186,10 +188,10 @@ export class TocRendererChangerController {
                     type: "simple",
                     symbol: {
                         type: "simple-fill",
-                        color: color,
+                        color: fillColor,
                         outline: {
                             width: outlineWidth,
-                            color: outlineColor
+                            color: strokeColor
                         }
                     }
                 };
@@ -200,10 +202,10 @@ export class TocRendererChangerController {
                     symbol: {
                         type: "simple-marker",
                         size: pointSize,
-                        color: color,
+                        color: fillColor,
                         outline: {
                             width: outlineWidth,
-                            color: outlineColor
+                            color: strokeColor
                         }
                     }
                 };
@@ -213,7 +215,7 @@ export class TocRendererChangerController {
                     type: "simple",
                     symbol: {
                         type: "simple-line",
-                        color: color,
+                        color: fillColor,
                         width: outlineWidth,
                         style: "solid"
                     }
@@ -259,13 +261,14 @@ export class TocRendererChangerController {
         );
     }
 
-    private setSizeRenderer(attribute: string, color?: Color | number[]): void {
+    private setSizeRenderer(attribute: string, color?: RGBAColor): void {
+        const sizeColor = color ? new Color(color) : undefined;
         createSizeRenderer(
             this.selectedLayer,
             this._mapWidgetModel!.view,
             attribute,
             this.vm.$refs["ctSmartRendererWidgets"],
-            color
+            sizeColor
         );
     }
 
@@ -318,9 +321,9 @@ export class TocRendererChangerController {
         this.model!.selectedRenderer = undefined;
         this.model!.selectedUniqueValueSymbol = "circle";
         this.model!.selectedAttribute = undefined;
-        this.model!.color = [];
-        this.model!.outlineColor = [];
-        this.model!.sizeRendererColor = [];
+        this.model!.color = undefined;
+        this.model!.outlineColor = undefined;
+        this.model!.sizeRendererColor = undefined;
         this.model!.classBreaksColors = [];
         this.model!.heatmapRenderer = null;
         this.model!.uniqueValueInfos = [];
