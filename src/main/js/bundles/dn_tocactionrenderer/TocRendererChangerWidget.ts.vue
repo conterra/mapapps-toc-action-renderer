@@ -62,7 +62,10 @@
         </v-flex>
 
         <v-layout
-            v-if="selectedRenderer && selectedRenderer !== 'unique_values'"
+            v-if="selectedRenderer === 'simple' ||
+                selectedRenderer === 'symbol' ||
+                selectedRenderer === 'heatmap' ||
+                (selectedRenderer && selectedAttribute)"
             row
             wrap
             class="tocactionrenderer-content-layout"
@@ -91,7 +94,7 @@
                             min="1"
                             single-line
                             hide-details
-                            class="tocactionrenderer--outlineWidth-textfield"
+                            class="tocactionrenderer--textfield"
                         />
                         <div v-if="currentGeometryType==='point'">
                             <div class="mb-4" />
@@ -102,7 +105,39 @@
                                 min="1"
                                 single-line
                                 hide-details
-                                class="tocactionrenderer--outlineWidth-textfield"
+                                class="tocactionrenderer--textfield"
+                            />
+                        </div>
+                    </v-card>
+                </div>
+                <div
+                    v-if="selectedRenderer === 'unique_values' && selectedAttribute"
+                    class="unique_value-container"
+                >
+                    <v-card class="pa-3">
+                        <v-select
+                            v-model="selectedUniqueValueSymbol"
+                            :items="symbolItems"
+                            :label="i18n.symbol"
+                            hide-details
+                        />
+                        <div class="mb-4" />
+                        <p>{{ i18n.pointSize }}</p>
+                        <v-text-field
+                            v-model="uniqueValueSize"
+                            type="number"
+                            min="1"
+                            single-line
+                            hide-details
+                            class="tocactionrenderer--textfield"
+                        />
+                        <div class="mb-4" />
+                        <div v-if="selectedUniqueValueSymbol === 'path'">
+                            <v-text-field
+                                v-model="uniqueValueSymbolURL"
+                                :label="i18n.symbolUrlLabel"
+                                :append-outer-icon="uniqueValueSymbolURL ? 'check' : ''"
+                                @click:append-outer="updateUniqueValueRenderer"
                             />
                         </div>
                     </v-card>
@@ -179,13 +214,35 @@
             </v-flex>
 
             <v-flex
-                v-if="selectedRenderer !== 'simple' &&
-                    selectedRenderer !== 'symbol'"
+                v-if="(selectedRenderer !== 'simple' && selectedRenderer !== 'symbol')"
                 xs12
                 md6
                 class="tocactionrenderer-right-column"
             >
                 <div
+                    v-if="selectedRenderer === 'unique_values' && selectedAttribute"
+                    class="unique-value-info-container"
+                >
+                    <v-card class="pa-3">
+                        <div
+                            v-for="(info, index) in uniqueValueInfos"
+                            :key="index"
+                            class="unique-value-info-item"
+                        >
+                            <div class="v-label theme--light mb-2">
+                                {{ info.value }}
+                            </div>
+                            <v-flex class="unique-value-color-container align-center pb-3">
+                                <color-picker
+                                    :value="info.color"
+                                    @input="updateUniqueValueColor(index, $event)"
+                                />
+                            </v-flex>
+                        </div>
+                    </v-card>
+                </div>
+                <div
+                    v-if="selectedRenderer !== 'symbol'"
                     ref="ctSmartRendererWidgets"
                     class="tocactionrenderer-esri-widgets"
                 />
@@ -194,7 +251,7 @@
     </v-container>
 </template>
 
-<script>
+<script lang="ts">
     /*
     TODO:
     - different color schemes: https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-smartMapping-symbology-color.html#getSchemes
@@ -202,29 +259,71 @@
     - filter renderer for attr types
     - heatmap renderer
     */
+    import Vue from "vue";
     import Bindable from "apprt-vue/mixins/Bindable";
     import ColorPicker from "./components/ColorPicker.vue";
 
-    export default {
+    import type { ColorPickerObject, HeatmapColorStop, RGBAColor, I18n} from "./api";
+
+    export default Vue.extend({
         components: {
             'color-picker': ColorPicker
         },
         mixins: [Bindable],
+        props:{
+            i18n: {
+                type: Object as () => I18n,
+                default: function (): I18n {
+                    return {
+                        renderer: "Renderer",
+                        renderers: [
+                            {value: "simple", text: "Simple"},
+                            {value: "symbol", text: "Symbol"},
+                            {value: "class_breaks", text: "Class Breaks"},
+                            {value: "size", text: "Size"},
+                            {value: "unique_values", text: "Unique Values"},
+                            {value: "heatmap", text: "Heatmap"}
+                        ],
+                        symbol:"Symbol",
+                        symbols: [
+                            {value: "circle", text: "Kreis"},
+                            {value: "square", text: "Quadrat"},
+                            {value: "triangle", text: "Dreieck"},
+                            {value: "diamond", text: "Raute"},
+                            {value: "path", text: "Custom Symbol"}
+                        ],
+                        resetRenderer: "Reset Renderer",
+                        attribute: "Attribute",
+                        fillColor: "Fill Color",
+                        outlineColor: "Outline Color",
+                        outlineWidth: "Outline Width",
+                        pointSize: "Point Size",
+                        symbolUrlLabel: "Symbol URL",
+                        symbolHeightLabel: "Symbol Height",
+                        symbolWidthLabel: "Symbol Width"
+                    };
+                }
+            }
+        },
         data: function () {
             return {
                 name: "",
-                i18n: Object,
                 message: "",
                 selectedLayerAttributes: [],
                 selectedLayerId: undefined,
                 selectedAttribute: undefined,
                 selectedRenderer: "simple",
-                color: [],
-                outlineColor: [],
-                sizeRendererColor: [],
+                selectedUniqueValueSymbol: "circle",
+                color: undefined as RGBAColor | undefined,
+                outlineColor: undefined as RGBAColor | undefined,
+                sizeRendererColor: undefined as RGBAColor | undefined,
                 outlineWidth: undefined,
                 pointSize: undefined,
-                allowedRenderers: [],
+                uniqueValueOutlineWidth: undefined,
+                uniqueValueSize: undefined,
+                uniqueValueInfos: [] as any[],
+                uniqueValueSymbolURL:"",
+                allowedRenderers: [] as string[],
                 symbolApplicable: undefined,
                 currentGeometryType: undefined,
                 symbolURL: "",
@@ -236,21 +335,16 @@
                     type: Number,
                     default: 12
                 },
-                heatmapColors: [],
-                classBreaksColors: []
+                heatmapColors: [] as HeatmapColorStop[],
+                classBreaksColors: [] as RGBAColor[]
             };
         },
         computed: {
             sizeRendererColorValue: {
                 get() {
                     const color = this.sizeRendererColor;
-                    if (color.length === 4) {
-                        return {
-                            r: color[0],
-                            g: color[1],
-                            b: color[2],
-                            a: color[3]
-                        };
+                    if (color) {
+                        return color;
                     } else {
                         return {
                             r: 200,
@@ -260,21 +354,16 @@
                         };
                     }
                 },
-                set(value) {
+                set(value: ColorPickerObject) {
                     const rgba = value.rgba;
-                    this.sizeRendererColor = [rgba.r, rgba.g, rgba.b, rgba.a];
+                    this.sizeRendererColor = { r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a };
                 }
             },
             colorPickerValue: {
                 get() {
                     const color = this.color;
-                    if (color.length === 4) {
-                        return {
-                            r: color[0],
-                            g: color[1],
-                            b: color[2],
-                            a: color[3]
-                        };
+                    if (color) {
+                        return color;
                     } else {
                         return {
                             r: 200,
@@ -284,22 +373,17 @@
                         };
                     }
                 },
-                set(value) {
+                set(value: ColorPickerObject) {
                     const rgba = value.rgba;
-                    this.color = [rgba.r, rgba.g, rgba.b, rgba.a];
+                    this.color = { r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a };
                     this.updateSimpleRenderer();
                 }
             },
             outlineColorPickerValue: {
                 get() {
                     const outlineColor = this.outlineColor;
-                    if (outlineColor.length === 4) {
-                        return {
-                            r: outlineColor[0],
-                            g: outlineColor[1],
-                            b: outlineColor[2],
-                            a: outlineColor[3]
-                        };
+                    if (outlineColor) {
+                        return outlineColor;
                     } else {
                         return {
                             r: 200,
@@ -309,15 +393,17 @@
                         };
                     }
                 },
-                set(value) {
+                set(value: ColorPickerObject) {
                     const rgba = value.rgba;
-                    this.outlineColor = [rgba.r, rgba.g, rgba.b, rgba.a];
+                    this.outlineColor = { r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a };
                     this.updateSimpleRenderer();
                 }
             },
             rendererItems: {
                 get() {
-                    const rendererArray = Object.keys(this.i18n.renderers).map(key => this.i18n.renderers[key]);
+                    const rendererArray = (Array.isArray(this.i18n.renderers)
+                        ? this.i18n.renderers
+                        : Object.values(this.i18n.renderers));
 
                     if (this.symbolApplicable) {
                         return rendererArray.filter((renderer) =>
@@ -325,8 +411,17 @@
                     } else {
                         const tempRendererList = rendererArray.filter((renderer) =>
                             this.allowedRenderers.includes(renderer.value));
-                        return tempRendererList.filter(renderer => renderer.value !== "symbol");
+                        const temp = tempRendererList.filter(renderer => renderer.value !== "symbol");
+                        return temp;
                     }
+                }
+            },
+            symbolItems: {
+                get() {
+                    const symbolArray = (Array.isArray(this.i18n.symbols)
+                        ? this.i18n.symbols
+                        : Object.values(this.i18n.symbols));
+                    return symbolArray;
                 }
             }
         },
@@ -337,13 +432,20 @@
                 }
             },
             selectedRenderer: function (renderer) {
-                if (renderer) {
+                if (renderer === "unique_values" && this.selectedAttribute) {
+                    this.updateUniqueValueRenderer();
+                } else if(renderer){
                     this.updateRenderer();
+                }
+            },
+            selectedUniqueValueSymbol: function (symbol) {
+                if (symbol) {
+                    this.updateUniqueValueRenderer();
                 }
             }
         },
         methods: {
-            reverseArray(arr) {
+            reverseArray(arr: any[]) {
                 return [...arr].reverse();
             },
             updateSimpleRenderer(){
@@ -356,7 +458,7 @@
                     pointSize: this.pointSize
                 });
             },
-            updateHeatmapColor(index, colorValue) {
+            updateHeatmapColor(index: number, colorValue: ColorPickerObject) {
                 const rgba = colorValue.rgba;
                 // Calculate the actual index in the original array
                 const actualIndex = this.heatmapColors.length - 1 - index;
@@ -371,7 +473,7 @@
                     heatmapColors: this.heatmapColors
                 });
             },
-            updateClassBreaksColor(index, colorValue) {
+            updateClassBreaksColor(index: number, colorValue: ColorPickerObject) {
                 const rgba = colorValue.rgba;
                 // Calculate the actual index in the original array
                 const actualIndex = this.classBreaksColors.length - 1 - index;
@@ -386,12 +488,39 @@
                     classBreaksColors: this.classBreaksColors
                 });
             },
+            updateUniqueValueRenderer() {
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    attribute: this.selectedAttribute,
+                    uniqueValueInfos: this.uniqueValueInfos,
+                    symbol: this.selectedUniqueValueSymbol,
+                    pathString: this.uniqueValueSymbolURL
+                });
+            },
+            updateUniqueValueColor(index: number, colorValue: ColorPickerObject) {
+                const rgba = colorValue.rgba;
+                this.uniqueValueInfos[index].color = {
+                    r: rgba.r,
+                    g: rgba.g,
+                    b: rgba.b,
+                    a: rgba.a
+                };
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    attribute: this.selectedAttribute,
+                    uniqueValueInfos: this.uniqueValueInfos,
+                    symbol: this.selectedUniqueValueSymbol,
+                    pathString: this.uniqueValueSymbolURL
+                });
+            },
             updateRenderer() {
                 this.$emit("update-renderer", {
                     attribute: this.selectedAttribute,
-                    renderer: this.selectedRenderer
+                    renderer: this.selectedRenderer,
+                    symbol: this.selectedUniqueValueSymbol
                 });
+
             }
         }
-    };
+    });
 </script>

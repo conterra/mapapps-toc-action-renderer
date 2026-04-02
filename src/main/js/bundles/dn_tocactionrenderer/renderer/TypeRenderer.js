@@ -15,8 +15,15 @@
  */
 import * as typeRendererCreator from "@arcgis/core/smartMapping/renderers/type";
 
-export default function createTypeRenderer(layer, view, attribute) {
-
+export default async function createTypeRenderer(
+    layer,
+    view,
+    attribute,
+    symbol,
+    size,
+    uniqueValueInfos,
+    pathString
+) {
     const rendererParams = {
         layer: layer,
         view: view,
@@ -24,17 +31,38 @@ export default function createTypeRenderer(layer, view, attribute) {
         numTypes: -1
     };
 
-    let rendererResult = null;
+    const colorAndValueInfo = [];
+    try {
+        const rendererResult = await typeRendererCreator.createRenderer(rendererParams);
 
-    typeRendererCreator
-        .createRenderer(rendererParams)
-        .then(response => {
-            // Set the output renderer on the layer
+        if (uniqueValueInfos) {
+            rendererResult.renderer.uniqueValueInfos.forEach((info) => {
+                applySymbolStyle(info.symbol, symbol, size, pathString);
+                const matchingInfo = uniqueValueInfos.find((u) => u && u.value === info.value);
+                if(matchingInfo && matchingInfo.color) {
+                    info.symbol.color = matchingInfo.color;
+                }
+                colorAndValueInfo.push({ value: info.value, color: info.symbol.color });
+            });
+        } else {
+            rendererResult.renderer.uniqueValueInfos.forEach(info => {
+                applySymbolStyle(info.symbol, symbol, size, pathString);
+                colorAndValueInfo.push({ value: info.value, color: info.symbol.color });
+            });
+        }
 
-            rendererResult = response;
-            layer.renderer = rendererResult.renderer;
-        })
-        .catch(function (error) {
-            console.error("there was an error: ", error);
-        });
+        applySymbolStyle(rendererResult.renderer.defaultSymbol, symbol, size, pathString);
+        layer.renderer = rendererResult.renderer;
+    } catch (error) {
+        console.error("there was an error: ", error);
+    }
+    return colorAndValueInfo;
+}
+
+function applySymbolStyle(symbolObj, style, size, pathString) {
+    symbolObj.style = style;
+    symbolObj.size = size;
+    if (style === "path" && pathString) {
+        symbolObj.path = pathString;
+    }
 }

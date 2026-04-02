@@ -32,13 +32,13 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
             id: "custom",
             tags: ["custom", "user-defined"],
             colors: classBreaksColors,
-            noDataColor: new Color([128, 128, 128, 0.5]),
+            noDataColor: new Color({ r: 128, g: 128, b: 128, a: 0.5 }),
             colorsForClassBreaks: [{
                 colors: classBreaksColors,
                 numClasses: classBreaksColors.length
             }],
             outline: {
-                color: new Color([255, 255, 255, 0.5]),
+                color: new Color({ r: 255, g: 255, b: 255, a: 0.5 }),
                 width: 0.5
             },
             size: 8,
@@ -142,9 +142,6 @@ export default function createClassBreaksRenderer(layer, view, attribute, domNod
                 );
 
                 updateLabels(layer.renderer.classBreakInfos);
-
-                console.info("Changed renderer:", layer.renderer.classBreakInfos);
-                console.info("Event:", event);
             }
 
             if (!slider) {
