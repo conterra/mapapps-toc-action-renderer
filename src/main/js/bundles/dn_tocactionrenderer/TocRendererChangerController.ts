@@ -28,13 +28,11 @@ import createHeatMapRenderer from "./renderer/HeatMapRenderer";
 import { TocRendererChangerModel } from "./TocRendererChangerModel";
 import type { InjectedReference } from "apprt-core/InjectedReference";
 import { RendererChangeEvent, RGBAColor } from "./api";
-import { MessagesReference } from "./nls/bundle";
 
 export class TocRendererChangerController {
     private vm: Vue;
     private model!: InjectedReference<TocRendererChangerModel>;
     private _mapWidgetModel: InjectedReference<MapWidgetModel>;
-    private _i18n!: InjectedReference<MessagesReference>;
     private selectedLayer: any;
     private oldRenderer!: any[];
     private originalHeatmapColorStops: any;
