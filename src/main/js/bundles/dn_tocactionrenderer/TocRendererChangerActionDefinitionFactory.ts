@@ -47,7 +47,10 @@ export class TocRendererChangerActionDefinitionFactory {
             icon: "color_lens",
 
             isVisibleForItem(tocItem: any) {
-                if (tocItem?.ref?.type === "feature") {
+                if (tocItem?.ref?.type === "feature" ||
+                    tocItem?.ref?.type === "ogc-feature" ||
+                    tocItem?.ref?.type === "csv" ||
+                    tocItem?.ref?.type === "geojson") {
                     return true;
                 }
             },

@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Heumarkt",
+        "category": "Platz",
+        "value": 80
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.9595, 50.9365]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Rheinauhafen",
+        "category": "Hafen",
+        "value": 70
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.9647, 50.9297]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Stadtwald",
+        "category": "Park",
+        "value": 60
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.9214, 50.9147]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "MediaPark",
+        "category": "Business",
+        "value": 90
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.9428, 50.9484]
+      }
+    }
+  ]
+}
