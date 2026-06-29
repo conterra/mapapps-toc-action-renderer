@@ -42,6 +42,11 @@
         ]
     },
     "bundles": {
+        "dn_tocactionrenderer":{
+            "Config": {
+                "uniqueValueSymbolURL": "M12 2L4 12h3v8h10v-8h3L12 2z"
+            }
+        },
         "agssearch": {
             "AutoStoreRegistration": {
                 "componentEnabled": true

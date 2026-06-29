@@ -1,18 +1,21 @@
-/*
- * Copyright (C) 2025 con terra GmbH (info@conterra.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+///
+/// Copyright (C) 2025 con terra GmbH (info@conterra.de)
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///         http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+///
+
+import { Messages } from '../bundle';
+
 export default {
     bundleName: "dn_tocactionrenderer",
     bundleDescription: "Widget containing the esri smart renderer functionalities",
@@ -31,6 +34,14 @@ export default {
             {value: "unique_values", text: "Unique Values"},
             {value: "heatmap", text: "Heatmap"}
         ],
+        symbol: "Symbol",
+        symbols: [
+            {value: "circle", text: "Kreis"},
+            {value: "square", text: "Quadrat"},
+            {value: "triangle", text: "Dreieck"},
+            {value: "diamond", text: "Raute"},
+            {value: "path", text: "Benutzerdefiniertes Symbol"}
+        ],
         resetRenderer: "Symbolisierung zurücksetzen",
         attribute: "Attribut",
         fillColor: "Füllfarbe",
@@ -41,4 +52,4 @@ export default {
         symbolHeightLabel: "Symbolhöhe",
         symbolWidthLabel: "Symbolbreite"
     }
-};
+} satisfies Messages;

@@ -1,0 +1,526 @@
+<!--
+
+    Copyright (C) 2025 con terra GmbH (info@conterra.de)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<template>
+    <v-container
+        pa-0
+        class="tocactionrenderer-main-container"
+    >
+        <!-- Renderer Selection Tabs -->
+        <v-flex
+            v-if="selectedLayerId"
+            mb-2
+        >
+            <v-select
+                v-model="selectedRenderer"
+                :items="rendererItems"
+                :label="i18n.renderer"
+                hide-details
+            />
+        </v-flex>
+
+        <v-flex
+            v-if="selectedLayerId && selectedRenderer !== 'simple' &&
+                selectedRenderer !== 'symbol' && selectedRenderer !== 'heatmap'"
+            mb-2
+        >
+            <v-select
+                v-model="selectedAttribute"
+                :items="selectedLayerAttributes"
+                item-text="name"
+                item-value="name"
+                :label="i18n.attribute"
+                hide-details
+            />
+        </v-flex>
+
+        <!-- Reset Button -->
+        <v-flex
+            v-if="selectedRenderer"
+            mb-3
+        >
+            <v-btn
+                class="primary"
+                @click="$emit('reset-renderer')"
+            >
+                {{ i18n.resetRenderer }}
+            </v-btn>
+        </v-flex>
+
+        <v-layout
+            v-if="selectedRenderer === 'simple' ||
+                selectedRenderer === 'symbol' ||
+                selectedRenderer === 'heatmap' ||
+                (selectedRenderer && selectedAttribute)"
+            row
+            wrap
+            class="tocactionrenderer-content-layout"
+        >
+            <v-flex
+                xs12
+                md6
+                class="tocactionrenderer-left-column"
+            >
+                <div v-if="selectedRenderer === 'simple'">
+                    <v-card class="pa-3">
+                        <p>{{ i18n.fillColor }}</p>
+                        <div class="tocactionrenderer--color-picker">
+                            <color-picker v-model="colorPickerValue" />
+                        </div>
+                        <div class="mb-4" />
+                        <p>{{ i18n.outlineColor }}</p>
+                        <div class="tocactionrenderer--color-picker">
+                            <color-picker v-model="outlineColorPickerValue" />
+                        </div>
+                        <div class="mb-4" />
+                        <p>{{ i18n.outlineWidth }}</p>
+                        <v-text-field
+                            v-model="outlineWidth"
+                            type="number"
+                            min="1"
+                            single-line
+                            hide-details
+                            class="tocactionrenderer--textfield"
+                        />
+                        <div v-if="currentGeometryType==='point'">
+                            <div class="mb-4" />
+                            <p>{{ i18n.pointSize }}</p>
+                            <v-text-field
+                                v-model="pointSize"
+                                type="number"
+                                min="1"
+                                single-line
+                                hide-details
+                                class="tocactionrenderer--textfield"
+                            />
+                        </div>
+                    </v-card>
+                </div>
+                <div
+                    v-if="selectedRenderer === 'unique_values' && selectedAttribute"
+                    class="unique_value-container"
+                >
+                    <v-card class="pa-3">
+                        <v-select
+                            v-model="selectedUniqueValueSymbol"
+                            :items="symbolItems"
+                            :label="i18n.symbol"
+                            hide-details
+                        />
+                        <div class="mb-4" />
+                        <p>{{ i18n.pointSize }}</p>
+                        <v-text-field
+                            v-model="uniqueValueSize"
+                            type="number"
+                            min="1"
+                            single-line
+                            hide-details
+                            class="tocactionrenderer--textfield"
+                        />
+                        <div class="mb-4" />
+                        <div v-if="selectedUniqueValueSymbol === 'path'">
+                            <v-text-field
+                                v-model="uniqueValueSymbolURL"
+                                :label="i18n.symbolUrlLabel"
+                                :append-outer-icon="uniqueValueSymbolURL ? 'check' : ''"
+                                @click:append-outer="updateUniqueValueRenderer"
+                            />
+                        </div>
+                    </v-card>
+                </div>
+                <div v-if="selectedRenderer === 'size' && selectedAttribute">
+                    <v-card class="pa-3">
+                        <p>{{ i18n.fillColor }}</p>
+                        <div class="tocactionrenderer--color-picker">
+                            <color-picker v-model="sizeRendererColorValue" />
+                        </div>
+                    </v-card>
+                </div>
+                <div v-if="selectedRenderer === 'symbol'">
+                    <v-card class="pa-3">
+                        <v-text-field
+                            v-model="symbolURL"
+                            :label="i18n.symbolUrlLabel"
+                        />
+                        <v-slider
+                            v-model="symbolHeight"
+                            thumb-label
+                            :label="i18n.symbolHeightLabel"
+                            :min="12"
+                            :max="200"
+                        />
+                        <v-slider
+                            v-model="symbolWidth"
+                            thumb-label
+                            :label="i18n.symbolWidthLabel"
+                            :min="12"
+                            :max="200"
+                        />
+                    </v-card>
+                </div>
+                <div v-if="selectedRenderer === 'heatmap'">
+                    <v-card class="pa-3">
+                        <div class="heatmap-settings">
+                            <div
+                                v-for="(item, index) in reverseArray(heatmapColors)"
+                                :key="index"
+                                class="heatmap-color-item"
+                            >
+                                <v-flex class="heatmap-color-container align-center pb-3">
+                                    <color-picker
+                                        :value="item.color"
+                                        @input="updateHeatmapColor(index, $event)"
+                                    />
+                                </v-flex>
+                            </div>
+                        </div>
+                    </v-card>
+                </div>
+                <div v-if="selectedRenderer === 'class_breaks' && selectedAttribute">
+                    <v-card class="pa-3">
+                        <div class="classbreaks-settings">
+                            <div
+                                v-for="(item, index) in reverseArray(classBreaksColors)"
+                                :key="index"
+                                class="classbreaks-color-item"
+                            >
+                                <div class="v-label theme--light mb-2">
+                                    {{ item.label }}
+                                </div>
+                                <v-flex class="classbreaks-color-container align-center pb-3">
+                                    <color-picker
+                                        :value="item"
+                                        @input="updateClassBreaksColor(index, $event)"
+                                    />
+                                </v-flex>
+                            </div>
+                        </div>
+                    </v-card>
+                </div>
+            </v-flex>
+
+            <v-flex
+                v-if="(selectedRenderer !== 'simple' && selectedRenderer !== 'symbol')"
+                xs12
+                md6
+                class="tocactionrenderer-right-column"
+            >
+                <div
+                    v-if="selectedRenderer === 'unique_values' && selectedAttribute"
+                    class="unique-value-info-container"
+                >
+                    <v-card class="pa-3">
+                        <div
+                            v-for="(info, index) in uniqueValueInfos"
+                            :key="index"
+                            class="unique-value-info-item"
+                        >
+                            <div class="v-label theme--light mb-2">
+                                {{ info.value }}
+                            </div>
+                            <v-flex class="unique-value-color-container align-center pb-3">
+                                <color-picker
+                                    :value="info.color"
+                                    @input="updateUniqueValueColor(index, $event)"
+                                />
+                            </v-flex>
+                        </div>
+                    </v-card>
+                </div>
+                <div
+                    v-if="selectedRenderer !== 'symbol'"
+                    ref="ctSmartRendererWidgets"
+                    class="tocactionrenderer-esri-widgets"
+                />
+            </v-flex>
+        </v-layout>
+    </v-container>
+</template>
+
+<script lang="ts">
+    /*
+    TODO:
+    - different color schemes: https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-smartMapping-symbology-color.html#getSchemes
+    - error handling
+    - filter renderer for attr types
+    - heatmap renderer
+    */
+    import Vue from "vue";
+    import Bindable from "apprt-vue/mixins/Bindable";
+    import ColorPicker from "./components/ColorPicker.vue";
+
+    import type { ColorPickerObject, HeatmapColorStop, RGBAColor, I18n} from "./api";
+
+    export default Vue.extend({
+        components: {
+            'color-picker': ColorPicker
+        },
+        mixins: [Bindable],
+        props:{
+            i18n: {
+                type: Object as () => I18n,
+                default: function (): I18n {
+                    return {
+                        renderer: "Renderer",
+                        renderers: [
+                            {value: "simple", text: "Simple"},
+                            {value: "symbol", text: "Symbol"},
+                            {value: "class_breaks", text: "Class Breaks"},
+                            {value: "size", text: "Size"},
+                            {value: "unique_values", text: "Unique Values"},
+                            {value: "heatmap", text: "Heatmap"}
+                        ],
+                        symbol:"Symbol",
+                        symbols: [
+                            {value: "circle", text: "Kreis"},
+                            {value: "square", text: "Quadrat"},
+                            {value: "triangle", text: "Dreieck"},
+                            {value: "diamond", text: "Raute"},
+                            {value: "path", text: "Custom Symbol"}
+                        ],
+                        resetRenderer: "Reset Renderer",
+                        attribute: "Attribute",
+                        fillColor: "Fill Color",
+                        outlineColor: "Outline Color",
+                        outlineWidth: "Outline Width",
+                        pointSize: "Point Size",
+                        symbolUrlLabel: "Symbol URL",
+                        symbolHeightLabel: "Symbol Height",
+                        symbolWidthLabel: "Symbol Width"
+                    };
+                }
+            }
+        },
+        data: function () {
+            return {
+                name: "",
+                message: "",
+                selectedLayerAttributes: [],
+                selectedLayerId: undefined,
+                selectedAttribute: undefined,
+                selectedRenderer: "simple",
+                selectedUniqueValueSymbol: "circle",
+                color: undefined as RGBAColor | undefined,
+                outlineColor: undefined as RGBAColor | undefined,
+                sizeRendererColor: undefined as RGBAColor | undefined,
+                outlineWidth: undefined,
+                pointSize: undefined,
+                uniqueValueOutlineWidth: undefined,
+                uniqueValueSize: undefined,
+                uniqueValueInfos: [] as any[],
+                uniqueValueSymbolURL:"",
+                allowedRenderers: [] as string[],
+                symbolApplicable: undefined,
+                currentGeometryType: undefined,
+                symbolURL: "",
+                symbolHeight: {
+                    type: Number,
+                    default: 12
+                },
+                symbolWidth : {
+                    type: Number,
+                    default: 12
+                },
+                heatmapColors: [] as HeatmapColorStop[],
+                classBreaksColors: [] as RGBAColor[]
+            };
+        },
+        computed: {
+            sizeRendererColorValue: {
+                get() {
+                    const color = this.sizeRendererColor;
+                    if (color) {
+                        return color;
+                    } else {
+                        return {
+                            r: 200,
+                            g: 200,
+                            b: 200,
+                            a: 1
+                        };
+                    }
+                },
+                set(value: ColorPickerObject) {
+                    const rgba = value.rgba;
+                    this.sizeRendererColor = { r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a };
+                }
+            },
+            colorPickerValue: {
+                get() {
+                    const color = this.color;
+                    if (color) {
+                        return color;
+                    } else {
+                        return {
+                            r: 200,
+                            g: 200,
+                            b: 200,
+                            a: 1
+                        };
+                    }
+                },
+                set(value: ColorPickerObject) {
+                    const rgba = value.rgba;
+                    this.color = { r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a };
+                    this.updateSimpleRenderer();
+                }
+            },
+            outlineColorPickerValue: {
+                get() {
+                    const outlineColor = this.outlineColor;
+                    if (outlineColor) {
+                        return outlineColor;
+                    } else {
+                        return {
+                            r: 200,
+                            g: 200,
+                            b: 200,
+                            a: 1
+                        };
+                    }
+                },
+                set(value: ColorPickerObject) {
+                    const rgba = value.rgba;
+                    this.outlineColor = { r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a };
+                    this.updateSimpleRenderer();
+                }
+            },
+            rendererItems: {
+                get() {
+                    const rendererArray = (Array.isArray(this.i18n.renderers)
+                        ? this.i18n.renderers
+                        : Object.values(this.i18n.renderers));
+
+                    if (this.symbolApplicable) {
+                        return rendererArray.filter((renderer) =>
+                            this.allowedRenderers.includes(renderer.value));
+                    } else {
+                        const tempRendererList = rendererArray.filter((renderer) =>
+                            this.allowedRenderers.includes(renderer.value));
+                        const temp = tempRendererList.filter(renderer => renderer.value !== "symbol");
+                        return temp;
+                    }
+                }
+            },
+            symbolItems: {
+                get() {
+                    const symbolArray = (Array.isArray(this.i18n.symbols)
+                        ? this.i18n.symbols
+                        : Object.values(this.i18n.symbols));
+                    return symbolArray;
+                }
+            }
+        },
+        watch: {
+            selectedAttribute: function (attr) {
+                if (attr) {
+                    this.updateRenderer();
+                }
+            },
+            selectedRenderer: function (renderer) {
+                if (renderer === "unique_values" && this.selectedAttribute) {
+                    this.updateUniqueValueRenderer();
+                } else if(renderer){
+                    this.updateRenderer();
+                }
+            },
+            selectedUniqueValueSymbol: function (symbol) {
+                if (symbol) {
+                    this.updateUniqueValueRenderer();
+                }
+            }
+        },
+        methods: {
+            reverseArray(arr: any[]) {
+                return [...arr].reverse();
+            },
+            updateSimpleRenderer(){
+
+                this.$emit("update-simple-renderer", {
+                    renderer: this.selectedRenderer,
+                    color: this.color,
+                    outlineColor: this.outlineColor,
+                    outlineWidth: this.outlineWidth,
+                    pointSize: this.pointSize
+                });
+            },
+            updateHeatmapColor(index: number, colorValue: ColorPickerObject) {
+                const rgba = colorValue.rgba;
+                // Calculate the actual index in the original array
+                const actualIndex = this.heatmapColors.length - 1 - index;
+                this.heatmapColors[actualIndex].color = {
+                    r: rgba.r,
+                    g: rgba.g,
+                    b: rgba.b,
+                    a: rgba.a
+                };
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    heatmapColors: this.heatmapColors
+                });
+            },
+            updateClassBreaksColor(index: number, colorValue: ColorPickerObject) {
+                const rgba = colorValue.rgba;
+                // Calculate the actual index in the original array
+                const actualIndex = this.classBreaksColors.length - 1 - index;
+                this.classBreaksColors[actualIndex].r = rgba.r;
+                this.classBreaksColors[actualIndex].g = rgba.g;
+                this.classBreaksColors[actualIndex].b = rgba.b;
+                this.classBreaksColors[actualIndex].a = rgba.a;
+
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    attribute: this.selectedAttribute,
+                    classBreaksColors: this.classBreaksColors
+                });
+            },
+            updateUniqueValueRenderer() {
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    attribute: this.selectedAttribute,
+                    uniqueValueInfos: this.uniqueValueInfos,
+                    symbol: this.selectedUniqueValueSymbol,
+                    pathString: this.uniqueValueSymbolURL
+                });
+            },
+            updateUniqueValueColor(index: number, colorValue: ColorPickerObject) {
+                const rgba = colorValue.rgba;
+                this.uniqueValueInfos[index].color = {
+                    r: rgba.r,
+                    g: rgba.g,
+                    b: rgba.b,
+                    a: rgba.a
+                };
+                this.$emit("update-renderer", {
+                    renderer: this.selectedRenderer,
+                    attribute: this.selectedAttribute,
+                    uniqueValueInfos: this.uniqueValueInfos,
+                    symbol: this.selectedUniqueValueSymbol,
+                    pathString: this.uniqueValueSymbolURL
+                });
+            },
+            updateRenderer() {
+                this.$emit("update-renderer", {
+                    attribute: this.selectedAttribute,
+                    renderer: this.selectedRenderer,
+                    symbol: this.selectedUniqueValueSymbol
+                });
+
+            }
+        }
+    });
+</script>
