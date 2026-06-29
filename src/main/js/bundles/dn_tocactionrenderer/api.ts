@@ -57,6 +57,7 @@ export interface I18n {
     symbols: Array<SymbolObjectType>;
     resetRenderer: string;
     attribute: string;
+    colorSelectionFor: string,
     fillColor: string;
     outlineColor: string;
     outlineWidth: string;
