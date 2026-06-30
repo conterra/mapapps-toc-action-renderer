@@ -30,6 +30,7 @@
                 :items="rendererItems"
                 :label="i18n.renderer"
                 hide-details
+                @change="onRendererChanged"
             />
         </v-flex>
 
@@ -45,6 +46,7 @@
                 item-value="name"
                 :label="i18n.attribute"
                 hide-details
+                @change="onAttributeChanged"
             />
         </v-flex>
 
@@ -124,6 +126,7 @@
                             :items="symbolItems"
                             :label="i18n.symbol"
                             hide-details
+                            @change="onSymbolChanged"
                         />
                         <div class="mb-4" />
                         <p>{{ i18n.pointSize }}</p>
@@ -430,26 +433,24 @@
                 }
             }
         },
-        watch: {
-            selectedAttribute: function (attr) {
-                if (attr) {
-                    this.updateRenderer();
-                }
-            },
-            selectedRenderer: function (renderer) {
-                if (renderer === "unique_values" && this.selectedAttribute) {
-                    this.updateUniqueValueRenderer();
-                } else if(renderer){
-                    this.updateRenderer();
-                }
-            },
-            selectedUniqueValueSymbol: function (symbol) {
-                if (symbol) {
-                    this.updateUniqueValueRenderer();
-                }
-            }
-        },
         methods: {
+            onAttributeChanged() {
+                if (this.selectedAttribute) {
+                    this.updateRenderer();
+                }
+            },
+            onRendererChanged() {
+                if (this.selectedRenderer === "unique_values" && this.selectedAttribute) {
+                    this.updateUniqueValueRenderer();
+                } else if (this.selectedRenderer) {
+                    this.updateRenderer();
+                }
+            },
+            onSymbolChanged() {
+                if (this.selectedUniqueValueSymbol) {
+                    this.updateUniqueValueRenderer();
+                }
+            },
             reverseArray(arr: any[]) {
                 return [...arr].reverse();
             },
