@@ -114,7 +114,9 @@ export class TocRendererChangerController {
                     type: item.type
                 };
             });
-            this.oldRenderer[selectedLayer.id] = selectedLayer.renderer?.clone();
+            if (!(selectedLayer.id in this.oldRenderer)) {
+                this.oldRenderer[selectedLayer.id] = selectedLayer.renderer?.clone();
+            }
             model.symbolApplicable = selectedLayer.geometryType === "point";
             model.currentGeometryType = selectedLayer.geometryType;
 
@@ -550,19 +552,30 @@ export class TocRendererChangerController {
         }
     }
 
+    /**
+     * Restores the layer to the renderer it had when it was first opened and
+     * resets the widget to match it.
+     */
     public resetRenderer(): void {
-        this.selectedLayer.renderer = this.oldRenderer[this.selectedLayer.id];
+        const layer = this.selectedLayer;
+        const originalRenderer = this.oldRenderer[layer.id];
+        layer.renderer = originalRenderer;
         this.removeRendererWidget();
-        this.model!.selectedRenderer = undefined;
-        this.model!.selectedUniqueValueSymbol = "circle";
-        this.model!.selectedAttribute = undefined;
-        this.model!.color = undefined;
-        this.model!.outlineColor = undefined;
-        this.model!.sizeRendererColor = undefined;
-        this.model!.classBreaksColors = [];
-        this.model!.heatmapRenderer = null;
-        this.model!.uniqueValueInfos = [];
-        this.model!.heatmapRenderer = this.clone(this.rendererDefaults.heatmapRenderer);
+
+        if (originalRenderer) {
+            this.applyCurrentRendererToModel(layer);
+        } else {
+            // the layer had no renderer to begin with: clear the panel
+            this.suppressRendererUpdate = true;
+            try {
+                this.resetRendererValuesToDefaults();
+                this.model!.selectedRenderer = undefined;
+            } finally {
+                setTimeout(() => {
+                    this.suppressRendererUpdate = false;
+                }, 0);
+            }
+        }
     }
 
 }
