@@ -25,9 +25,9 @@ import createClassBreaksRenderer from "./renderer/ClassBreaksRenderer";
 import createTypeRenderer from "./renderer/TypeRenderer";
 import createHeatMapRenderer from "./renderer/HeatMapRenderer";
 
-import { TocRendererChangerModel } from "./TocRendererChangerModel";
+import { TocRendererChangerModel, TocRendererChangerModelProperties } from "./TocRendererChangerModel";
 import type { InjectedReference } from "apprt-core/InjectedReference";
-import { HeatmapColorStop, RendererChangeEvent, RendererType, RGBAColor, SymbolType } from "./api";
+import { HeatmapColorStop, RendererChangeEvent, RGBAColor } from "./api";
 
 type SupportedLayer = __esri.FeatureLayer | __esri.OGCFeatureLayer | __esri.CSVLayer | __esri.GeoJSONLayer;
 
@@ -37,8 +37,8 @@ export class TocRendererChangerController {
     private _mapWidgetModel: InjectedReference<MapWidgetModel>;
     private selectedLayer: any;
     private oldRenderer!: {[key: string]: __esri.Renderer | undefined};
-    private originalHeatmapColorStops: any;
-    private initializingFromLayer = false; // prevents rendering updates while setting model from existing renderer
+    private rendererDefaults!: Partial<TocRendererChangerModelProperties>;
+    private suppressRendererUpdate = false;
 
     constructor(
         vm: Vue,
@@ -79,7 +79,28 @@ export class TocRendererChangerController {
 
     initProperties(): void {
         this.oldRenderer = {};
-        this.originalHeatmapColorStops = JSON.parse(JSON.stringify(this.model!.heatmapRenderer || null));
+
+        const model = this.model!;
+        // deep-cloned so later edits can never mutate the stored defaults
+        this.rendererDefaults = this.clone({
+            color: model.color,
+            outlineColor: model.outlineColor,
+            outlineWidth: model.outlineWidth,
+            pointSize: model.pointSize,
+            sizeRendererColor: model.sizeRendererColor,
+            uniqueValueSize: model.uniqueValueSize,
+            selectedUniqueValueSymbol: model.selectedUniqueValueSymbol,
+            symbolURL: model.symbolURL,
+            symbolHeight: model.symbolHeight,
+            symbolWidth: model.symbolWidth,
+            classBreaksColors: model.classBreaksColors,
+            uniqueValueInfos: model.uniqueValueInfos,
+            heatmapRenderer: model.heatmapRenderer
+        });
+    }
+
+    private clone<T>(value: T): T {
+        return JSON.parse(JSON.stringify(value ?? null));
     }
 
     private getLayerAttributes(layerId: string) {
@@ -103,9 +124,8 @@ export class TocRendererChangerController {
     }
 
     /**
-     * Reads the layer's current renderer and pushes its state into the model when a layer is
-     * selected, so the widget opens on the renderer mode the layer actually uses and shows its
-     * symbology as the default instead of the static config defaults.
+     * Populates the model with the values of the current renderer of a given layer.
+     * The model values for all other renderers are reset
      */
     private applyCurrentRendererToModel(layer: SupportedLayer): void {
         const renderer = layer.renderer;
@@ -113,8 +133,9 @@ export class TocRendererChangerController {
             return;
         }
 
-        this.initializingFromLayer = true;
+        this.suppressRendererUpdate = true;
         try {
+            this.resetRendererValuesToDefaults();
             switch (renderer.type) {
                 case "simple":
                     this.applySimpleRendererToModel(renderer);
@@ -138,9 +159,19 @@ export class TocRendererChangerController {
         } finally {
             // using timeout so this runs after other timeouts used while populating
             setTimeout(() => {
-                this.initializingFromLayer = false;
+                this.suppressRendererUpdate = false;
             }, 0);
         }
+    }
+
+    /** Resets all renderer-specific model values to the configured defaults. */
+    private resetRendererValuesToDefaults(): void {
+        const model = this.model!;
+        // clone so each reset gets its own copy and never shares references with the snapshot
+        Object.entries(this.clone(this.rendererDefaults)).forEach(([key, value]) => {
+            model.set(key, value);
+        });
+        model.selectedAttribute = undefined;
     }
 
 
@@ -322,7 +353,11 @@ export class TocRendererChangerController {
                         this.setHeatmapRenderer();
                         break;
                     case "simple":
-                        // do nothing
+                        this.updateSimpleRenderer(
+                            this.model!.color,
+                            this.model!.outlineColor,
+                            this.model!.outlineWidth,
+                            this.model!.pointSize);
                         break;
                     case "symbol":
                         this.setSymbolRenderer();
@@ -335,7 +370,7 @@ export class TocRendererChangerController {
     }
 
     private updateSizeRenderer(color: RGBAColor): void {
-        if (this.initializingFromLayer) {
+        if (this.suppressRendererUpdate) {
             return;
         }
         if (!this.selectedLayer || !this.selectedLayer.renderer || !this.selectedLayer.renderer.classBreakInfos) {
@@ -347,7 +382,7 @@ export class TocRendererChangerController {
     }
 
     private updateTypeRenderer(symbol: string, pointSize: number): void {
-        if (this.initializingFromLayer) {
+        if (this.suppressRendererUpdate) {
             return;
         }
         if (!this.selectedLayer || !this.selectedLayer.renderer || !this.selectedLayer.renderer.uniqueValueInfos) {
@@ -372,7 +407,7 @@ export class TocRendererChangerController {
     }
 
     public updateSimpleRenderer(color: RGBAColor, outlineColor: RGBAColor, outlineWidth: number, pointSize: number): void {
-        if (this.initializingFromLayer) {
+        if (this.suppressRendererUpdate) {
             return;
         }
         const geomType = this.model!.currentGeometryType;
@@ -424,7 +459,7 @@ export class TocRendererChangerController {
     }
 
     private updateSymbolRenderer(model: TocRendererChangerModel): void {
-        if (this.initializingFromLayer) {
+        if (this.suppressRendererUpdate) {
             return;
         }
         const geomType = this.selectedLayer.geometryType;
@@ -527,7 +562,7 @@ export class TocRendererChangerController {
         this.model!.classBreaksColors = [];
         this.model!.heatmapRenderer = null;
         this.model!.uniqueValueInfos = [];
-        this.model!.heatmapRenderer = JSON.parse(JSON.stringify(this.originalHeatmapColorStops));
+        this.model!.heatmapRenderer = this.clone(this.rendererDefaults.heatmapRenderer);
     }
 
 }
