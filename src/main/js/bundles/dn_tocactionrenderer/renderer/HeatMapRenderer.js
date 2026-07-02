@@ -45,7 +45,16 @@ export default function createHeatMapRenderer(layer, properties, mapWidgetModel,
     heatmapRendererCreator.createRenderer(params)
         .then(function (response) {
             rendererResult = response;
-            layer.renderer = rendererResult.renderer;
+            const renderer = rendererResult.renderer;
+            // Keep the exact configured color stops on the renderer.
+            // Otherwise, more stps are added implicitly
+            renderer.colorStops = colorStops.map(stop => {
+                return {
+                    ratio: stop.ratio,
+                    color: new Color(stop.color)
+                };
+            });
+            layer.renderer = renderer;
         })
         .catch(function (error) {
             console.error("there was an error: ", error);
