@@ -237,7 +237,7 @@
                             class="unique-value-info-item"
                         >
                             <div class="v-label theme--light mb-2">
-                                {{ info.value }}
+                                {{ info.label ?? info.value }}
                             </div>
                             <v-flex class="unique-value-color-container align-center pb-3">
                                 <color-picker

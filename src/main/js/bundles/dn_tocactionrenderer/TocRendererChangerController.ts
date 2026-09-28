@@ -236,6 +236,7 @@ export class TocRendererChangerController {
             model.uniqueValueInfos = infos.map((info) => {
                 return {
                     value: info.value,
+                    label: info.label,
                     color: info.symbol?.color
                 };
             });
@@ -402,6 +403,7 @@ export class TocRendererChangerController {
         const colorValueInfos = renderer.uniqueValueInfos.map((info: any) => {
             return {
                 value: info.value,
+                label: info.label,
                 color: info.symbol.color
             };
         });
