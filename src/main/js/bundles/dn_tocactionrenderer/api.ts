@@ -87,6 +87,7 @@ export interface LayerAttribute {
 
 export interface UniqueValueInfo {
     value: string;
+    label?: string;
     color: RGBAColor;
 }
 

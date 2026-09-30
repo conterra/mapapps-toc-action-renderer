@@ -42,12 +42,20 @@ export default async function createTypeRenderer(
                 if(matchingInfo && matchingInfo.color) {
                     info.symbol.color = matchingInfo.color;
                 }
-                colorAndValueInfo.push({ value: info.value, color: info.symbol.color });
+                colorAndValueInfo.push({
+                    value: info.value,
+                    label: info.label,
+                    color: info.symbol.color
+                });
             });
         } else {
             rendererResult.renderer.uniqueValueInfos.forEach(info => {
                 applySymbolStyle(info.symbol, symbol, size, pathString);
-                colorAndValueInfo.push({ value: info.value, color: info.symbol.color });
+                colorAndValueInfo.push({
+                    value: info.value,
+                    label: info.label,
+                    color: info.symbol.color
+                });
             });
         }
 

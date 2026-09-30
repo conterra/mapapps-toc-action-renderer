@@ -34,6 +34,7 @@
             "theme-autumn",
             "toc",
             "toolset",
+            "legend",
             "dn_imprintprivacy",
             "dn_tocactionrenderer"
         ],
@@ -155,6 +156,31 @@
                                                     {
                                                         "fieldName": "value",
                                                         "label": "Wert"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "id": "sf311Incidents",
+                                    "title": "SF311 Incidents (Coded Value Domain)",
+                                    "type": "AGS_FEATURE",
+                                    "url": "https://sampleserver6.arcgisonline.com/arcgis/rest/services/SF311/FeatureServer/0",
+                                    "visible": true,
+                                    "popupTemplate": {
+                                        "title": "{req_type}",
+                                        "content": [
+                                            {
+                                                "type": "fields",
+                                                "fieldInfos": [
+                                                    {
+                                                        "fieldName": "req_type",
+                                                        "label": "Request type"
+                                                    },
+                                                    {
+                                                        "fieldName": "status",
+                                                        "label": "Status"
                                                     }
                                                 ]
                                             }
